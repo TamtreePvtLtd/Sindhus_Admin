@@ -68,7 +68,13 @@ function Navbar() {
   return (
     <>
       <Box display={"flex"} flexGrow={1}>
-        <AppBar component="nav">
+        <AppBar
+          component="nav"
+          sx={{
+            backgroundColor: "white",
+            color: "#57ccb5",
+          }}
+        >
           <Toolbar>
             <IconButton
               color="inherit"
@@ -93,14 +99,15 @@ function Navbar() {
                 width="50px"
               />
               <Typography
-                variant="h6"
-                component="div"
                 sx={{
-                  color: "red",
-                  fontWeight: "bolder",
+                  fontWeight: 800,
+                  color: theme.palette.primary.main,
+                  fontSize: "2rem",
+                  fontFamily: "Sindhus-Logo-Font",
+                  cursor: "pointer",
                 }}
               >
-                Sindhu's Kitchen
+                SINDHU&#8217;S
               </Typography>
             </Box>
             <Stack
@@ -121,7 +128,13 @@ function Navbar() {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                 >
-                  <Avatar sx={{ width: 28, height: 28 }}>
+                  <Avatar
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      backgroundColor: "#57ccb5",
+                    }}
+                  >
                     {user?.name ? user.name.toUpperCase()[0] : ""}
                   </Avatar>
                 </IconButton>
@@ -173,7 +186,7 @@ function Navbar() {
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: "background.paper",
+              // bgcolor: "background.paper",
               transform: "translateY(-50%) rotate(45deg)",
               zIndex: 0,
             },
