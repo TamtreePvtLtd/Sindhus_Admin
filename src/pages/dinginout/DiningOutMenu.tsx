@@ -16,7 +16,7 @@ import {
 import { useSnackBar } from "../../context/SnackBarContext";
 import { SnackbarSeverityEnum } from "../../enums/SnackbarSeverityEnums";
 import CommonSaveDialog from "../../common/components/CommonSaveDialog";
-import CommonDeleteDialog from "../../common/components/CommonDeleteDialog";
+import CommonClearDialog from "../../common/components/CommonClearDialog";
 
 interface MenuProductCount {
   [key: string]: string[];
@@ -260,10 +260,7 @@ function DiningOutMenu() {
         </Typography>
       </Box>
       <Container>
-        <Box>
-          <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
-            Clear All Menus Products
-          </Button>
+        <Box>     
         </Box>
         <Box>
           <Grid container spacing={2}>
@@ -369,10 +366,14 @@ function DiningOutMenu() {
             display: "flex",
             justifyContent: "flex-end",
             pb: 3,
-            gap: 2,
+            gap: 3,
+           
           }}
         >
-          <Button variant="outlined" onClick={handleCancel}>
+          <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
+            Clear Products
+          </Button>
+          <Button variant="outlined" onClick={handleCancel} sx={{maxWidth:"64px"}}>
             Cancel
           </Button>
           <Button variant="contained" onClick={handleSave}>
@@ -387,9 +388,9 @@ function DiningOutMenu() {
           content="Do you want to save the changes?"
         />
         {clearDialogOpen && (
-          <CommonDeleteDialog
+          <CommonClearDialog
             title="Clear All Products"
-            content="Are You Sure Want To Clear All The Products?"
+            content="Are you sure want to clear all the Products?.This will Clear all the Selection"
             dialogOpen={clearDialogOpen}
             onDialogclose={() => setClearDialogOpen(false)}
             onDelete={handleClearButtonClick}

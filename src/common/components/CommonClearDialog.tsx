@@ -16,7 +16,7 @@ interface IProps {
   content: string;
 }
 
-function CommonDeleteDialog(props: IProps) {
+function CommonClearDialog(props: IProps) {
   const { dialogOpen, onDialogclose, onDelete, title, content } = props;
 
   return (
@@ -33,11 +33,11 @@ function CommonDeleteDialog(props: IProps) {
           <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogclose} variant="outlined" color="primary">
+          <Button onClick={onDialogclose} variant="outlined" color="primary" size="small">
             Cancel
           </Button>
-          <Button onClick={onDelete} variant="contained">
-            Delete
+          <Button onClick={onDelete} variant="contained" size="small">
+            DeSelect
           </Button>
         </DialogActions>
       </Dialog>
@@ -45,4 +45,4 @@ function CommonDeleteDialog(props: IProps) {
   );
 }
 
-export default CommonDeleteDialog;
+export default CommonClearDialog;
