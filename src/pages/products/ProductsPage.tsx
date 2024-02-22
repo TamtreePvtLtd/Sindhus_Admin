@@ -116,7 +116,7 @@ function ProductsPage() {
 
   return (
     <>
-      <Container>
+      <Container sx={{ py: 2 }}>
         <Box
           sx={{
             width: "100%",
@@ -181,7 +181,11 @@ function ProductsPage() {
                       width: "10%",
                     }}
                   >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      color="primary"
+                    >
                       Image
                     </Typography>
                   </TableCell>
@@ -193,7 +197,11 @@ function ProductsPage() {
                       width: "15%",
                     }}
                   >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      color="primary"
+                    >
                       Title
                     </Typography>
                   </TableCell>
@@ -205,7 +213,11 @@ function ProductsPage() {
                       width: "20%",
                     }}
                   >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      color="primary"
+                    >
                       Description
                     </Typography>
                   </TableCell>
@@ -217,7 +229,11 @@ function ProductsPage() {
                       width: "10%",
                     }}
                   >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      color="primary"
+                    >
                       Price
                     </Typography>
                   </TableCell>
@@ -229,7 +245,11 @@ function ProductsPage() {
                       width: "17%",
                     }}
                   >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      color="primary"
+                    >
                       Catering Size-Price
                     </Typography>
                   </TableCell>
@@ -241,7 +261,11 @@ function ProductsPage() {
                       width: "17%",
                     }}
                   >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      color="primary"
+                    >
                       DailyMenu Size-Price
                     </Typography>
                   </TableCell>
@@ -253,7 +277,11 @@ function ProductsPage() {
                       width: "10%",
                     }}
                   >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      color="primary"
+                    >
                       Action
                     </Typography>
                   </TableCell>

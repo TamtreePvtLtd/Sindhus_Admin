@@ -260,8 +260,7 @@ function DiningOutMenu() {
         </Typography>
       </Box>
       <Container>
-        <Box>     
-        </Box>
+        <Box></Box>
         <Box>
           <Grid container spacing={2}>
             <Grid item xs={3}>
@@ -367,13 +366,16 @@ function DiningOutMenu() {
             justifyContent: "flex-end",
             pb: 3,
             gap: 3,
-           
           }}
         >
           <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
             Clear Products
           </Button>
-          <Button variant="outlined" onClick={handleCancel} sx={{maxWidth:"64px"}}>
+          <Button
+            variant="outlined"
+            onClick={handleCancel}
+            sx={{ maxWidth: "64px" }}
+          >
             Cancel
           </Button>
           <Button variant="contained" onClick={handleSave}>
