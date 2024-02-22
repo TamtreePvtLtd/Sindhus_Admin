@@ -33,7 +33,7 @@ function CommonDeleteDialog(props: IProps) {
           <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogclose} variant="outlined" color="error">
+          <Button onClick={onDialogclose} variant="outlined" color="primary">
             Cancel
           </Button>
           <Button onClick={onDelete} variant="contained">

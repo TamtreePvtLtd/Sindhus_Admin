@@ -85,13 +85,13 @@ function Menus() {
             />
           </Grid>
 
-          <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+          <Grid item xs={12}>
             <TableContainer
               elevation={0}
               sx={{
                 boxShadow: 3,
-                width: "55%",
-                maxWidth: "800px",
+                width: "70vw",
+                // maxWidth: "800px",
               }}
               component={Paper}
             >
@@ -103,12 +103,17 @@ function Menus() {
                         Name
                       </Typography>
                     </TableCell>
-                    <TableCell width={"30%"}>
+                    <TableCell sx={{ width: "30%" }}>
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        MenuType
+                      </Typography>
+                    </TableCell>
+                    <TableCell width={"20%"}>
                       <Typography variant="subtitle1" fontWeight="bold">
                         SubMenus
                       </Typography>
                     </TableCell>
-                    <TableCell width={"15%"} sx={{ textAlign: "center" }}>
+                    <TableCell width={"20%"} sx={{ textAlign: "center" }}>
                       <Typography variant="subtitle1" fontWeight="bold">
                         Action
                       </Typography>
@@ -121,7 +126,7 @@ function Menus() {
                     menus?.items.map((menu) => (
                       <TableRow key={menu._id}>
                         <TableCell>{menu.title}</TableCell>
-
+                        <TableCell>{menu.menuType}</TableCell>
                         <TableCell>
                           {menu.subMenus &&
                             menu.subMenus.length > 0 &&

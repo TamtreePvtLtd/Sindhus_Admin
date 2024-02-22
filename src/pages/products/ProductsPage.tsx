@@ -32,7 +32,7 @@ function ProductsPage() {
   const [isAdd, setIsAdd] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
   const [menuData, setMenuData] = useState<IProductPageMenuDropDown[]>([]);
-    const [selectedMenuValue, setSelectedMenuValue] =
+  const [selectedMenuValue, setSelectedMenuValue] =
     useState<IProductPageMenuDropDown | null>(null);
   const [selectedSubmenuValues, setSelectedSubmenuValues] = useState<string[]>(
     []
@@ -86,7 +86,7 @@ function ProductsPage() {
   }, []);
 
   const clearSearch = () => {
-       setSelectedMenuValue(null);
+    setSelectedMenuValue(null);
     setSelectedSubmenuValues([]);
   };
 
@@ -282,10 +282,7 @@ function ProductsPage() {
                       <TableCell
                         align="right"
                         sx={{
-                          textAlign: "center",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
+                          textAlign: "left",
                           maxWidth: "50px",
                         }}
                       >

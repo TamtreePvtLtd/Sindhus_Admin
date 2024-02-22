@@ -32,7 +32,7 @@ function CommonSaveDialog(props: IProps) {
           <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogclose} variant="outlined">
+          <Button onClick={onDialogclose} variant="outlined" color="primary">
             Cancel
           </Button>
           <Button onClick={onSave} variant="contained">
