@@ -673,7 +673,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         Catering Size
                       </Typography>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleAddCateringSize}
                       >
                         <AddIcon /> Add
@@ -689,7 +689,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size(oz)
+                                Size
                               </Typography>
                               <TextField
                                 fullWidth
@@ -793,7 +793,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         DailyMenu Size
                       </Typography>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleAddDailyMenuSize}
                       >
                         <AddIcon /> Add
@@ -809,7 +809,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size(oz)
+                                Size
                               </Typography>
                               <TextField
                                 fullWidth

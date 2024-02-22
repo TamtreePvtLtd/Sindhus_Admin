@@ -278,11 +278,11 @@ function MenuDrawer(props: IProps) {
             }}
           >
             <Typography variant="body1" fontWeight="bold">
-              Sub Menus
+              SubMenu
             </Typography>
             <Button variant="outlined" onClick={handleAddSubMenu}>
               <AddIcon />
-              Add Submenus
+              Add Submenu
             </Button>
           </Box>
           {subMenuItems &&
