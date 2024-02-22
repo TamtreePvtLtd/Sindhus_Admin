@@ -10,7 +10,11 @@ import {
   IUser,
   IProductPageMenuDropDown,
 } from "../interface/types";
-import { httpWithCredentials, httpWithMultipartFormData } from "./http";
+import {
+  httpWithCredentials,
+  httpWithMultipartFormData,
+  httpWithoutCredentials,
+} from "./http";
 
 const getAllEnquiries = async (page: number, pageSize: number) => {
   try {
@@ -247,6 +251,18 @@ const updateMenu = async (updateMenu: FormData) => {
   }
 };
 
+const createSpecials = async (images: string[]) => {
+  try {
+    const response = await httpWithoutCredentials.post<string>(
+      "/specials/createSpecials",
+      { images }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const deleteMenu = async (menuId: string) => {
   try {
     var response = await httpWithCredentials.delete(
@@ -278,4 +294,5 @@ export {
   createMenu,
   deleteEnquiry,
   updateMenu,
+  createSpecials,
 };

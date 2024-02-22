@@ -34,6 +34,10 @@ const navItems = [
     label: "Daily Menu",
     link: paths.DININGOUTMENU,
   },
+  {
+    label: "Specials",
+    link: paths.SPECIALS,
+  },
   ,
 ];
 function NavbarDrawer(props: INavbarProps) {
