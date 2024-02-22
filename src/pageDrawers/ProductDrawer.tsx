@@ -22,7 +22,6 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import { getAllMenusForAddProduct } from "../services/api";
-// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ProductInitialValue } from "../constants/initialValue";
 import imageCompression from "browser-image-compression";
 import ProductImage from "../common/ProductImage";
@@ -507,7 +506,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           </FormGroup>
                         </AccordionSummary>
                         {data.subMenus.length > 0 && (
-                          <AccordionDetails>
+                          <AccordionDetails sx={{margin:"40px"}}>
                             <Typography variant="subtitle1">
                               SubMenus
                             </Typography>
@@ -714,7 +713,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         Catering Size
                       </Typography>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleAddCateringSize}
                       >
                         <AddIcon /> Add
@@ -730,7 +729,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size(oz)
+                                Size
                               </Typography>
                               <TextField
                                 fullWidth
@@ -793,7 +792,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         DailyMenu Size
                       </Typography>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleAddDailyMenuSize}
                       >
                         <AddIcon /> Add
@@ -809,7 +808,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size(oz)
+                                Size
                               </Typography>
                               <TextField
                                 fullWidth

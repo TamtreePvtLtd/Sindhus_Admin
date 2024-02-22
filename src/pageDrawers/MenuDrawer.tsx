@@ -53,18 +53,14 @@ const defaultValues = {
 
 const menuTypes: IOptionTypes[] = [
   { id: "1", label: "Snacks", value: "1" },
-  { id: "2", label: "Others", value: "2" },
   { id: "3", label: "Drinks", value: "3" },
+  { id: "2", label: "Others", value: "2" },
 ];
 
 function MenuDrawer(props: IProps) {
   const { menuDrawerOpen, handleMenuDrawerclose, selectedMenu } = props;
   const [isEdit, setIsEdit] = useState(!!selectedMenu);
   const [subMenuItems, setSubMenuItems] = useState<ISubMenu[]>([]);
-  const [selectedMenuImage, setSelectedMenuImage] = useState<string | null>(
-    null
-  );
-  const [newMenuImageFile, setNewMenuImageFile] = useState<File | null>(null);
   const { updateSnackBarState } = useSnackBar();
 
   const {
@@ -90,12 +86,6 @@ function MenuDrawer(props: IProps) {
   const createMenuMutation = useCreateMenu();
   var menuUpdateMutation = useUpdateMenu();
   const filePosterRef = useRef<HTMLInputElement>(null);
-
-  const handleMenuUploadButtonClick = () => {
-    if (filePosterRef.current) {
-      filePosterRef.current.click();
-    }
-  };
 
   const handleAddSubMenu = () => {
     const subMenuValues = getValues("subMenus") || [];
@@ -278,11 +268,11 @@ function MenuDrawer(props: IProps) {
             }}
           >
             <Typography variant="body1" fontWeight="bold">
-              Sub Menus
+              SubMenu
             </Typography>
             <Button variant="outlined" onClick={handleAddSubMenu}>
               <AddIcon />
-              Add Submenus
+              Add Submenu
             </Button>
           </Box>
           {subMenuItems &&
