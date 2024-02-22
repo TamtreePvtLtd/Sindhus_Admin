@@ -33,7 +33,12 @@ function CommonClearDialog(props: IProps) {
           <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogclose} variant="outlined" color="primary" size="small">
+          <Button
+            onClick={onDialogclose}
+            variant="outlined"
+            color="primary"
+            size="small"
+          >
             Cancel
           </Button>
           <Button onClick={onDelete} variant="contained" size="small">
