@@ -251,12 +251,14 @@ const updateMenu = async (updateMenu: FormData) => {
   }
 };
 
-const createSpecials = async (images: string[]) => {
+const createSpecials = async (imageData) => {
   try {
     const response = await httpWithoutCredentials.post<string>(
       "/specials/createSpecials",
-      { images }
+      imageData
     );
+    console.log(response.data);
+    
     return response.data;
   } catch (error) {
     throw error;
