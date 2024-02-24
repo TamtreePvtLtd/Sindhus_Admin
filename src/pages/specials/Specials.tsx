@@ -140,12 +140,18 @@ function Specials() {
   const createProductSpecial = useCreateSpecials();
 
   useEffect(() => {
-    return () => {
-      // Clean up object URLs when component unmounts
-      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
-    };
-  }, [imagePreviews]);
+    // Retrieve image previews from local storage on component mount
+    const storedPreviews = localStorage.getItem("imagePreviews");
+    if (storedPreviews) {
+      setImagePreviews(JSON.parse(storedPreviews));
+    }
+  }, []);
 
+   useEffect(() => {
+     // Save image previews to local storage whenever it changes
+     localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
+   }, [imagePreviews]);
+  
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -181,8 +187,6 @@ function Specials() {
 
         console.log("Images uploaded successfully");
 
-        // After saving to the database, you might want to perform additional actions like clearing state
-        setImagePreviews([]);
         setImages([]);
       }
     } catch (error) {
