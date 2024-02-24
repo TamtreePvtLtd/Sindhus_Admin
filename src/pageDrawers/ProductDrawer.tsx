@@ -22,7 +22,6 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import { getAllMenusForAddProduct } from "../services/api";
-// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ProductInitialValue } from "../constants/initialValue";
 import imageCompression from "browser-image-compression";
 import ProductImage from "../common/ProductImage";
@@ -68,6 +67,9 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
   const [selectedPosterImage, setSelectedPosterImage] = useState<
     string | undefined
   >("");
+  const [showPriceField, setShowPriceField] = useState(false);
+  const [showCateringSizeField, setShowCateringSizeField] = useState(false);
+  const [showDailyMenuSizeField, setShowDailyMenuSizeField] = useState(false);
 
   var updateProductMutation = useUpdateProduct();
   var productCreateMutation = useCreateProduct();
@@ -346,7 +348,6 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
       console.log(error);
     }
   };
-
   useEffect(() => {
     if (selectedProduct && selectedProduct._id) {
       setProduct({ ...selectedProduct });
@@ -360,6 +361,14 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
           setSelectedPosterImage("");
         }
       }
+
+      setShowPriceField(!!selectedProduct.price);
+      setShowCateringSizeField(
+        selectedProduct.cateringMenuSizeWithPrice.length > 0
+      );
+      setShowDailyMenuSizeField(
+        selectedProduct.dailyMenuSizeWithPrice.length > 0
+      );
     }
   }, [selectedProduct]);
 
@@ -451,12 +460,12 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     }
                   />
                 </Box>
-                   <Box sx={{ margin: "5px 0" }}>
+                <Box sx={{ margin: "5px 0" }}>
                   <Typography variant="subtitle1">
                     Menus <span style={{ color: "red" }}>*</span>
                   </Typography>
                 </Box>
-                <Box mb={2}>
+                <Box>
                   {menuData.length > 0 &&
                     menuData.map((data, index) => (
                       <Accordion
@@ -504,7 +513,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           </FormGroup>
                         </AccordionSummary>
                         {data.subMenus.length > 0 && (
-                          <AccordionDetails>
+                          <AccordionDetails sx={{ marginLeft: "40px" }}>
                             <Typography variant="subtitle1">
                               SubMenus
                             </Typography>
@@ -633,7 +642,45 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                 </Box>
               </Grid>
               <Grid item md={7}>
-                {product.cateringMenuSizeWithPrice.length === 0 && (
+                <Box mt={3}>
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={showPriceField}
+                          onChange={(e) => setShowPriceField(e.target.checked)}
+                          color="primary"
+                        />
+                      }
+                      label="Price($)"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={showCateringSizeField}
+                          onChange={(e) =>
+                            setShowCateringSizeField(e.target.checked)
+                          }
+                          color="primary"
+                        />
+                      }
+                      label="Catering Size"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={showDailyMenuSizeField}
+                          onChange={(e) =>
+                            setShowDailyMenuSizeField(e.target.checked)
+                          }
+                          color="primary"
+                        />
+                      }
+                      label="DailyMenu Size"
+                    />
+                  </FormGroup>
+                </Box>
+                {showPriceField && (
                   <Box mt={3}>
                     <Typography
                       sx={{
@@ -660,7 +707,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     />
                   </Box>
                 )}
-                {product.price === 0 && (
+                {showCateringSizeField && (
                   <>
                     <Box
                       sx={{ display: "flex", justifyContent: "space-between" }}
@@ -673,7 +720,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         Catering Size
                       </Typography>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleAddCateringSize}
                       >
                         <AddIcon /> Add
@@ -689,7 +736,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size(oz)
+                                Size
                               </Typography>
                               <TextField
                                 fullWidth
@@ -737,50 +784,9 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           </Grid>
                         </Grid>
                       ))}
-                    <Box mt={2}>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ marginRight: "5px" }}
-                      >
-                        Serving Size Description
-                      </Typography>
-                      <TextField
-                        variant="outlined"
-                        multiline
-                        minRows={4}
-                        maxRows={6}
-                        fullWidth
-                        value={product.servingSizeDescription}
-                        onChange={(e) =>
-                          setProduct((prevState) => ({
-                            ...prevState,
-                            servingSizeDescription: e.target.value,
-                          }))
-                        }
-                      />
-                    </Box>
                   </>
                 )}
-                <Box mt={2}>
-                  <Typography variant="subtitle1" sx={{ marginRight: "5px" }}>
-                    Ingredients
-                  </Typography>
-                  <TextField
-                    variant="outlined"
-                    multiline
-                    minRows={4}
-                    maxRows={6}
-                    fullWidth
-                    value={product.ingredients}
-                    onChange={(e) =>
-                      setProduct((prevState) => ({
-                        ...prevState,
-                        ingredients: e.target.value,
-                      }))
-                    }
-                  />
-                </Box>
-                {product.price === 0 && (
+                {showDailyMenuSizeField && (
                   <>
                     <Box
                       sx={{ display: "flex", justifyContent: "space-between" }}
@@ -793,7 +799,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         DailyMenu Size
                       </Typography>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={handleAddDailyMenuSize}
                       >
                         <AddIcon /> Add
@@ -809,7 +815,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size(oz)
+                                Size
                               </Typography>
                               <TextField
                                 fullWidth
@@ -863,6 +869,26 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                       ))}
                   </>
                 )}
+
+                <Box mt={2}>
+                  <Typography variant="subtitle1" sx={{ marginRight: "5px" }}>
+                    Ingredients
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    multiline
+                    minRows={4}
+                    maxRows={6}
+                    fullWidth
+                    value={product.ingredients}
+                    onChange={(e) =>
+                      setProduct((prevState) => ({
+                        ...prevState,
+                        ingredients: e.target.value,
+                      }))
+                    }
+                  />
+                </Box>
               </Grid>
             </Grid>
           </Box>

@@ -22,13 +22,14 @@ const navItems = [
     label: "Catering Enquiries",
     link: paths.CATERINGENQUIRIES,
   },
-  {
-    label: "Products",
-    link: paths.PRODUCTS,
-  },
+
   {
     label: "Menus",
     link: paths.MENUS,
+  },
+  {
+    label: "Products",
+    link: paths.PRODUCTS,
   },
   {
     label: "Daily Menu",
@@ -69,8 +70,12 @@ function NavbarDrawer(props: INavbarProps) {
           backgroundColor: "#ece7ee",
         }}
       >
-        <Typography color="primary" sx={{ fontWeight: 800 }} fontSize={"large"}>
-          Sindhu's Kitchen
+        <Typography
+          color="primary"
+          sx={{ fontWeight: 800, fontFamily: "Sindhus-Logo-Font" }}
+          fontSize={"large"}
+        >
+          SINDHU'S KITCHEN
         </Typography>
         <ArrowBackIosIcon sx={{ fontSize: "large" }} color="primary" />
       </Box>
