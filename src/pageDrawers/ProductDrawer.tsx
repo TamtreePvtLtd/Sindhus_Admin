@@ -348,7 +348,6 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
       console.log(error);
     }
   };
-
   useEffect(() => {
     if (selectedProduct && selectedProduct._id) {
       setProduct({ ...selectedProduct });
@@ -362,6 +361,14 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
           setSelectedPosterImage("");
         }
       }
+
+      setShowPriceField(!!selectedProduct.price);
+      setShowCateringSizeField(
+        selectedProduct.cateringMenuSizeWithPrice.length > 0
+      );
+      setShowDailyMenuSizeField(
+        selectedProduct.dailyMenuSizeWithPrice.length > 0
+      );
     }
   }, [selectedProduct]);
 
@@ -458,7 +465,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     Menus <span style={{ color: "red" }}>*</span>
                   </Typography>
                 </Box>
-                <Box mb={2}>
+                <Box>
                   {menuData.length > 0 &&
                     menuData.map((data, index) => (
                       <Accordion
@@ -506,7 +513,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           </FormGroup>
                         </AccordionSummary>
                         {data.subMenus.length > 0 && (
-                          <AccordionDetails sx={{margin:"40px"}}>
+                          <AccordionDetails sx={{ marginLeft: "40px" }}>
                             <Typography variant="subtitle1">
                               SubMenus
                             </Typography>
