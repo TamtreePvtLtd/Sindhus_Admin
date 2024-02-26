@@ -106,6 +106,7 @@ function Navbar() {
               />
               <Typography
                 sx={{
+                  padding: "10px",
                   fontWeight: 800,
                   color: theme.palette.primary.main,
                   fontSize: "2rem",
