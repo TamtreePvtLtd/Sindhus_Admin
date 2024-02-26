@@ -11,6 +11,7 @@ import {
   createMenu,
   updateMenu,
   deleteMenu,
+  createSpecials,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -53,6 +54,18 @@ export const useCreateMenu = () => {
     mutationFn: createMenu,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useCreateSpecials = () => {
+  return useMutation({
+    mutationFn: createSpecials,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["special"] });
     },
     onError: (error) => {
       console.log(error);

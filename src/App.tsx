@@ -13,6 +13,7 @@ import CustomSnackBar from "./common/components/CustomSnackBar";
 import Login from "./pages/login/Login";
 import PrivateRoute from "./common/components/PrivateRoute";
 import AuthProvider from "./context/AuthContext";
+import Specials from "./pages/specials/Specials";
 
 export const queryClient = new QueryClient();
 
@@ -63,6 +64,14 @@ function App() {
                     element={
                       <PrivateRoute>
                         <DiningOutMenu />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path={paths.SPECIALS}
+                    element={
+                      <PrivateRoute>
+                        <Specials />
                       </PrivateRoute>
                     }
                   />
