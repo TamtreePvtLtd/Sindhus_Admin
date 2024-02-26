@@ -3,30 +3,50 @@ import {
   AppBar,
   Avatar,
   Box,
-  Drawer,
+  Button,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
-  Stack,
   Toolbar,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+
 import { useTheme } from "@mui/material/styles";
-import NavbarDrawer from "../pageDrawers/NavbarDrawer";
+
 import { useAuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { logOut } from "../services/api";
 import { useSnackBar } from "../context/SnackBarContext";
 import Logout from "@mui/icons-material/Logout";
+import { paths } from "../routes/Paths";
+
+const navMenus = [
+  {
+    label: "Catering Enquiries",
+    link: paths.CATERINGENQUIRIES,
+  },
+  {
+    label: "Menus",
+    link: paths.MENUS,
+  },
+  {
+    label: "Products",
+    link: paths.PRODUCTS,
+  },
+  {
+    label: "Daily Menu",
+    link: paths.DININGOUTMENU,
+  },
+  {
+    label: "Specials",
+    link: paths.SPECIALS,
+  },
+];
 
 function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const [isNavBarOpen, setNavBarOpen] = React.useState(false);
-
   const { user, updateUserData } = useAuthContext();
   const { updateSnackBarState } = useSnackBar();
 
@@ -34,17 +54,13 @@ function Navbar() {
 
   const navigate = useNavigate();
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleDrawerToggle = () => {
-    setNavBarOpen((prevState) => !prevState);
   };
 
   const handleLogoutClick = async () => {
@@ -52,7 +68,6 @@ function Navbar() {
       .then((response) => {
         if (response.status) {
           updateUserData(null);
-
           handleClose();
           navigate("/login");
         }
@@ -67,7 +82,7 @@ function Navbar() {
 
   return (
     <>
-      <Box display={"flex"} flexGrow={1}>
+      <Box>
         <AppBar
           component="nav"
           sx={{
@@ -76,20 +91,11 @@ function Navbar() {
           }}
         >
           <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-            >
-              <MenuIcon />
-            </IconButton>
-
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: 1,
+                width: "90%",
               }}
             >
               <img
@@ -109,58 +115,75 @@ function Navbar() {
               >
                 SINDHU&#8217;S
               </Typography>
-            </Box>
-            <Stack
-              flexDirection={"row"}
-              flexGrow={1}
-              alignItems={"center"}
-              justifyContent={"flex-end"}
-              gap={2}
-              sx={{
-                cursor: "pointer",
-              }}
-            >
-              {user && (
-                <IconButton
-                  onClick={handleMenuClick}
-                  size="small"
-                  aria-controls={open ? "account-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
-                >
-                  <Avatar
+              <Box
+                sx={{
+                  width: "80%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {navMenus.map((menu, index) => (
+                  <Box
+                    key={menu.label}
                     sx={{
-                      width: 28,
-                      height: 28,
-                      backgroundColor: "#57ccb5",
+                      position: "relative",
+                      marginRight: index < navMenus.length - 1 ? "20px" : "0",
                     }}
                   >
-                    {user?.name ? user.name.toUpperCase()[0] : ""}
-                  </Avatar>
-                </IconButton>
-              )}
-            </Stack>
+                    <Link to={menu.link} style={{ textDecoration: "none" }}>
+                      <Button
+                        sx={{
+                          borderRadius: "50px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          fontSize: "large",
+                          textTransform: "none",
+                          color: "black",
+                          "&:hover": {
+                            backgroundColor: theme.palette.primary.main,
+                            color: "white",
+                          },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          px={2}
+                        >
+                          {menu.label}
+                        </Box>
+                      </Button>
+                    </Link>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+
+            {user && (
+              <IconButton
+                onClick={handleMenuClick}
+                size="small"
+                aria-controls={open ? "account-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+              >
+                <Avatar
+                  sx={{
+                    width: 28,
+                    height: 28,
+                    backgroundColor: "#57ccb5",
+                  }}
+                >
+                  {user?.name ? user.name.toUpperCase()[0] : ""}
+                </Avatar>
+              </IconButton>
+            )}
           </Toolbar>
         </AppBar>
         <Toolbar />
-        <Box component="nav">
-          <Drawer
-            variant="temporary"
-            open={isNavBarOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true,
-            }}
-            PaperProps={{
-              style: {
-                boxSizing: "border-box",
-                width: isSmallScreen ? "60vw" : "20vw",
-              },
-            }}
-          >
-            <NavbarDrawer onDrawerToggle={handleDrawerToggle} />
-          </Drawer>
-        </Box>
       </Box>
       <Menu
         anchorEl={anchorEl}
@@ -186,7 +209,6 @@ function Navbar() {
               right: 14,
               width: 10,
               height: 10,
-              // bgcolor: "background.paper",
               transform: "translateY(-50%) rotate(45deg)",
               zIndex: 0,
             },
@@ -205,4 +227,5 @@ function Navbar() {
     </>
   );
 }
+
 export default Navbar;
