@@ -38,11 +38,7 @@ const navMenus = [
     label: "Daily Menu",
     link: paths.DININGOUTMENU,
   },
-  {
-    label: "Specials",
-    link: paths.SPECIALS,
-  },
-];
+  ];
 
 function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
