@@ -28,7 +28,6 @@ import ProductImage from "../common/ProductImage";
 import { useCreateProduct, useUpdateProduct } from "../customRQHooks/Hooks";
 import { useSnackBar } from "../context/SnackBarContext";
 import { IMenu, IProduct } from "../interface/types";
-
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
@@ -476,16 +475,26 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           aria-controls="panel1a-content"
                           id="panel1a-header"
                         >
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {/* <KeyboardDoubleArrowRightIcon fontSize="small" /> */}
                           <FormGroup
                             sx={{
                               display: "flex",
                               flexWrap: "wrap",
                             }}
                           >
+                           
                             <FormControlLabel
                               value={data._id}
                               control={
                                 <Checkbox
+                                  size="small"
+                                  sx={{
+                                    "& .MuiCheckbox-root": {
+                                      borderWidth: 0.5,
+                                      borderStyle: "dotted",
+                                    },
+                                  }}
                                   checked={product.menu.mainMenuIds.includes(
                                     data._id
                                   )}
@@ -510,7 +519,8 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                               }
                               label={data.title}
                             />
-                          </FormGroup>
+                            </FormGroup>
+                            </Box>
                         </AccordionSummary>
                         {data.subMenus.length > 0 && (
                           <AccordionDetails sx={{ marginLeft: "40px" }}>
@@ -529,6 +539,23 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   value={submenu.title}
                                   control={
                                     <Checkbox
+                                      size="small"
+                                      sx={{
+                                        "& .MuiCheckbox-root": {
+                                          position: "relative",
+                                          "&:after": {
+                                            content: '""',
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            border: "1px dotted #000", // Adjust color and thickness as needed
+                                            borderRadius: 4, // Adjust border radius as needed
+                                            pointerEvents: "none", // Ensure clicks pass through the pseudo-element
+                                          },
+                                        },
+                                      }}
                                       checked={product.menu.subMenuIds.includes(
                                         submenu._id
                                       )}
