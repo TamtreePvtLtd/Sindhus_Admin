@@ -1,12 +1,12 @@
 import { IMenu } from "../interface/menus";
 
-export const MenuInitialValue: IMenu = {
-  id: "",
-  name: "",
-  description: "",
-  image: "",
-  submenus: [],
-};
+// export const MenuInitialValue: IMenu = {
+//   id: "",
+//   name: "",
+//   description: "",
+//   image: "",
+//   submenus: [],
+// };
 
 export const ProductInitialValue = {
   title: "",

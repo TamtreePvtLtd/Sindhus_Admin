@@ -45,7 +45,7 @@ function PaginatedHeader(props: IProps) {
               </Box>
             </Typography>
             {!!props.addButtonText && (
-              <Button variant="contained" onClick={props.onAddClick}>
+              <Button variant="contained" size="small"onClick={props.onAddClick} >
                 <AddIcon />
                 {props.addButtonText}
               </Button>
