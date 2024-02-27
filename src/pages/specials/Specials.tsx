@@ -1,75 +1,97 @@
-
-
 import React, { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {  useCreateSpecials } from "../../customRQHooks/Hooks";
-
+import { useCreateSpecials } from "../../customRQHooks/Hooks";
+import imageCompression from "browser-image-compression";
 
 function Specials() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const createProductSpecial = useCreateSpecials();
-   useEffect(() => {
-     // Retrieve image previews from local storage on component mount
-     const storedPreviews = localStorage.getItem("imagePreviews");
-     if (storedPreviews) {
-       setImagePreviews(JSON.parse(storedPreviews));
-     }
-   }, []);
 
-   useEffect(() => {
-     // Save image previews to local storage whenever it changes
-     localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
-   }, [imagePreviews]);
-
-  const handleImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    try {
-      const files: FileList | null = event.target.files;
-
-      if (files) {
-        const imageFiles: File[] = Array.from(files);
-        const previews: string[] = [];
-
-        for (let i = 0; i < imageFiles.length; i++) {
-          const file = imageFiles[i];
-          const preview = URL.createObjectURL(file); // Generate preview URL
-          previews.push(preview);
-        }
-
-        setImagePreviews((prevPreviews) => [...prevPreviews, ...previews]);
-        setImages((prevImages) => [...prevImages, ...imageFiles]);
-      }
-    } catch (error) {
-      console.error("Error uploading images:", error);
+  useEffect(() => {
+    const storedPreviews = localStorage.getItem("imagePreviews");
+    if (storedPreviews) {
+      setImagePreviews(JSON.parse(storedPreviews));
     }
-  };
+  }, []);
 
-  const handleSave = async () => {
-    try {
-      if (images.length > 0) {
-        const imageData = images.map((image) => ({
-          data: URL.createObjectURL(image),
-        }));
+  useEffect(() => {
+    localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
+  }, [imagePreviews]);
 
-await createProductSpecial.mutateAsync({ images: imageData });
+const handleImageChange = async (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  try {
+    const files: FileList | null = event.target.files;
 
-        console.log("Images uploaded successfully");
+    if (files) {
+      const imageFiles: File[] = Array.from(files);
+      const compressedImages: File[] = [];
 
-        setImages([]);
+      for (let i = 0; i < imageFiles.length; i++) {
+        const compressedImage = await handleCompressFile(imageFiles[i]);
+        compressedImages.push(compressedImage);
+        setImagePreviews((prevPreviews) => [
+          ...prevPreviews,
+          URL.createObjectURL(compressedImage),
+        ]);
       }
-    } catch (error) {
-      console.error("Error uploading images:", error);
+
+      setImages((prevImages) => [...prevImages, ...compressedImages]);
     }
-  };
+  } catch (error) {
+    console.error("Error uploading images:", error);
+  }
+};
+
+const handleSave = async () => {
+  try {
+    if (images.length > 0) {
+      const imageData = images.map((image) => ({
+        data: image,
+        originalname: image.name,
+        mimetype: image.type,
+      }));
+
+      await createProductSpecial.mutateAsync({ images: imageData });
+
+      console.log("Images uploaded successfully");
+
+      setImages([]);
+    }
+  } catch (error) {
+    console.error("Error uploading images:", error);
+  }
+};
+
+
+  async function handleCompressFile(imageFile: File): Promise<File> {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedBlob = await imageCompression(imageFile, options);
+      const compressedFile = new File([compressedBlob], imageFile.name, {
+        type: "image/jpeg",
+        lastModified: Date.now(),
+      });
+
+      return compressedFile;
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      throw error; // Rethrow the error to be caught by the caller
+    }
+  }
 
   const handleCancel = () => {
     setImagePreviews([]);
     setImages([]);
   };
-  console.log("imagePreviews", imagePreviews);
 
   return (
     <>
