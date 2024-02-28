@@ -475,52 +475,51 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           aria-controls="panel1a-content"
                           id="panel1a-header"
                         >
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {/* <KeyboardDoubleArrowRightIcon fontSize="small" /> */}
-                          <FormGroup
-                            sx={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                            }}
-                          >
-                           
-                            <FormControlLabel
-                              value={data._id}
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{
-                                    "& .MuiCheckbox-root": {
-                                      borderWidth: 0.5,
-                                      borderStyle: "dotted",
-                                    },
-                                  }}
-                                  checked={product.menu.mainMenuIds.includes(
-                                    data._id
-                                  )}
-                                  onChange={(e) => {
-                                    const isChecked = e.target.checked;
-                                    setProduct((prevState) => ({
-                                      ...prevState,
-                                      menu: {
-                                        ...prevState.menu,
-                                        mainMenuIds: isChecked
-                                          ? [
-                                              ...prevState.menu.mainMenuIds,
-                                              data._id,
-                                            ]
-                                          : prevState.menu.mainMenuIds.filter(
-                                              (id) => id !== data._id
-                                            ),
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            {/* <KeyboardDoubleArrowRightIcon fontSize="small" /> */}
+                            <FormGroup
+                              sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <FormControlLabel
+                                value={data._id}
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    sx={{
+                                      "& .MuiCheckbox-root": {
+                                        borderWidth: 0.5,
+                                        borderStyle: "dotted",
                                       },
-                                    }));
-                                  }}
-                                />
-                              }
-                              label={data.title}
-                            />
+                                    }}
+                                    checked={product.menu.mainMenuIds.includes(
+                                      data._id
+                                    )}
+                                    onChange={(e) => {
+                                      const isChecked = e.target.checked;
+                                      setProduct((prevState) => ({
+                                        ...prevState,
+                                        menu: {
+                                          ...prevState.menu,
+                                          mainMenuIds: isChecked
+                                            ? [
+                                                ...prevState.menu.mainMenuIds,
+                                                data._id,
+                                              ]
+                                            : prevState.menu.mainMenuIds.filter(
+                                                (id) => id !== data._id
+                                              ),
+                                        },
+                                      }));
+                                    }}
+                                  />
+                                }
+                                label={data.title}
+                              />
                             </FormGroup>
-                            </Box>
+                          </Box>
                         </AccordionSummary>
                         {data.subMenus.length > 0 && (
                           <AccordionDetails sx={{ marginLeft: "40px" }}>
@@ -707,33 +706,162 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     />
                   </FormGroup>
                 </Box>
+                {/* {showPriceField && (
+                  <>
+                    <Grid container spacing={3} mb={1}>
+                      <Grid item md={5}>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: "15px",
+                            }}
+                          >
+                            Size
+                          </Typography>
+                          <TextField
+                            sx={{ width: "70%" }}
+                            size="small"
+                            // value={product.size}
+                            onChange={(event) =>
+                              setProduct((prevState) => ({
+                                ...prevState,
+                                size: event.target.value,
+                              }))
+                            }
+                          />
+                        </Box>
+                      </Grid>
+                      <Grid item md={5}>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: "15px",
+                            }}
+                          >
+                            Price($)
+                          </Typography>
+                          <TextField
+                         
+                            
+                            sx={{ width: "70%" }}
+                            size="small"
+                            value={product.price}
+                            onChange={(event) => {
+                              if (/^\d*\.?\d*$/.test(event.target.value)) {
+                                setProduct((prevState) => ({
+                                  ...prevState,
+                                  price: event.target.value,
+                                }));
+                              }
+                            }}
+                            inputProps={{
+                              pattern: "^\\d*\\.?\\d*$",
+                            }}
+                          />
+                        </Box>
+                      </Grid>
+                      <Grid
+                        item
+                        md={2}
+                        sx={{ display: "flex", alignItems: "center",mt:"20px" }}
+                      >
+                        <Box>
+                          <Button variant="contained" size="small">
+                            <AddIcon /> Add
+                          </Button>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </>
+                )} */}
+
                 {showPriceField && (
-                  <Box mt={3}>
-                    <Typography
-                      sx={{
-                        marginRight: "20px",
-                      }}
-                      variant="subtitle1"
+                  <>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                      mt={2}
                     >
-                      Price($)
-                    </Typography>
-                    <TextField
-                      size="small"
-                      value={product.price}
-                      onChange={(e) => {
-                        if (/^\d*\.?\d*$/.test(e.target.value)) {
-                          setProduct((prevState) => ({
-                            ...prevState,
-                            price: e.target.value,
-                          }));
-                        }
-                      }}
-                      inputProps={{
-                        pattern: "^\\d*\\.?\\d*$",
-                      }}
-                    />
-                  </Box>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ marginRight: "5px" }}
+                      >
+                        Price
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        onClick={handleAddCateringSize}
+                      >
+                        <AddIcon /> Add
+                      </Button>
+                    </Box>
+                    {product.cateringMenuSizeWithPrice.length > 0 &&
+                      product.cateringMenuSizeWithPrice.map((value, index) => (
+                        <Grid container spacing={3} mb={1} key={index}>
+                          <Grid item md={5}>
+                            <Box>
+                              <Typography
+                                sx={{
+                                  fontSize: "15px",
+                                }}
+                              >
+                                Size
+                              </Typography>
+                              <TextField
+                                sx={{ width: "70%" }}
+                                size="small"
+                                // value={product.size}
+                                onChange={(event) =>
+                                  setProduct((prevState) => ({
+                                    ...prevState,
+                                    size: event.target.value,
+                                  }))
+                                }
+                              />
+                            </Box>
+                          </Grid>
+                          <Grid item md={5}>
+                            <Box>
+                              <Typography
+                                sx={{
+                                  fontSize: "15px",
+                                }}
+                              >
+                                Price($)
+                              </Typography>
+                              <TextField
+                                sx={{ width: "70%" }}
+                                size="small"
+                                value={product.price}
+                                onChange={(event) => {
+                                  if (/^\d*\.?\d*$/.test(event.target.value)) {
+                                    setProduct((prevState) => ({
+                                      ...prevState,
+                                      price: event.target.value,
+                                    }));
+                                  }
+                                }}
+                                inputProps={{
+                                  pattern: "^\\d*\\.?\\d*$",
+                                }}
+                              />
+                            </Box>
+                          </Grid>
+                          <Grid
+                            item
+                            md={2}
+                            sx={{ display: "flex", alignItems: "flex-end" }}
+                          >
+                            <IconButton
+                              onClick={() => handleDeleteCateringSize(index)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+                      ))}
+                  </>
                 )}
+
                 {showCateringSizeField && (
                   <>
                     <Box
