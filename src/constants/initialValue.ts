@@ -15,7 +15,7 @@ export const ProductInitialValue = {
   menu: { mainMenuIds: [], subMenuIds: [] },
   images: [],
   cateringMenuSizeWithPrice: [],
-  price: 0,
+  price: [],
   servingSizeDescription: "",
   ingredients: "",
   dailyMenuSizeWithPrice: [],

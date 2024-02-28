@@ -197,6 +197,18 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     }
   };
 
+  const handleAddItemSize = () => {
+    const updatedProduct = {
+      ...product,
+      Price: [
+        ...product.price,
+        { size: "", price: 0},
+      ],
+    };
+
+    setProduct(updatedProduct);
+  };
+
   const handleAddCateringSize = () => {
     const updatedProduct = {
       ...product,
@@ -785,17 +797,17 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         variant="subtitle1"
                         sx={{ marginRight: "5px" }}
                       >
-                        Price
+                        Item Price
                       </Typography>
                       <Button
                         variant="contained"
-                        onClick={handleAddCateringSize}
+                        onClick={handleAddItemSize}
                       >
                         <AddIcon /> Add
                       </Button>
                     </Box>
-                    {product.cateringMenuSizeWithPrice.length > 0 &&
-                      product.cateringMenuSizeWithPrice.map((value, index) => (
+                    {product.price.length > 0 &&
+                      product.price.map((value, index) => (
                         <Grid container spacing={3} mb={1} key={index}>
                           <Grid item md={5}>
                             <Box>
@@ -831,15 +843,10 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                               <TextField
                                 sx={{ width: "70%" }}
                                 size="small"
-                                value={product.price}
-                                onChange={(event) => {
-                                  if (/^\d*\.?\d*$/.test(event.target.value)) {
-                                    setProduct((prevState) => ({
-                                      ...prevState,
-                                      price: event.target.value,
-                                    }));
-                                  }
-                                }}
+                                value={value.price} // Accessing price at the current index
+                                // onChange={(event) =>
+                                //   handleAddItemSize(index, "price", event)
+                                // }
                                 inputProps={{
                                   pattern: "^\\d*\\.?\\d*$",
                                 }}
@@ -852,7 +859,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                             sx={{ display: "flex", alignItems: "flex-end" }}
                           >
                             <IconButton
-                              onClick={() => handleDeleteCateringSize(index)}
+                              // onClick={() => handleDeleteCateringSize(index)}
                             >
                               <DeleteIcon />
                             </IconButton>
