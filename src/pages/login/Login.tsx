@@ -16,6 +16,7 @@ import { useSnackBar } from "../../context/SnackBarContext";
 import { useEffect, useState } from "react";
 import { paths } from "../../routes/Paths";
 import { useAuthContext } from "../../context/AuthContext";
+import theme from "../../theme/theme";
 
 const schema = yup.object().shape({
   phoneNumber: yup
@@ -84,7 +85,7 @@ function Login() {
     <>
       {isLoading != null && !isLoading && (
         <>
-          <AppBar>
+          <AppBar sx={{ backgroundColor: "white" }}>
             <Toolbar>
               <Box
                 sx={{
@@ -111,14 +112,14 @@ function Login() {
                   />
                 </Link>
                 <Typography
-                  variant="h6"
-                  component="div"
                   sx={{
-                    color: "red",
-                    fontWeight: "bolder",
+                    fontFamily: "Sindhus-Logo-Font",
+                    fontWeight: 800,
+                    fontSize: "2rem",
+                    color: "#57ccb5",
                   }}
                 >
-                  Sindhu's Kitchen
+                  SINDHU'S
                 </Typography>
               </Box>
             </Toolbar>
@@ -138,7 +139,7 @@ function Login() {
               </Typography>
               <form onSubmit={handleSubmit(handleLogin)}>
                 <Typography>
-                  PhoneNumber<span style={{ color: "red" }}>*</span>
+                  UserId<span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                   variant="outlined"
@@ -175,6 +176,12 @@ function Login() {
                     mt: 0,
                   }}
                 />
+                <span
+                  style={{ float: "right", color: theme.palette.primary.main }}
+                >
+                  Forgot Password?
+                </span>
+
                 <Button
                   variant="contained"
                   color="primary"
