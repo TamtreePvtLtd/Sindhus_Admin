@@ -1,27 +1,27 @@
-
-
 import React, { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {  useCreateSpecials } from "../../customRQHooks/Hooks";
-
+import { useCreateSpecials, useDeleteSpecial } from "../../customRQHooks/Hooks";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function Specials() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const createProductSpecial = useCreateSpecials();
-   useEffect(() => {
-     // Retrieve image previews from local storage on component mount
-     const storedPreviews = localStorage.getItem("imagePreviews");
-     if (storedPreviews) {
-       setImagePreviews(JSON.parse(storedPreviews));
-     }
-   }, []);
+  const deleteSpecial = useDeleteSpecial();
+  useEffect(() => {
+    // Retrieve image previews from local storage on component mount
+    const storedPreviews = localStorage.getItem("imagePreviews");
+    if (storedPreviews) {
+      setImagePreviews(JSON.parse(storedPreviews));
+    }
+  }, []);
 
-   useEffect(() => {
-     // Save image previews to local storage whenever it changes
-     localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
-   }, [imagePreviews]);
+  useEffect(() => {
+    // Save image previews to local storage whenever it changes
+    localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
+  }, [imagePreviews]);
 
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -54,7 +54,7 @@ function Specials() {
           data: URL.createObjectURL(image),
         }));
 
-await createProductSpecial.mutateAsync({ images: imageData });
+        await createProductSpecial.mutateAsync({ images: imageData });
 
         console.log("Images uploaded successfully");
 
@@ -64,13 +64,37 @@ await createProductSpecial.mutateAsync({ images: imageData });
       console.error("Error uploading images:", error);
     }
   };
-
-  const handleCancel = () => {
-    setImagePreviews([]);
-    setImages([]);
+  const handleMouseEnter = (index: number) => {
+    setDeleteIndex(index);
   };
-  console.log("imagePreviews", imagePreviews);
 
+  const handleMouseLeave = () => {
+    setDeleteIndex(null);
+  };
+
+   const handleDelete = (index: number) => {
+     const updatedPreviews = [...imagePreviews];
+     updatedPreviews.splice(index, 1);
+     setImagePreviews(updatedPreviews);
+
+     const updatedImages = [...images];
+     updatedImages.splice(index, 1);
+     setImages(updatedImages);
+   };
+//   const deleteSpecialMutation = deleteSpecial.mutate;
+
+// const handleDelete = async (index: number) => {
+//   try {
+//     const specialIdToDelete = /* Extract the specialId from your data structure */;
+
+//     // Assuming deleteSpecialMutation takes a parameter for deletion of type ISpecial
+//     deleteSpecialMutation({ specialId: specialIdToDelete });
+    
+//     // ... rest of the function remains the same ...
+//   } catch (error) {
+//     console.error("Error deleting image:", error);
+//   }
+// };
   return (
     <>
       <Container>
@@ -109,12 +133,36 @@ await createProductSpecial.mutateAsync({ images: imageData });
             }}
           >
             {imagePreviews.map((preview, index) => (
-              <Box key={index} sx={{ mr: 2, mb: 2 }}>
+              <Box
+                key={index}
+                sx={{
+                  position: "relative",
+                  mr: 2,
+                  mb: 2,
+                  display: "inline-block",
+                }}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
+              >
                 <img
                   src={preview}
                   alt={`Preview ${index}`}
                   style={{ width: 100, height: 100, objectFit: "cover" }}
                 />
+                {deleteIndex === index && (
+                  <Button
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                    }}
+                    onClick={() => handleDelete(index)}
+                    size="small"
+                  >
+                    <DeleteIcon />
+                  </Button>
+                )}
               </Box>
             ))}
           </Box>
@@ -125,14 +173,6 @@ await createProductSpecial.mutateAsync({ images: imageData });
             style={{ marginRight: "8px" }}
           >
             Save
-          </Button>
-          <Button
-            onClick={handleCancel}
-            variant="contained"
-            color="primary"
-            style={{ marginRight: "8px" }}
-          >
-            Cancel
           </Button>
         </Box>
       </Container>

@@ -9,6 +9,7 @@ import {
   IProductWithMenu,
   IUser,
   IProductPageMenuDropDown,
+  ISpecial,
 } from "../interface/types";
 import {
   httpWithCredentials,
@@ -110,6 +111,18 @@ const deleteProduct = async (product: IProduct) => {
     var id = product._id;
     const response = await httpWithCredentials.delete(
       `/product/deleteProduct/${id}`
+    );
+    return response;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+const deleteSpecial = async (specials: ISpecial) => {
+  try {
+    var id = specials.id;
+    const response = await httpWithCredentials.delete(
+      `/specials/deleteProduct/${id}`
     );
     return response;
   } catch (error) {
@@ -297,4 +310,5 @@ export {
   deleteEnquiry,
   updateMenu,
   createSpecials,
+  deleteSpecial,
 };

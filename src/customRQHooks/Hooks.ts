@@ -12,6 +12,7 @@ import {
   updateMenu,
   deleteMenu,
   createSpecials,
+  deleteSpecial,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -86,6 +87,18 @@ export const useDeleteProduct = () => {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteSpecial = () => {
+  return useMutation({
+    mutationFn: deleteSpecial,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["specials"] });
     },
     onError: (error) => {
       console.log(error);

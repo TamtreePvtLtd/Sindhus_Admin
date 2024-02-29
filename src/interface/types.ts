@@ -131,3 +131,7 @@ export interface IDiningOutMenu {
   productIds: string[];
   _id: string;
 }
+ export interface ISpecial {
+  id: string;
+  image: string;
+}
