@@ -7,6 +7,7 @@ export interface ICateringEnquiries {
   mobileNumber: string;
   message: string;
   eventDate: string;
+  isResponse: boolean;
 }
 
 export interface IProductPageMenuDropDown {

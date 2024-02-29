@@ -276,6 +276,17 @@ const deleteMenu = async (menuId: string) => {
     throw new Error(message);
   }
 };
+const changeisResponseStatus = async (enquiryId: any) => {
+  try {
+    const response = await httpWithCredentials.put(
+      `/enquiry/changeEnquiryisResponseStatus/${enquiryId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return "Internal server error";
+  }
+};
 
 export {
   getAllEnquiries,
@@ -297,4 +308,5 @@ export {
   deleteEnquiry,
   updateMenu,
   createSpecials,
+  changeisResponseStatus,
 };
