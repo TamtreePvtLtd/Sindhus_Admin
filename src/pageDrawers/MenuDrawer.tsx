@@ -61,6 +61,7 @@ function MenuDrawer(props: IProps) {
   const { menuDrawerOpen, handleMenuDrawerclose, selectedMenu } = props;
   const [isEdit, setIsEdit] = useState(!!selectedMenu);
   const [subMenuItems, setSubMenuItems] = useState<ISubMenu[]>([]);
+  const [showAddSubMenu, setShowAddSubMenu] = useState(false);
   const { updateSnackBarState } = useSnackBar();
 
   const {
@@ -231,11 +232,18 @@ function MenuDrawer(props: IProps) {
             <Box pt={2}>
               <Typography variant="subtitle1">Menu Type *</Typography>
               <Controller
-                name={"menuType"}
+                name="menuType"
                 control={control}
                 render={({ field, fieldState }) => (
                   <FormControl fullWidth>
-                    <RadioGroup {...field} row>
+                    <RadioGroup
+                      {...field}
+                      row
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setShowAddSubMenu(e.target.value === "1");
+                      }}
+                    >
                       {menuTypes.map((option) => (
                         <FormControlLabel
                           key={option.id}
@@ -256,28 +264,30 @@ function MenuDrawer(props: IProps) {
         </Grid>
         <Divider />
 
-        <Box sx={{ padding: "10px" }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 2,
-              marginTop: 2,
-              padding: 1,
-            }}
-          >
-            <Typography variant="body1" fontWeight="bold">
-              SubMenu
-            </Typography>
-            <Button variant="outlined" onClick={handleAddSubMenu}>
-              <AddIcon />
-              Add Submenu
-            </Button>
+        {showAddSubMenu && (
+          <Box sx={{ padding: "10px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 2,
+                marginTop: 2,
+                padding: 1,
+              }}
+            >
+              <Typography variant="body1" fontWeight="bold">
+                SubMenu
+              </Typography>
+              <Button variant="outlined" onClick={handleAddSubMenu}>
+                <AddIcon />
+                Add Submenu
+              </Button>
+            </Box>
+            {subMenuItems &&
+              subMenuItems.map((item, index) => SubMenuFields(item, index))}
           </Box>
-          {subMenuItems &&
-            subMenuItems.map((item, index) => SubMenuFields(item, index))}
-        </Box>
+        )}
       </Container>
     </Box>
   );
