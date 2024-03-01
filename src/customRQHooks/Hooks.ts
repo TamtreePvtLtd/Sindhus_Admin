@@ -12,6 +12,7 @@ import {
   updateMenu,
   deleteMenu,
   createSpecials,
+  changeisResponseStatus,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -134,6 +135,18 @@ export const useUpdateProduct = () => {
     mutationFn: updateProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+export const useChangeisResponseStatus = () => {
+ 
+  return useMutation({
+    mutationFn: changeisResponseStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isResponse"] });
     },
     onError: (error) => {
       console.log(error);

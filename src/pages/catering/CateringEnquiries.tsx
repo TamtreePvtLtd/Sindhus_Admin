@@ -11,11 +11,16 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Checkbox,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CateringEnquirieDrawer from "../../pageDrawers/CateringEnquiriesDrawer";
-import { useDeleteEnquiry, useGetAllEnquiry } from "../../customRQHooks/Hooks";
+import {
+  useChangeisResponseStatus,
+  useDeleteEnquiry,
+  useGetAllEnquiry,
+} from "../../customRQHooks/Hooks";
 import { ICateringEnquiries } from "../../interface/types";
 import { format } from "date-fns";
 import PaginatedHeader from "../../common/components/PaginatedHeader";
@@ -36,7 +41,7 @@ function CateringEnquiries() {
 
   const { data: enquiryData, refetch } = useGetAllEnquiry(page, rowsPerPage);
   const deleteEnquiryMutation = useDeleteEnquiry();
-
+  const isResponseUpdateMutation = useChangeisResponseStatus();
   useEffect(() => {
     refetch();
   }, [page, rowsPerPage]);
@@ -78,6 +83,29 @@ function CateringEnquiries() {
       });
     } else {
       console.error("Invalid selectedenquiry or _id");
+    }
+  };
+  const handleCheckboxChange = async (
+    enquiryId: string,
+    isChecked: boolean
+  ) => {
+    try {
+      const response = isResponseUpdateMutation.mutate(enquiryId, {
+        onSuccess: () => {
+          updateSnackBarState(
+            true,
+            "Status updated successfully",
+            SnackbarSeverityEnum.SUCCESS
+          );
+        },
+      });
+    } catch (error) {
+      updateSnackBarState(
+        true,
+        "Error while update status",
+        SnackbarSeverityEnum.ERROR
+      );
+      console.error(error);
     }
   };
 
@@ -174,6 +202,25 @@ function CateringEnquiries() {
                           <IconButton onClick={() => handleDelete(enquiryData)}>
                             <DeleteIcon />
                           </IconButton>
+                        </Tooltip>
+                        <Tooltip
+                          title={
+                            enquiryData.isResponse ? "Response" : " Response"
+                          }
+                          arrow
+                        >
+                          <Checkbox
+                            inputProps={{ "aria-label": "controlled" }}
+                            defaultChecked={enquiryData.isResponse}
+                            onChange={(event) => {
+                              if (event.target) {
+                                handleCheckboxChange(
+                                  enquiryData._id,
+                                  event.target.checked
+                                );
+                              }
+                            }}
+                          />
                         </Tooltip>
                       </Box>
                     </TableCell>
