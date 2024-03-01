@@ -200,10 +200,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
   const handleAddItemSize = () => {
     const updatedProduct = {
       ...product,
-      Price: [
-        ...product.price,
-        { size: "", price: 0},
-      ],
+      itemSizeWithPrice: [...product.itemSizeWithPrice, { size: "", price: 0 }],
     };
 
     setProduct(updatedProduct);
@@ -308,7 +305,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append("title", product.title);
     formData.append("description", product.description);
     formData.append("netWeight", product.netWeight.toString());
-    formData.append("price", String(product.price));
+    // formData.append("price", String(product.price));
     formData.append("menu", JSON.stringify(product.menu));
     product.images.forEach((image, index) => {
       formData.append(`image_${index}`, image);
@@ -316,6 +313,11 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append(
       "cateringMenuSizeWithPrice",
       JSON.stringify(product.cateringMenuSizeWithPrice)
+    );
+
+    formData.append(
+      "itemSizeWithPrice",
+      JSON.stringify(product.itemSizeWithPrice)
     );
     formData.append(
       "dailyMenuSizeWithPrice",
@@ -373,7 +375,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
         }
       }
 
-      setShowPriceField(!!selectedProduct.price);
+      setShowPriceField(!!selectedProduct.itemSizeWithPrice);
       setShowCateringSizeField(
         selectedProduct.cateringMenuSizeWithPrice.length > 0
       );
@@ -407,6 +409,35 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     }));
 
     console.log("onclick", index);
+  };
+
+  const handleSizeChange = (index, newSize) => {
+    const updatedSizes = [...product.itemSizeWithPrice];
+    updatedSizes[index].size = newSize;
+    setProduct((prevState) => ({
+      ...prevState,
+      itemSizeWithPrice: updatedSizes,
+    }));
+  };
+
+  // Function to handle price change
+  const handlePriceChange = (index, newPrice) => {
+    const updatedPrices = [...product.itemSizeWithPrice];
+    updatedPrices[index].price = newPrice;
+    setProduct((prevState) => ({
+      ...prevState,
+      itemSizeWithPrice: updatedPrices,
+    }));
+  };
+
+  // Function to handle deletion of item size
+  const handleDeleteItemSize = (index) => {
+    const updatedSizes = [...product.itemSizeWithPrice];
+    updatedSizes.splice(index, 1);
+    setProduct((prevState) => ({
+      ...prevState,
+      itemSizeWithPrice: updatedSizes,
+    }));
   };
 
   return (
@@ -786,7 +817,6 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     </Grid>
                   </>
                 )} */}
-
                 {showPriceField && (
                   <>
                     <Box
@@ -799,15 +829,12 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                       >
                         Item Price
                       </Typography>
-                      <Button
-                        variant="contained"
-                        onClick={handleAddItemSize}
-                      >
+                      <Button variant="contained" onClick={handleAddItemSize}>
                         <AddIcon /> Add
                       </Button>
                     </Box>
-                    {product.price.length > 0 &&
-                      product.price.map((value, index) => (
+                    {product.itemSizeWithPrice.length > 0 &&
+                      product.itemSizeWithPrice.map((value, index) => (
                         <Grid container spacing={3} mb={1} key={index}>
                           <Grid item md={5}>
                             <Box>
@@ -821,12 +848,9 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                               <TextField
                                 sx={{ width: "70%" }}
                                 size="small"
-                                // value={product.size}
+                                value={value.size} // Accessing size at the current index
                                 onChange={(event) =>
-                                  setProduct((prevState) => ({
-                                    ...prevState,
-                                    size: event.target.value,
-                                  }))
+                                  handleSizeChange(index, event.target.value)
                                 }
                               />
                             </Box>
@@ -844,9 +868,9 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                 sx={{ width: "70%" }}
                                 size="small"
                                 value={value.price} // Accessing price at the current index
-                                // onChange={(event) =>
-                                //   handleAddItemSize(index, "price", event)
-                                // }
+                                onChange={(event) =>
+                                  handlePriceChange(index, event.target.value)
+                                }
                                 inputProps={{
                                   pattern: "^\\d*\\.?\\d*$",
                                 }}
@@ -859,7 +883,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                             sx={{ display: "flex", alignItems: "flex-end" }}
                           >
                             <IconButton
-                              // onClick={() => handleDeleteCateringSize(index)}
+                              onClick={() => handleDeleteItemSize(index)}
                             >
                               <DeleteIcon />
                             </IconButton>

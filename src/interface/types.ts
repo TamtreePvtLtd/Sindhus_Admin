@@ -24,7 +24,7 @@ export interface IProduct {
   posterURL?: string | File;
   _id?: string;
   title: string;
-  price: IItemSizeWithPrice[];
+  itemSizeWithPrice: IItemSizeWithPrice[];
   images: Array<string | File>;
   description: string;
   netWeight: number;
