@@ -45,7 +45,11 @@ function PaginatedHeader(props: IProps) {
               </Box>
             </Typography>
             {!!props.addButtonText && (
-              <Button variant="contained" size="small"onClick={props.onAddClick} >
+              <Button
+                variant="contained"
+                size="small"
+                onClick={props.onAddClick}
+              >
                 <AddIcon />
                 {props.addButtonText}
               </Button>
@@ -64,7 +68,7 @@ function PaginatedHeader(props: IProps) {
         >
           <Box display={"flex"} alignItems={"center"}>
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-              <InputLabel id="take-count-label">Take Count</InputLabel>
+              <InputLabel id="take-count-label">Page</InputLabel>
               <Select
                 labelId="take-count"
                 id="take-count"

@@ -1057,7 +1057,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                 )}
 
                 <Box mt={2}>
-                  <Typography variant="subtitle1" sx={{ marginRight: "5px" }}>
+                  {/* <Typography variant="subtitle1" sx={{ marginRight: "5px" }}>
                     Ingredients
                   </Typography>
                   <TextField
@@ -1073,7 +1073,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         ingredients: e.target.value,
                       }))
                     }
-                  />
+                  /> */}
                 </Box>
               </Grid>
             </Grid>
