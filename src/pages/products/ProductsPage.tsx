@@ -316,9 +316,18 @@ function ProductsPage() {
                       >
                         {item.description}
                       </TableCell>
-                      <TableCell align="right" sx={{ textAlign: "center" }}>
-                        ${item.price}
+                      <TableCell style={{ textAlign: "center" }}>
+                        {item.itemSizeWithPrice &&
+                          item.itemSizeWithPrice.length > 0 &&
+                          item.itemSizeWithPrice.map((qty, index) => (
+                            <Box key={index} m={1}>
+                              <>
+                                {qty.size} - ${qty.price}
+                              </>
+                            </Box>
+                          ))}
                       </TableCell>
+
                       <TableCell style={{ textAlign: "center" }}>
                         {item.cateringMenuSizeWithPrice.length > 0 &&
                           item.cateringMenuSizeWithPrice.map((qty, index) => (
