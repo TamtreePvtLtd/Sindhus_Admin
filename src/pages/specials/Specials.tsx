@@ -3,6 +3,8 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useCreateSpecials, useDeleteSpecial } from "../../customRQHooks/Hooks";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+
 
 function Specials() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -10,6 +12,9 @@ function Specials() {
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const createProductSpecial = useCreateSpecials();
   const deleteSpecial = useDeleteSpecial();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState<number | null>(null);
+
   useEffect(() => {
     // Retrieve image previews from local storage on component mount
     const storedPreviews = localStorage.getItem("imagePreviews");
@@ -94,7 +99,19 @@ function Specials() {
 //   } catch (error) {
 //     console.error("Error deleting image:", error);
 //   }
-// };
+  // };
+  
+  //  Function to open the dialog
+  const openDeleteDialog = (index: number) => {
+    setDeleteConfirmationIndex(index);
+    setOpenDialog(true);
+  };
+
+  // Function to close the dialog
+  const closeDeleteDialog = () => {
+    setDeleteConfirmationIndex(null);
+    setOpenDialog(false);
+  };
   return (
     <>
       <Container>
@@ -157,12 +174,12 @@ function Specials() {
                       left: "50%",
                       transform: "translate(-50%, -50%)",
                     }}
-                    onClick={() => handleDelete(index)}
+                    onClick={() => openDeleteDialog(index)}
                     size="small"
                   >
-                    <DeleteIcon />
+                    <DeleteIcon sx={{ color: "#FFF" }} />
                   </Button>
-                )}
+                   )}
               </Box>
             ))}
           </Box>
@@ -175,6 +192,31 @@ function Specials() {
             Save
           </Button>
         </Box>
+        {/* Dialog should be outside the loop */}
+        <Dialog open={openDialog} onClose={closeDeleteDialog}>
+          <DialogTitle>Delete Confirmation</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete the uploaded image?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeDeleteDialog} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (deleteConfirmationIndex !== null) {
+                  handleDelete(deleteConfirmationIndex);
+                }
+                closeDeleteDialog();
+              }}
+              color="primary"
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );
