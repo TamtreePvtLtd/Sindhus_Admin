@@ -375,7 +375,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
         }
       }
 
-      setShowPriceField(!!selectedProduct.itemSizeWithPrice);
+     setShowPriceField(!!selectedProduct.itemSizeWithPrice);
       setShowCateringSizeField(
         selectedProduct.cateringMenuSizeWithPrice.length > 0
       );

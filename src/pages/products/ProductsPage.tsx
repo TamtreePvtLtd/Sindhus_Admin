@@ -317,7 +317,8 @@ function ProductsPage() {
                         {item.description}
                       </TableCell>
                       <TableCell style={{ textAlign: "center" }}>
-                        {item.itemSizeWithPrice.length > 0 &&
+                        {item.itemSizeWithPrice &&
+                          item.itemSizeWithPrice.length > 0 &&
                           item.itemSizeWithPrice.map((qty, index) => (
                             <Box key={index} m={1}>
                               <>
