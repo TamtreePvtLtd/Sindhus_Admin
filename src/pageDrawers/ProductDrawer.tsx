@@ -298,9 +298,11 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append("netWeight", product.netWeight.toString());
     formData.append("price", String(product.price));
     formData.append("menu", JSON.stringify(product.menu));
+
     product.images.forEach((image, index) => {
       formData.append(`image_${index}`, image);
     });
+
     formData.append(
       "cateringMenuSizeWithPrice",
       JSON.stringify(product.cateringMenuSizeWithPrice)
@@ -317,6 +319,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append("producId", product._id ?? "");
     formData.append("servingSizeDescription", product.servingSizeDescription);
     formData.append("ingredients", product.ingredients);
+
     try {
       if (isAdd) {
         productCreateMutation.mutate(formData, {
@@ -475,52 +478,51 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           aria-controls="panel1a-content"
                           id="panel1a-header"
                         >
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {/* <KeyboardDoubleArrowRightIcon fontSize="small" /> */}
-                          <FormGroup
-                            sx={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                            }}
-                          >
-                           
-                            <FormControlLabel
-                              value={data._id}
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{
-                                    "& .MuiCheckbox-root": {
-                                      borderWidth: 0.5,
-                                      borderStyle: "dotted",
-                                    },
-                                  }}
-                                  checked={product.menu.mainMenuIds.includes(
-                                    data._id
-                                  )}
-                                  onChange={(e) => {
-                                    const isChecked = e.target.checked;
-                                    setProduct((prevState) => ({
-                                      ...prevState,
-                                      menu: {
-                                        ...prevState.menu,
-                                        mainMenuIds: isChecked
-                                          ? [
-                                              ...prevState.menu.mainMenuIds,
-                                              data._id,
-                                            ]
-                                          : prevState.menu.mainMenuIds.filter(
-                                              (id) => id !== data._id
-                                            ),
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            {/* <KeyboardDoubleArrowRightIcon fontSize="small" /> */}
+                            <FormGroup
+                              sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <FormControlLabel
+                                value={data._id}
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    sx={{
+                                      "& .MuiCheckbox-root": {
+                                        borderWidth: 0.5,
+                                        borderStyle: "dotted",
                                       },
-                                    }));
-                                  }}
-                                />
-                              }
-                              label={data.title}
-                            />
+                                    }}
+                                    checked={product.menu.mainMenuIds.includes(
+                                      data._id
+                                    )}
+                                    onChange={(e) => {
+                                      const isChecked = e.target.checked;
+                                      setProduct((prevState) => ({
+                                        ...prevState,
+                                        menu: {
+                                          ...prevState.menu,
+                                          mainMenuIds: isChecked
+                                            ? [
+                                                ...prevState.menu.mainMenuIds,
+                                                data._id,
+                                              ]
+                                            : prevState.menu.mainMenuIds.filter(
+                                                (id) => id !== data._id
+                                              ),
+                                        },
+                                      }));
+                                    }}
+                                  />
+                                }
+                                label={data.title}
+                              />
                             </FormGroup>
-                            </Box>
+                          </Box>
                         </AccordionSummary>
                         {data.subMenus.length > 0 && (
                           <AccordionDetails sx={{ marginLeft: "40px" }}>

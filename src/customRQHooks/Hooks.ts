@@ -65,7 +65,7 @@ export const useCreateSpecials = () => {
   return useMutation({
     mutationFn: createSpecials,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["special"] });
+      queryClient.invalidateQueries({ queryKey: ["specials"] });
     },
     onError: (error) => {
       console.log(error);

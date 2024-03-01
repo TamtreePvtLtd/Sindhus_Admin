@@ -6,7 +6,10 @@ import imageCompression from "browser-image-compression";
 
 function Specials() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<{ images: (string | File)[] }>({
+    images: [],
+  });
+
   const createProductSpecial = useCreateSpecials();
 
   useEffect(() => {
@@ -20,52 +23,59 @@ function Specials() {
     localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
   }, [imagePreviews]);
 
-const handleImageChange = async (
-  event: React.ChangeEvent<HTMLInputElement>
-) => {
-  try {
-    const files: FileList | null = event.target.files;
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (!files || files.length === 0) return;
+    const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+    setImagePreviews((prevImages) => [...prevImages, ...urls]);
 
     if (files) {
-      const imageFiles: File[] = Array.from(files);
-      const compressedImages: File[] = [];
+      const filesArray: File[] = Array.from(files);
+      const validFiles = filesArray.filter(
+        (file) =>
+          file.type === "image/png" ||
+          file.type === "image/jpeg" ||
+          file.type === "image/jpg"
+      );
 
-      for (let i = 0; i < imageFiles.length; i++) {
-        const compressedImage = await handleCompressFile(imageFiles[i]);
-        compressedImages.push(compressedImage);
-        setImagePreviews((prevPreviews) => [
-          ...prevPreviews,
-          URL.createObjectURL(compressedImage),
-        ]);
-      }
+      const compressedFiles = await Promise.all(
+        validFiles.map((file) => handleCompressFile(file))
+      );
 
-      setImages((prevImages) => [...prevImages, ...compressedImages]);
-    }
-  } catch (error) {
-    console.error("Error uploading images:", error);
-  }
-};
+      const compressedValidFiles = compressedFiles.filter(
+        (compressedFile) => compressedFile !== undefined
+      ) as File[];
 
-const handleSave = async () => {
-  try {
-    if (images.length > 0) {
-      const imageData = images.map((image) => ({
-        data: image,
-        originalname: image.name,
-        mimetype: image.type,
+      setImages((prevProduct) => ({
+        ...prevProduct,
+        images: [...prevProduct.images, ...compressedValidFiles],
       }));
-
-      await createProductSpecial.mutateAsync({ images: imageData });
-
-      console.log("Images uploaded successfully");
-
-      setImages([]);
+    } else {
+      console.log(
+        "Invalid file format. Please select a JPEG or PNG or JPG file."
+      );
     }
-  } catch (error) {
-    console.error("Error uploading images:", error);
-  }
-};
+  };
 
+  const handleSave = async (e: any) => {
+    e.preventDefault();
+    const formData = new FormData();
+    console.log("images", images.images);
+
+    images.images.forEach((image, index) => {
+      formData.append(`image_${index}`, image);
+    });
+
+    try {
+      console.log("formData", formData);
+      const response = await createProductSpecial.mutate(formData);
+      console.log("Images uploaded successfully", response);
+      setImages({ images: [] });
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    }
+  };
 
   async function handleCompressFile(imageFile: File): Promise<File> {
     const options = {
@@ -90,7 +100,7 @@ const handleSave = async () => {
 
   const handleCancel = () => {
     setImagePreviews([]);
-    setImages([]);
+    setImages({ images: [] });
   };
 
   return (
