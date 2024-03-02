@@ -84,6 +84,7 @@ const createProduct = async (formData) => {
       "/product/createProduct",
       formData
     );
+
     return response.data;
   } catch (error) {
     var message = (error as Error).message;
@@ -251,14 +252,14 @@ const updateMenu = async (updateMenu: FormData) => {
   }
 };
 
-const createSpecials = async (imageData) => {
+const createSpecials = async (formData) => {
   try {
-    const response = await httpWithoutCredentials.post<string>(
-      "/specials/createSpecials",
-      imageData
+    const response = await httpWithMultipartFormData.post<string[]>(
+      "specials/createSpecials",
+      formData
     );
-    console.log(response.data);
-    
+    console.log("response", response.data);
+
     return response.data;
   } catch (error) {
     throw error;
