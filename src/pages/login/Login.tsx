@@ -17,13 +17,10 @@ import { useEffect, useState } from "react";
 import { paths } from "../../routes/Paths";
 import { useAuthContext } from "../../context/AuthContext";
 import theme from "../../theme/theme";
+import ForgotPasswordDialog from "../../pageDialogs/ForgotPasswordDialog";
 
 const schema = yup.object().shape({
-  phoneNumber: yup
-    .string()
-    .required()
-    .typeError("Please enter the PhoneNumber")
-    .matches(/^[0-9]{10}$/, "Please enter a valid phone number"),
+  email: yup.string().email('Please enter a valid email address').required('Email is required'),
   password: yup.string().required("Password is required"),
 });
 
@@ -32,6 +29,15 @@ function Login() {
   const { updateSnackBarState } = useSnackBar();
   const { updateUserData } = useAuthContext();
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
+  const [isForgotPasswordDialogOpen, setIsForgotPasswordDialogOpen] = useState(false);
+
+  const handleOpenForgotPasswordDialog = () => {
+    setIsForgotPasswordDialogOpen(true);
+  };
+
+  const handleCloseForgotPasswordDialog = () => {
+    setIsForgotPasswordDialogOpen(false);
+  };
 
   const {
     register,
@@ -146,9 +152,9 @@ function Login() {
                   margin="normal"
                   fullWidth
                   type="tel"
-                  {...register("phoneNumber")}
-                  error={!!errors.phoneNumber}
-                  helperText={errors.phoneNumber?.message?.toString()}
+                  {...register("email")}
+                  error={!!errors.email}
+                  helperText={errors.email?.message?.toString()}
                   FormHelperTextProps={{
                     sx: { color: "red", marginLeft: "0px" },
                   }}
@@ -177,7 +183,7 @@ function Login() {
                   }}
                 />
                 <span
-                  style={{ float: "right", color: theme.palette.primary.main }}
+                  style={{ float: "right", color: theme.palette.primary.main,cursor:"pointer" }} onClick={handleOpenForgotPasswordDialog}
                 >
                   Forgot Password?
                 </span>
@@ -192,8 +198,10 @@ function Login() {
                   Login
                 </Button>
               </form>
+
             </Box>
           </Box>
+          <ForgotPasswordDialog open={isForgotPasswordDialogOpen} onClose={handleCloseForgotPasswordDialog} />
         </>
       )}
     </>

@@ -5,12 +5,12 @@ export interface IAuthContext {
 
 export interface IUser {
   userId: string | null;
-  phoneNumber: string | null;
+  email: string | null;
   name: string | null;
 }
 
 export interface ILoginFormInputs {
-  phoneNumber: string;
+  email: string;
   password: string;
 }
 
