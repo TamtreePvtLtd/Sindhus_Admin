@@ -2,6 +2,8 @@ import {
   AppBar,
   Box,
   Button,
+  IconButton,
+  InputAdornment,
   TextField,
   Toolbar,
   Typography,
@@ -17,6 +19,8 @@ import { useEffect, useState } from "react";
 import { paths } from "../../routes/Paths";
 import { useAuthContext } from "../../context/AuthContext";
 import theme from "../../theme/theme";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Visibility from "@mui/icons-material/Visibility";
 
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -28,6 +32,7 @@ function Login() {
   const { updateSnackBarState } = useSnackBar();
   const { updateUserData } = useAuthContext();
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -77,6 +82,11 @@ function Login() {
   useEffect(() => {
     checkAuthorization();
   }, []);
+
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   return (
     <>
@@ -162,11 +172,20 @@ function Login() {
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="new"
                   {...register("password")}
                   error={!!errors.password}
                   helperText={errors.password?.message?.toString()}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={togglePasswordVisibility}>
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   required
                   sx={{
                     mt: 0,
