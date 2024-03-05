@@ -88,10 +88,11 @@ const Signup = ({ onSign, requiredHeading, onRegisterLinkClick }: SignProps) => 
           setShowSnackbar(true);
           updateSnackBarState(true, "Signup Successfully", "success");
         })
-        .catch((error) => {
+        .catch((error:any) => {
           if (error.response && error.response.data) {
             console.log(error.response.data);
-          }
+            updateSnackBarState(true, error.response.data.message, "error");
+    }
         });
     }
   };

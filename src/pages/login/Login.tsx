@@ -43,6 +43,7 @@ function Login() {
       const response = await adminLogin(data);
       if (response.data) {
         updateUserData(response.data);
+        updateSnackBarState(true, "Login Successfully", "success")
         navigate(paths.ROOT);
       } else {
         console.log("Login failed");
