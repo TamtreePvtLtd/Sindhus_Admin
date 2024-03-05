@@ -307,9 +307,11 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append("netWeight", product.netWeight.toString());
     // formData.append("price", String(product.price));
     formData.append("menu", JSON.stringify(product.menu));
+
     product.images.forEach((image, index) => {
       formData.append(`image_${index}`, image);
     });
+
     formData.append(
       "cateringMenuSizeWithPrice",
       JSON.stringify(product.cateringMenuSizeWithPrice)
@@ -331,6 +333,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append("producId", product._id ?? "");
     formData.append("servingSizeDescription", product.servingSizeDescription);
     formData.append("ingredients", product.ingredients);
+
     try {
       if (isAdd) {
         productCreateMutation.mutate(formData, {
