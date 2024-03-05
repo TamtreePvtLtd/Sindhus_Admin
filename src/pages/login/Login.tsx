@@ -20,6 +20,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import theme from "../../theme/theme";
 import ForgotPasswordDialog from "../../pageDialogs/ForgotPasswordDialog";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CustomSnackBar from "../../common/components/CustomSnackBar";
 
 const schema = yup.object().shape({
   email: yup.string().email('Please enter a valid email address').required('Email is required'),
@@ -33,6 +34,7 @@ function Login() {
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
   const [isForgotPasswordDialogOpen, setIsForgotPasswordDialogOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const handleOpenForgotPasswordDialog = () => {
     setIsForgotPasswordDialogOpen(true);
@@ -61,6 +63,8 @@ function Login() {
       if (response.data) {
         updateUserData(response.data);
         navigate(paths.ROOT);
+        setShowSnackbar(true)
+          updateSnackBarState(true, "Login Successfully", "success")
       } else {
         console.log("Login failed");
       }
@@ -81,12 +85,13 @@ function Login() {
       } else {
         setIsLoading(false);
         updateUserData({ ...user });
+
         navigate(paths.ROOT);
       }
     } catch (error) {
       setIsLoading(false);
       console.error("Error checking authorization:", error);
-      navigate(paths.LOGIN); // Redirect to login page if an error occurs
+      navigate(paths.LOGIN); 
     }
   };
 
@@ -143,7 +148,7 @@ function Login() {
               justifyContent: "center",
               alignItems: "center",
               minHeight: "70vh",
-              marginTop: "20px",
+              marginTop: "60px",
             }}
           >
             <Box>
@@ -152,7 +157,7 @@ function Login() {
               </Typography>
               <form onSubmit={handleSubmit(handleLogin)}>
                 <Typography>
-                  UserId<span style={{ color: "red" }}>*</span>
+                  Email<span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                   variant="outlined"
@@ -172,6 +177,9 @@ function Login() {
                   autoComplete="new"
                   required
                 />
+                 <Typography>
+                  Password<span style={{ color: "red" }}>*</span>
+                </Typography>
                 <TextField
   variant="outlined"
   margin="normal"
@@ -181,6 +189,9 @@ function Login() {
   {...register("password")}
   error={!!errors.password}
   helperText={errors.password?.message?.toString()}
+  FormHelperTextProps={{
+    sx: { color: "red", marginLeft: "0px" },
+  }}
   required
   InputProps={{
     endAdornment: (
@@ -216,6 +227,7 @@ function Login() {
           <ForgotPasswordDialog open={isForgotPasswordDialogOpen} onClose={handleCloseForgotPasswordDialog} />
         </>
       )}
+      {showSnackbar && <CustomSnackBar />}
     </>
   );
 }

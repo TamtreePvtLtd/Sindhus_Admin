@@ -5,6 +5,8 @@ import * as yup from 'yup';
 import { httpWithoutCredentials } from '../services/http';
 import OTPVerificationDialog from './VerifyOtp';
 import { useState } from 'react';
+import { useSnackBar } from '../context/SnackBarContext';
+import CustomSnackBar from '../common/components/CustomSnackBar';
 
 interface ForgotPasswordForm {
     email: string;
@@ -17,7 +19,8 @@ interface ForgotPasswordForm {
   });
 
 const ForgotPasswordDialog = ({ open, onClose }) => {
-
+  const { updateSnackBarState } = useSnackBar();
+ const [showSnackbar, setShowSnackbar] = useState(false);
   const [email, setEmail] = useState('');
   const [openVerifyDialog, setOpenVerifyDialog] = useState(false);
   
@@ -31,9 +34,14 @@ const ForgotPasswordDialog = ({ open, onClose }) => {
       console.log('OTP sent successfully');
       setEmail(data.email);
       onClose();
+      setShowSnackbar(true)
+          updateSnackBarState(true, "OTP sent Successfully", "success")
       setOpenVerifyDialog(true); 
-    } catch (error) {
-      console.error('Failed to send OTP:', error);
+    } catch (error:any) {
+      if (error.response && error.response.data) {
+        console.log(error.response.data);
+        updateSnackBarState(true, error.response.data.message, "error");
+}
     }
   };
 
@@ -42,13 +50,18 @@ const ForgotPasswordDialog = ({ open, onClose }) => {
       const response = await httpWithoutCredentials.post('/customer/verify-otp', { otp: enteredOTP, email });
       if (response.status === 200) {
         console.log('OTP verified successfully');
+        setShowSnackbar(true)
+          updateSnackBarState(true, "OTP verified Successfully", "success")
       } else {
-        console.error('Failed to verify OTP:', response.data);
+        updateSnackBarState(true, "Failed to send OTP" , "error")
       }
-    } catch (error) {
-      console.error('Error verifying OTP:', error); 
+    } catch (error:any) {
+      if (error.response && error.response.data) {
+        console.log(error.response.data);
+        updateSnackBarState(true, error.response.data.message, "error"); 
     }
   };
+}
 
   return (
     <>
@@ -70,6 +83,7 @@ const ForgotPasswordDialog = ({ open, onClose }) => {
         <Button onClick={handleSubmit(handleSendOTP)}>Send OTP</Button>
       </DialogActions>
     </Dialog>
+    {showSnackbar && <CustomSnackBar />}
     <OTPVerificationDialog
         open={openVerifyDialog}
         onClose={() => setOpenVerifyDialog(false)}
