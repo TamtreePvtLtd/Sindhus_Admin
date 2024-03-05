@@ -378,7 +378,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
         }
       }
 
-     setShowPriceField(!!selectedProduct.itemSizeWithPrice);
+      setShowPriceField(!!selectedProduct.itemSizeWithPrice);
       setShowCateringSizeField(
         selectedProduct.cateringMenuSizeWithPrice.length > 0
       );
@@ -1085,12 +1085,20 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
             <Box mr={3} mb={1} sx={{ position: "fixed", bottom: 0, right: 0 }}>
               <Button
                 variant="outlined"
-                sx={{ marginRight: "5px" }}
+                sx={{ marginRight: "5px", color: "#038265" }}
                 onClick={handleClose}
               >
                 Cancel
               </Button>
-              <Button variant="contained" onClick={handleSaveProduct}>
+              <Button
+                variant="contained"
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#038265",
+                  },
+                }}
+                onClick={handleSaveProduct}
+              >
                 Save
               </Button>
             </Box>

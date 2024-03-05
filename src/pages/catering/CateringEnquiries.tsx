@@ -1,6 +1,5 @@
 import {
   Box,
-  Container,
   IconButton,
   Paper,
   Table,
@@ -111,7 +110,7 @@ function CateringEnquiries() {
 
   return (
     <>
-      <Container>
+      <Box sx={{ marginLeft: "25px", marginRight: "25px" }}>
         <PaginatedHeader
           pagetitle="Enquires"
           pageInfo={enquiryData?.pageInfo}
@@ -229,7 +228,7 @@ function CateringEnquiries() {
             </TableBody>
           </Table>
         </TableContainer>
-      </Container>
+      </Box>
       {deleteDialogOpen && (
         <CommonDeleteDialog
           title="Delete Enquiry"

@@ -9,7 +9,6 @@ import {
   Pagination,
   Button,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import { IPageInfo } from "../../interface/types";
 import { useTheme } from "@mui/material/styles";
 
@@ -26,7 +25,7 @@ function PaginatedHeader(props: IProps) {
   const theme = useTheme();
 
   return (
-    <>
+    <Box>
       <Grid container alignItems={"center"} my={2}>
         <Grid item xs={12} md={4}>
           <Box display={"flex"} gap={3}>
@@ -38,7 +37,7 @@ function PaginatedHeader(props: IProps) {
             >
               {props.pagetitle}&nbsp;
               <Box
-                sx={{ opacity: 0.7, color: `${theme.palette.primary.main}` }}
+                sx={{ fontWeight: 800, color: "#038265" }}
                 component={"span"}
               >
                 ({props.pageInfo?.totalItems})
@@ -49,8 +48,8 @@ function PaginatedHeader(props: IProps) {
                 variant="contained"
                 size="small"
                 onClick={props.onAddClick}
+                sx={{ marginLeft: "72rem", minWidth: "130px", height: "35px" }}
               >
-                <AddIcon />
                 {props.addButtonText}
               </Button>
             )}
@@ -66,14 +65,14 @@ function PaginatedHeader(props: IProps) {
             alignItems: "center",
           }}
         >
-          <Box display={"flex"} alignItems={"center"}>
+          <Box display="flex" alignItems="center">
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
               <InputLabel id="take-count-label">Page</InputLabel>
               <Select
                 labelId="take-count"
                 id="take-count"
                 value={props.pageInfo?.pageSize ?? 10}
-                label="Take Count"
+                label="Page"
                 onChange={(_e) => {
                   props.onRowsPerPageChange(Number(_e.target.value));
                   props.onPageChange(1);
@@ -87,13 +86,21 @@ function PaginatedHeader(props: IProps) {
             <Pagination
               count={props.pageInfo?.totalPages}
               variant="outlined"
-              color="primary"
               onChange={(_e, page) => props.onPageChange(page)}
+              sx={{
+                "& .MuiPaginationItem-page.Mui-selected": {
+                  backgroundColor: "#038265",
+                  color: "#FFFFFF",
+                },
+                ...(props.pagetitle === "Menus" && {
+                  marginRight: "40rem",
+                }),
+              }}
             />
           </Box>
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 }
 

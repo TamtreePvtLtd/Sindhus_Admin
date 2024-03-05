@@ -238,7 +238,7 @@ function DiningOutMenu() {
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    resetChanges(); // Reset changes if cancel is clicked
+    resetChanges();
   };
 
   useEffect(() => {
@@ -368,17 +368,37 @@ function DiningOutMenu() {
             gap: 3,
           }}
         >
-          <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
+          <Button
+            variant="contained"
+            onClick={() => setClearDialogOpen(true)}
+            sx={{
+              backgroundColor: "#038265",
+              "&:hover": {
+                backgroundColor: "#038265",
+              },
+            }}
+          >
             Clear Products
           </Button>
           <Button
             variant="outlined"
             onClick={handleCancel}
-            sx={{ maxWidth: "64px" }}
+            sx={{
+              maxWidth: "64px",
+              color: "#038265",
+            }}
           >
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleSave}>
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#038265",
+              },
+            }}
+          >
             Save
           </Button>
         </Box>
