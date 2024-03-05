@@ -865,7 +865,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Price($)
+                                Price$
                               </Typography>
                               <TextField
                                 sx={{ width: "70%" }}

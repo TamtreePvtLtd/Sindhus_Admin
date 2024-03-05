@@ -10,6 +10,7 @@ import {
   MenuItem,
   Toolbar,
   Typography,
+  Tooltip, // Import Tooltip component
 } from "@mui/material";
 
 import { useTheme } from "@mui/material/styles";
@@ -50,8 +51,6 @@ function Navbar() {
   const { user, updateUserData } = useAuthContext();
   const { updateSnackBarState } = useSnackBar();
 
-  console.log(user);
-
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -88,6 +87,8 @@ function Navbar() {
           sx={{
             backgroundColor: "white",
             color: "#57ccb5",
+            boxShadow:
+              "0px 0px 0px 0px rgba(0,0,0,0), 0px 0px 4px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)",
           }}
         >
           <Toolbar>
@@ -164,23 +165,27 @@ function Navbar() {
             </Box>
 
             {user && (
-              <IconButton
-                onClick={handleMenuClick}
-                size="small"
-                aria-controls={open ? "account-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-              >
-                <Avatar
-                  sx={{
-                    width: 28,
-                    height: 28,
-                    backgroundColor: "#57ccb5",
-                  }}
-                >
-                  {user?.name ? user.name.toUpperCase()[0] : ""}
-                </Avatar>
-              </IconButton>
+              <Box sx={{ marginLeft: "auto" }}>
+                <Tooltip title="Logout">
+                  <IconButton
+                    onMouseEnter={handleMenuClick}
+                    size="small"
+                    aria-controls={open ? "account-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        backgroundColor: "#57ccb5",
+                      }}
+                    >
+                      {user?.name ? user.name.toUpperCase()[0] : ""}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+              </Box>
             )}
           </Toolbar>
         </AppBar>
