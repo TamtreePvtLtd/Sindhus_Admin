@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AppBar, Box, Button, TextField, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, InputAdornment, TextField, Toolbar, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,7 +9,9 @@ import { paths } from "../../routes/Paths";
 import { ISignUp } from "../../interface/customer";
 import { useAuthContext } from "../../context/AuthContext";
 import { useSnackBar } from "../../context/SnackBarContext";
-import CustomSnackBar from "../../common/components/CustomSnackBar";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff"
+
 
 
 interface ISignUpFormFields {
@@ -46,7 +48,10 @@ const Signup = () => {
   const navigate = useNavigate();
   const { updateUserData } = useAuthContext();
   const { updateSnackBarState } = useSnackBar();
-  const [showSnackbar, setShowSnackbar] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -72,7 +77,6 @@ const Signup = () => {
             });
             navigate (paths.LOGIN)
           }
-          setShowSnackbar(true);
           updateSnackBarState(true, "Signup Successfully", "success");
         })
         .catch((error:any) => {
@@ -82,6 +86,14 @@ const Signup = () => {
     }
         });
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -179,20 +191,39 @@ const Signup = () => {
             <TextField
               label="Password"
               variant="outlined"
-              type="password"
-              {...register("password")}
+              type={showPassword ? "text" : "password"}
+              {...register("password")} 
               error={!!errors.password}
               helperText={(errors.password || (register("password"), true)) && errors.password?.message}
               required
+              InputProps={{
+                // Add endAdornment to show/hide password icon
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility}>
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               label="Confirm Password"
               variant="outlined"
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               {...register("confirmPassword")}
               error={!!errors.confirmPassword}
               helperText={(errors.confirmPassword || (register("confirmPassword"), true)) && errors.confirmPassword?.message}
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleConfirmPasswordVisibility}>
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Button
               type="submit"
@@ -211,7 +242,6 @@ const Signup = () => {
           </Link>
         </Typography>
       </Box>
-      {showSnackbar && <CustomSnackBar />}
     </div>
     </>
     )}
