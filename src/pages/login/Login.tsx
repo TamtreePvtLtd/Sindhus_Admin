@@ -2,6 +2,7 @@ import {
   AppBar,
   Box,
   Button,
+  IconButton,
   TextField,
   Toolbar,
   Typography,
@@ -18,6 +19,7 @@ import { paths } from "../../routes/Paths";
 import { useAuthContext } from "../../context/AuthContext";
 import theme from "../../theme/theme";
 import ForgotPasswordDialog from "../../pageDialogs/ForgotPasswordDialog";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const schema = yup.object().shape({
   email: yup.string().email('Please enter a valid email address').required('Email is required'),
@@ -30,6 +32,7 @@ function Login() {
   const { updateUserData } = useAuthContext();
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
   const [isForgotPasswordDialogOpen, setIsForgotPasswordDialogOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleOpenForgotPasswordDialog = () => {
     setIsForgotPasswordDialogOpen(true);
@@ -37,6 +40,10 @@ function Login() {
 
   const handleCloseForgotPasswordDialog = () => {
     setIsForgotPasswordDialogOpen(false);
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   const {
@@ -165,23 +172,28 @@ function Login() {
                   autoComplete="new"
                   required
                 />
-                <Typography>
-                  Password<span style={{ color: "red" }}>*</span>
-                </Typography>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  type="password"
-                  autoComplete="new"
-                  {...register("password")}
-                  error={!!errors.password}
-                  helperText={errors.password?.message?.toString()}
-                  required
-                  sx={{
-                    mt: 0,
-                  }}
-                />
+  variant="outlined"
+  margin="normal"
+  fullWidth
+  type={showPassword ? "text" : "password"}
+  autoComplete="new"
+  {...register("password")}
+  error={!!errors.password}
+  helperText={errors.password?.message?.toString()}
+  required
+  InputProps={{
+    endAdornment: (
+      <IconButton
+        onClick={handleTogglePasswordVisibility}
+        edge="end"
+        aria-label={showPassword ? "Hide password" : "Show password"}
+      >
+        {showPassword ? <VisibilityOff /> : <Visibility />}
+      </IconButton>
+    ),
+  }}
+/>
                 <span
                   style={{ float: "right", color: theme.palette.primary.main,cursor:"pointer" }} onClick={handleOpenForgotPasswordDialog}
                 >
