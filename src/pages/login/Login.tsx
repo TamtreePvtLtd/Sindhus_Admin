@@ -136,7 +136,7 @@ function Login() {
               </Typography>
               <form onSubmit={handleSubmit(handleLogin)}>
                 <Typography>
-                  UserId<span style={{ color: "red" }}>*</span>
+                  Email<span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                   variant="outlined"
