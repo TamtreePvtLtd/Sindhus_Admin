@@ -3,7 +3,6 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } 
 import UpdatePasswordDialog from './UpdatePasswordDialog';
 import { httpWithoutCredentials } from '../services/http';
 import { useSnackBar } from '../context/SnackBarContext';
-import CustomSnackBar from '../common/components/CustomSnackBar';
 
 interface OTPVerificationProps {
   open: boolean;
