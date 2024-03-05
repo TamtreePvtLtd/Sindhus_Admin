@@ -3,7 +3,6 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, I
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { httpWithoutCredentials } from '../services/http';
 import { useSnackBar } from '../context/SnackBarContext';
-import CustomSnackBar from '../common/components/CustomSnackBar';
 
 interface UpdatePasswordDialogProps {
     open: boolean;
@@ -15,20 +14,18 @@ const UpdatePasswordDialog = ({ open, onClose, email }:UpdatePasswordDialogProps
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { updateSnackBarState } = useSnackBar();
-    const [showSnackbar, setShowSnackbar] = useState(false);
 
     const handleUpdatePassword = async () => {
         try {
             await httpWithoutCredentials.post('/customer/update-password', { email, newPassword: password });
             console.log('Password updated successfully');
             onClose();
-            setShowSnackbar(true)
           updateSnackBarState(true, "Password updated Successfully", "success")
         } catch (error:any) {
             if (error.response && error.response.data) {
                 console.log(error.response.data);
                 updateSnackBarState(true, error.response.data.message, "error");
-        }
+            }
     };
 }
 
@@ -81,7 +78,6 @@ const UpdatePasswordDialog = ({ open, onClose, email }:UpdatePasswordDialogProps
                 </Button>
             </DialogActions>
         </Dialog>
-        {showSnackbar && <CustomSnackBar />}
         </>
     );
 };
