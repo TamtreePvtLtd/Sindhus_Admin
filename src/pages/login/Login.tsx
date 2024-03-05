@@ -19,11 +19,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import theme from "../../theme/theme";
 
 const schema = yup.object().shape({
-  phoneNumber: yup
-    .string()
-    .required()
-    .typeError("Please enter the PhoneNumber")
-    .matches(/^[0-9]{10}$/, "Please enter a valid phone number"),
+  email: yup.string().email("Invalid email").required("Email is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -73,7 +69,7 @@ function Login() {
     } catch (error) {
       setIsLoading(false);
       console.error("Error checking authorization:", error);
-      navigate(paths.LOGIN); // Redirect to login page if an error occurs
+      navigate(paths.LOGIN); 
     }
   };
 
@@ -130,7 +126,7 @@ function Login() {
               justifyContent: "center",
               alignItems: "center",
               minHeight: "70vh",
-              marginTop: "20px",
+              marginTop: "30px",
             }}
           >
             <Box>
@@ -145,10 +141,10 @@ function Login() {
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  type="tel"
-                  {...register("phoneNumber")}
-                  error={!!errors.phoneNumber}
-                  helperText={errors.phoneNumber?.message?.toString()}
+                  type="email"
+                  {...register("email")}
+                  error={!!errors.email}
+                  helperText={errors.email?.message?.toString()}
                   FormHelperTextProps={{
                     sx: { color: "red", marginLeft: "0px" },
                   }}
@@ -156,7 +152,6 @@ function Login() {
                     mt: 0,
                     paddingBottom: "10px",
                   }}
-                  autoComplete="new"
                   required
                 />
                 <Typography>
@@ -181,7 +176,12 @@ function Login() {
                 >
                   Forgot Password?
                 </span>
-
+                    <Link
+                      to={paths.REGISTER}
+                      style={{ textDecoration: "none", color: theme.palette.primary.main, marginLeft: "10px" }}
+                    >
+                      Register Now
+                    </Link>
                 <Button
                   variant="contained"
                   color="primary"
