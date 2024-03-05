@@ -10,6 +10,7 @@ import {
   MenuItem,
   Toolbar,
   Typography,
+  Tooltip, // Import Tooltip component
 } from "@mui/material";
 
 import { useTheme } from "@mui/material/styles";
@@ -49,8 +50,6 @@ function Navbar() {
   const open = Boolean(anchorEl);
   const { user, updateUserData } = useAuthContext();
   const { updateSnackBarState } = useSnackBar();
-
-  console.log(user);
 
   const navigate = useNavigate();
   const theme = useTheme();
@@ -170,23 +169,25 @@ function Navbar() {
 
             {user && (
               <Box sx={{ marginLeft: "auto" }}>
-                <IconButton
-                  onClick={handleMenuClick}
-                  size="small"
-                  aria-controls={open ? "account-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
-                >
-                  <Avatar
-                    sx={{
-                      width: 28,
-                      height: 28,
-                      backgroundColor: "#038265",
-                    }}
+                <Tooltip title="Logout">
+                  <IconButton
+                    onMouseEnter={handleMenuClick}
+                    size="small"
+                    aria-controls={open ? "account-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
                   >
-                    {user?.name ? user.name.toUpperCase()[0] : ""}
-                  </Avatar>
-                </IconButton>
+                    <Avatar
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        backgroundColor: "#57ccb5",
+                      }}
+                    >
+                      {user?.name ? user.name.toUpperCase()[0] : ""}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
               </Box>
             )}
           </Toolbar>
