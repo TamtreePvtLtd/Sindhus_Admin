@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Box, Button, TextField, Toolbar, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -11,11 +11,6 @@ import { useAuthContext } from "../../context/AuthContext";
 import { useSnackBar } from "../../context/SnackBarContext";
 import CustomSnackBar from "../../common/components/CustomSnackBar";
 
-interface SignProps {
-  onSign?(): void;
-  requiredHeading?: boolean;
-  onRegisterLinkClick?(): void;
-}
 
 interface ISignUpFormFields {
   phoneNumber?: string;
@@ -47,15 +42,11 @@ const schema = yup.object().shape({
   name: yup.string().required("Please enter Name"),
 });
 
-const Signup = ({ onSign, requiredHeading, onRegisterLinkClick }: SignProps) => {
+const Signup = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { updateUserData } = useAuthContext();
   const { updateSnackBarState } = useSnackBar();
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const { state } = location;
-  const isNavbarLogin = state?.fromNavbarLogin || false;
-  const isSignupLogin = state?.fromSignupLogin || false;
   const {
     register,
     handleSubmit,
@@ -79,11 +70,7 @@ const Signup = ({ onSign, requiredHeading, onRegisterLinkClick }: SignProps) => 
             updateUserData({
               ...response.data,
             });
-            if (!isNavbarLogin && !isSignupLogin) {
-              if (onSign) onSign();
-            } else {
-              navigate(paths.ROOT);
-            }
+            navigate (paths.LOGIN)
           }
           setShowSnackbar(true);
           updateSnackBarState(true, "Signup Successfully", "success");
@@ -98,7 +85,10 @@ const Signup = ({ onSign, requiredHeading, onRegisterLinkClick }: SignProps) => 
   };
 
   return (
-    <div style={{ paddingTop: "64px" }}> {/* Add padding top to accommodate the fixed AppBar */}
+   <>
+    {isLoading != null && !isLoading && (
+    <>
+    <div style={{ paddingTop: "64px" }}> 
       <AppBar sx={{ backgroundColor: "white", position: "fixed", top: 0, zIndex: 9999 }}>
         <Toolbar>
           <Box
@@ -216,14 +206,16 @@ const Signup = ({ onSign, requiredHeading, onRegisterLinkClick }: SignProps) => 
         </form>
         <Typography variant="body1" align="center" marginTop={"10px"}>
           Already have an account?{" "}
-          <Link to={paths.LOGIN} onClick={() => {
-                  onRegisterLinkClick && onRegisterLinkClick();}} style={{ textDecoration: "none" }}>
+          <Link to={paths.LOGIN} style={{ textDecoration: "none" }}>
             Log in
           </Link>
         </Typography>
       </Box>
       {showSnackbar && <CustomSnackBar />}
     </div>
+    </>
+    )}
+    </>
   );
 };
 
