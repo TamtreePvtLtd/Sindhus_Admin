@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useCreateSpecials, useDeleteSpecial } from "../../customRQHooks/Hooks";
+import { useCreateSpecials, useDeleteSpecial, useGetSpecials } from "../../customRQHooks/Hooks";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 
 function Specials() {
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  // const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const createProductSpecial = useCreateSpecials();
@@ -15,13 +15,20 @@ function Specials() {
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    // Retrieve image previews from local storage on component mount
-    const storedPreviews = localStorage.getItem("imagePreviews");
-    if (storedPreviews) {
-      setImagePreviews(JSON.parse(storedPreviews));
-    }
-  }, []);
+  // getProductSpecial() 
+  // const { data } = getProductSpecial()
+
+  const { data:imagePreviews, isLoading } = useGetSpecials()
+  console.log('first', imagePreviews)
+
+
+  // useEffect(() => {
+  //   // Retrieve image previews from local storage on component mount
+  //   const storedPreviews = localStorage.getItem("imagePreviews");
+  //   if (storedPreviews) {
+  //     setImagePreviews(JSON.parse(storedPreviews));
+  //   }
+  // }, []);
 
   useEffect(() => {
     // Save image previews to local storage whenever it changes
@@ -44,7 +51,7 @@ function Specials() {
           previews.push(preview);
         }
 
-        setImagePreviews((prevPreviews) => [...prevPreviews, ...previews]);
+        // setImagePreviews((prevPreviews) => [...prevPreviews, ...previews]);
         setImages((prevImages) => [...prevImages, ...imageFiles]);
       }
     } catch (error) {
@@ -78,13 +85,18 @@ function Specials() {
   };
 
    const handleDelete = (index: number) => {
-     const updatedPreviews = [...imagePreviews];
-     updatedPreviews.splice(index, 1);
-     setImagePreviews(updatedPreviews);
 
-     const updatedImages = [...images];
-     updatedImages.splice(index, 1);
-     setImages(updatedImages);
+    console.log("handleDelete => ", index)
+    //  const updatedPreviews = [...imagePreviews];
+    //  updatedPreviews.splice(index, 1);
+    //  setImagePreviews(updatedPreviews);
+
+    //  const updatedImages = [...images];
+    //  updatedImages.splice(index, 1);
+    //  setImages(updatedImages);
+
+    console.log('first s', deleteSpecial)
+     deleteSpecial.mutate({ id: index })
    };
 //   const deleteSpecialMutation = deleteSpecial.mutate;
 
@@ -102,7 +114,7 @@ function Specials() {
   // };
   
   //  Function to open the dialog
-  const openDeleteDialog = (index: number) => {
+  const openDeleteDialog = (index: string) => {
     setDeleteConfirmationIndex(index);
     setOpenDialog(true);
   };
@@ -112,6 +124,7 @@ function Specials() {
     setDeleteConfirmationIndex(null);
     setOpenDialog(false);
   };
+
   return (
     <>
       <Container>
@@ -149,7 +162,7 @@ function Specials() {
               flexWrap: "wrap",
             }}
           >
-            {imagePreviews.map((preview, index) => (
+            {!isLoading && imagePreviews?.data && imagePreviews?.data.map((preview, index) => (
               <Box
                 key={index}
                 sx={{
@@ -158,15 +171,15 @@ function Specials() {
                   mb: 2,
                   display: "inline-block",
                 }}
-                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseEnter={() => handleMouseEnter(preview._id)}
                 onMouseLeave={handleMouseLeave}
               >
                 <img
-                  src={preview}
-                  alt={`Preview ${index}`}
+                  src={preview.images[0]}
+                  alt={`Preview ${preview._id}`}
                   style={{ width: 100, height: 100, objectFit: "cover" }}
                 />
-                {deleteIndex === index && (
+                {deleteIndex === preview._id && (
                   <Button
                     sx={{
                       position: "absolute",
@@ -174,10 +187,10 @@ function Specials() {
                       left: "50%",
                       transform: "translate(-50%, -50%)",
                     }}
-                    onClick={() => openDeleteDialog(index)}
+                    onClick={() => openDeleteDialog(preview._id)}
                     size="small"
                   >
-                    <DeleteIcon sx={{ color: "#FFF" }} />
+                    <DeleteIcon sx={{ color: "#57ccb5" }} />
                   </Button>
                    )}
               </Box>

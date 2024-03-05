@@ -12,6 +12,7 @@ import {
   updateMenu,
   deleteMenu,
   createSpecials,
+  getSpecials,
   deleteSpecial,
 } from "../services/api";
 import { queryClient } from "../App";
@@ -66,13 +67,22 @@ export const useCreateSpecials = () => {
   return useMutation({
     mutationFn: createSpecials,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["special"] });
+      queryClient.invalidateQueries({ queryKey: ["specials"] });
     },
     onError: (error) => {
       console.log(error);
     },
   });
 };
+
+export const useGetSpecials = () => {
+  return useQuery({
+    queryKey: ["specials"],
+    queryFn: () => getSpecials(),
+    refetchOnWindowFocus: false,
+  });
+};
+
 
 export const useGetProducts = (menuId: string, subMenuIds: string[]) => {
   return useQuery({

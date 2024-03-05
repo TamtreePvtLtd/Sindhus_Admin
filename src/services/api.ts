@@ -122,7 +122,7 @@ const deleteSpecial = async (specials: ISpecial) => {
   try {
     var id = specials.id;
     const response = await httpWithCredentials.delete(
-      `/specials/deleteProduct/${id}`
+      `/specials/deleteSpecial/${id}`
     );
     return response;
   } catch (error) {
@@ -278,6 +278,19 @@ const createSpecials = async (imageData) => {
   }
 };
 
+const getSpecials = async () => {
+  try {
+    const response = await httpWithoutCredentials.get<string>(
+      "/specials/getAllSpecials"
+    );
+    console.log(response.data);
+    
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const deleteMenu = async (menuId: string) => {
   try {
     var response = await httpWithCredentials.delete(
@@ -310,5 +323,6 @@ export {
   deleteEnquiry,
   updateMenu,
   createSpecials,
+  getSpecials,
   deleteSpecial,
 };
