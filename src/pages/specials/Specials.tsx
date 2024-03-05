@@ -94,7 +94,7 @@ function Specials() {
       return compressedFile;
     } catch (error) {
       console.error("Error compressing image:", error);
-      throw error; // Rethrow the error to be caught by the caller
+      throw error; 
     }
   }
 
@@ -121,6 +121,7 @@ function Specials() {
               component="label"
               variant="outlined"
               startIcon={<AddIcon />}
+              sx={{ color: "#038265" }}
             >
               Upload Images
               <input
@@ -154,7 +155,12 @@ function Specials() {
             onClick={handleSave}
             variant="contained"
             color="primary"
-            style={{ marginRight: "8px" }}
+            sx={{
+              marginRight: "8px",
+              "&:hover": {
+                backgroundColor: "#038265",
+              },
+            }}
           >
             Save
           </Button>
@@ -162,7 +168,12 @@ function Specials() {
             onClick={handleCancel}
             variant="contained"
             color="primary"
-            style={{ marginRight: "8px" }}
+            sx={{
+              marginRight: "8px",
+              "&:hover": {
+                backgroundColor: "#038265",
+              },
+            }}
           >
             Cancel
           </Button>

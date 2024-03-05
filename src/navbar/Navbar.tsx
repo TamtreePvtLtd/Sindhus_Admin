@@ -86,9 +86,7 @@ function Navbar() {
           component="nav"
           sx={{
             backgroundColor: "white",
-            color: "#57ccb5",
-            boxShadow:
-              "0px 0px 0px 0px rgba(0,0,0,0), 0px 0px 4px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)",
+            color: "#038265",
           }}
         >
           <Toolbar>
@@ -109,7 +107,7 @@ function Navbar() {
                 sx={{
                   padding: "10px",
                   fontWeight: 800,
-                  color: theme.palette.primary.main,
+                  color: "#038265",
                   fontSize: "2rem",
                   fontFamily: "Sindhus-Logo-Font",
                   cursor: "pointer",
@@ -141,7 +139,12 @@ function Navbar() {
                           alignItems: "center",
                           fontSize: "large",
                           textTransform: "none",
-                          color: "black",
+                          backgroundColor:
+                            location.pathname === menu.link
+                              ? theme.palette.primary.main
+                              : "transparent",
+                          color:
+                            location.pathname === menu.link ? "white" : "black",
                           "&:hover": {
                             backgroundColor: theme.palette.primary.main,
                             color: "white",

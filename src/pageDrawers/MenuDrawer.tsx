@@ -317,10 +317,21 @@ function MenuDrawer(props: IProps) {
             onClick={() => {
               handleMenuDrawerclose();
             }}
+            sx={{
+              color: "#038265",
+            }}
           >
             Cancel
           </Button>
-          <Button type="submit" variant="contained">
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              "&:hover": {
+                backgroundColor: "#038265", 
+              },
+            }}
+          >
             Save
           </Button>
         </Box>

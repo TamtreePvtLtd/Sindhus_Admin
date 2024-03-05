@@ -123,7 +123,7 @@ function Login() {
                     fontFamily: "Sindhus-Logo-Font",
                     fontWeight: 800,
                     fontSize: "2rem",
-                    color: "#57ccb5",
+                    color: "#038265",
                   }}
                 >
                   SINDHU'S
