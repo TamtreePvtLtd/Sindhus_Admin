@@ -21,6 +21,8 @@ const OTPVerificationDialog = ({ open, onClose, email }: OTPVerificationProps) =
       if (response.status === 200) {
         console.log('OTP verified successfully');
         updateSnackBarState(true, "OTP verified Successfully", "success");
+        onClose();
+        setShowUpdatePasswordDialog(true)
       } else {
         updateSnackBarState(true, "Failed to send OTP", "error");
       }

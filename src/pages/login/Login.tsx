@@ -20,7 +20,6 @@ import { useAuthContext } from "../../context/AuthContext";
 import theme from "../../theme/theme";
 import ForgotPasswordDialog from "../../pageDialogs/ForgotPasswordDialog";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import CustomSnackBar from "../../common/components/CustomSnackBar";
 
 const schema = yup.object().shape({
   email: yup.string().email('Please enter a valid email address').required('Email is required'),
@@ -34,7 +33,6 @@ function Login() {
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
   const [isForgotPasswordDialogOpen, setIsForgotPasswordDialogOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const handleOpenForgotPasswordDialog = () => {
     setIsForgotPasswordDialogOpen(true);
@@ -64,8 +62,6 @@ function Login() {
         updateUserData(response.data);
         updateSnackBarState(true, "Login Successfully", "success")
         navigate(paths.ROOT);
-        setShowSnackbar(true)
-          updateSnackBarState(true, "Login Successfully", "success")
       } else {
         console.log("Login failed");
       }
@@ -234,7 +230,6 @@ function Login() {
           <ForgotPasswordDialog open={isForgotPasswordDialogOpen} onClose={handleCloseForgotPasswordDialog} />
         </>
       )}
-      {showSnackbar && <CustomSnackBar />}
     </>
   );
 }
