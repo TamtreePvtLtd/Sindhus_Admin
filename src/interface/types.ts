@@ -89,7 +89,22 @@ export interface IOptionTypes {
   value: string;
 }
 
+export interface IUser {
+  userId: string | null;
+  email: string | null;
+  name: string | null;
+}
 
+export interface ILoginFormInputs {
+  email: string;
+  password: string;
+}
+
+export interface ILoginResponse {
+  data: IUser | null;
+  message: string;
+  status?: boolean;
+}
 
 export interface IDinningOutMenus {
   _id: string;

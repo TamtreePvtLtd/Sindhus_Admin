@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   IconButton,
-  InputAdornment,
   TextField,
   Toolbar,
   Typography,
@@ -19,11 +18,12 @@ import { useEffect, useState } from "react";
 import { paths } from "../../routes/Paths";
 import { useAuthContext } from "../../context/AuthContext";
 import theme from "../../theme/theme";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Visibility from "@mui/icons-material/Visibility";
+import ForgotPasswordDialog from "../../pageDialogs/ForgotPasswordDialog";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CustomSnackBar from "../../common/components/CustomSnackBar";
 
 const schema = yup.object().shape({
-  email: yup.string().email("Invalid email").required("Email is required"),
+  email: yup.string().email('Please enter a valid email address').required('Email is required'),
   password: yup.string().required("Password is required"),
 });
 
@@ -32,7 +32,21 @@ function Login() {
   const { updateSnackBarState } = useSnackBar();
   const { updateUserData } = useAuthContext();
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
+  const [isForgotPasswordDialogOpen, setIsForgotPasswordDialogOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+
+  const handleOpenForgotPasswordDialog = () => {
+    setIsForgotPasswordDialogOpen(true);
+  };
+
+  const handleCloseForgotPasswordDialog = () => {
+    setIsForgotPasswordDialogOpen(false);
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   const {
     register,
@@ -50,6 +64,8 @@ function Login() {
         updateUserData(response.data);
         updateSnackBarState(true, "Login Successfully", "success")
         navigate(paths.ROOT);
+        setShowSnackbar(true)
+          updateSnackBarState(true, "Login Successfully", "success")
       } else {
         console.log("Login failed");
       }
@@ -70,6 +86,7 @@ function Login() {
       } else {
         setIsLoading(false);
         updateUserData({ ...user });
+
         navigate(paths.ROOT);
       }
     } catch (error) {
@@ -84,9 +101,6 @@ function Login() {
   }, []);
 
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
 
   return (
     <>
@@ -137,7 +151,7 @@ function Login() {
               justifyContent: "center",
               alignItems: "center",
               minHeight: "70vh",
-              marginTop: "30px",
+              marginTop: "60px",
             }}
           >
             <Box>
@@ -152,7 +166,7 @@ function Login() {
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  type="email"
+                  type="tel"
                   {...register("email")}
                   error={!!errors.email}
                   helperText={errors.email?.message?.toString()}
@@ -165,34 +179,36 @@ function Login() {
                   }}
                   required
                 />
-                <Typography>
+                 <Typography>
                   Password<span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new"
-                  {...register("password")}
-                  error={!!errors.password}
-                  helperText={errors.password?.message?.toString()}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={togglePasswordVisibility}>
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  required
-                  sx={{
-                    mt: 0,
-                  }}
-                />
+  variant="outlined"
+  margin="normal"
+  fullWidth
+  type={showPassword ? "text" : "password"}
+  autoComplete="new"
+  {...register("password")}
+  error={!!errors.password}
+  helperText={errors.password?.message?.toString()}
+  FormHelperTextProps={{
+    sx: { color: "red", marginLeft: "0px" },
+  }}
+  required
+  InputProps={{
+    endAdornment: (
+      <IconButton
+        onClick={handleTogglePasswordVisibility}
+        edge="end"
+        aria-label={showPassword ? "Hide password" : "Show password"}
+      >
+        {showPassword ? <VisibilityOff /> : <Visibility />}
+      </IconButton>
+    ),
+  }}
+/>
                 <span
-                  style={{ float: "right", color: theme.palette.primary.main }}
+                  style={{ float: "right", color: theme.palette.primary.main,cursor:"pointer" }} onClick={handleOpenForgotPasswordDialog}
                 >
                   Forgot Password?
                 </span>
@@ -212,10 +228,13 @@ function Login() {
                   Login
                 </Button>
               </form>
+
             </Box>
           </Box>
+          <ForgotPasswordDialog open={isForgotPasswordDialogOpen} onClose={handleCloseForgotPasswordDialog} />
         </>
       )}
+      {showSnackbar && <CustomSnackBar />}
     </>
   );
 }
