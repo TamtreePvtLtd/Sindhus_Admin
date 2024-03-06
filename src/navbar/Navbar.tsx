@@ -181,7 +181,7 @@ function Navbar() {
                       sx={{
                         width: 28,
                         height: 28,
-                        backgroundColor: "#57ccb5",
+                        backgroundColor: "#038265",
                       }}
                     >
                       {user?.name ? user.name.toUpperCase()[0] : ""}

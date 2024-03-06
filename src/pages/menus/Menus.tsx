@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Grid, IconButton } from "@mui/material";
+import { Box, Typography, Grid, IconButton, Container } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -72,7 +72,7 @@ function Menus() {
 
   return (
     <>
-      <Box sx={{ marginLeft: "25px", marginRight: "25px" }}>
+      <Box>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <PaginatedHeader
