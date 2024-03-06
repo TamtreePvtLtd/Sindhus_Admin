@@ -72,7 +72,7 @@ function Menus() {
 
   return (
     <>
-      <Box sx={{marginLeft:"40px", marginRight:"40px"}}>
+      <Box>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <PaginatedHeader
