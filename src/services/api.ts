@@ -1,4 +1,9 @@
-import { ILoginFormInputs, ILoginResponse, ISignUp, IUser } from "../interface/customer";
+import {
+  ILoginFormInputs,
+  ILoginResponse,
+  ISignUp,
+  IUser,
+} from "../interface/customer";
 import { IMenu } from "../interface/menus";
 import {
   ICateringEnquiries,
@@ -215,8 +220,6 @@ const adminLogin = async (credential: ILoginFormInputs) => {
   }
 };
 
-
-
 const isAuthorized = async () => {
   try {
     const response = await httpWithCredentials.get<IUser>(
@@ -296,8 +299,7 @@ const getSpecials = async () => {
     const response = await httpWithoutCredentials.get<string>(
       "/specials/getAllSpecials"
     );
-    console.log(response.data);
-    
+
     return response.data;
   } catch (error) {
     throw error;
@@ -330,25 +332,25 @@ const changeisResponseStatus = async (enquiryId: any) => {
 export {
   getSpecials,
   deleteSpecial,
-    getAllEnquiries,
-    getAllMenus,
-    getProductsByMenuId,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    getAllMenusForAddProduct,
-    adminLogin,
-    isAuthorized,
-    logOut,
-    SignupCredentials,
-    getAllDiningOutMenuWithProducts,
-    createDiningOutProduct,
-    getAllDiningOutId,
-    updateDiningOutProduct,
-    deleteMenu,
-    createMenu,
-    deleteEnquiry,
-    updateMenu,
-    createSpecials,
-    changeisResponseStatus
+  getAllEnquiries,
+  getAllMenus,
+  getProductsByMenuId,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getAllMenusForAddProduct,
+  adminLogin,
+  isAuthorized,
+  logOut,
+  SignupCredentials,
+  getAllDiningOutMenuWithProducts,
+  createDiningOutProduct,
+  getAllDiningOutId,
+  updateDiningOutProduct,
+  deleteMenu,
+  createMenu,
+  deleteEnquiry,
+  updateMenu,
+  createSpecials,
+  changeisResponseStatus,
 };

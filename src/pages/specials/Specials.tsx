@@ -1,34 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useCreateSpecials, useDeleteSpecial, useGetSpecials } from "../../customRQHooks/Hooks";
+import {
+  useCreateSpecials,
+  useDeleteSpecial,
+  useGetSpecials,
+} from "../../customRQHooks/Hooks";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 function Specials() {
-  // const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreview, setImagePreview] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const createProductSpecial = useCreateSpecials();
   const deleteSpecial = useDeleteSpecial();
   const [openDialog, setOpenDialog] = useState(false);
-  const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState<number | null>(null);
+  const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState<
+    number | null
+  >(null);
 
-  // getProductSpecial() 
-  // const { data } = getProductSpecial()
+  let { data: imagePreviews, isLoading } = useGetSpecials();
 
-  const { data:imagePreviews, isLoading } = useGetSpecials()
-  console.log('first', imagePreviews)
-
-
-  // useEffect(() => {
-  //   // Retrieve image previews from local storage on component mount
-  //   const storedPreviews = localStorage.getItem("imagePreviews");
-  //   if (storedPreviews) {
-  //     setImagePreviews(JSON.parse(storedPreviews));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storedPreviews = localStorage.getItem("imagePreviews");
+    if (storedPreviews) {
+      try {
+        const parsedPreviews = JSON.parse(storedPreviews);
+        setImagePreview(parsedPreviews.data); // Assuming 'data' holds the array of images
+      } catch (error) {
+        console.error("Error parsing stored previews:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // Save image previews to local storage whenever it changes
@@ -51,7 +61,7 @@ function Specials() {
           previews.push(preview);
         }
 
-        // setImagePreviews((prevPreviews) => [...prevPreviews, ...previews]);
+        setImagePreview((prevPreviews) => [...prevPreviews, ...previews]);
         setImages((prevImages) => [...prevImages, ...imageFiles]);
       }
     } catch (error) {
@@ -59,23 +69,40 @@ function Specials() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e: any) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    images.forEach((image, index) => {
+      formData.append(`image_${index}`, image);
+    });
+
     try {
-      if (images.length > 0) {
-        const imageData = images.map((image) => ({
-          data: URL.createObjectURL(image),
-        }));
-
-        await createProductSpecial.mutateAsync({ images: imageData });
-
-        console.log("Images uploaded successfully");
-
-        setImages([]);
-      }
+      const response = await createProductSpecial.mutate(formData);
+      setImagePreview([]);
+      setImages([]);
     } catch (error) {
       console.error("Error uploading images:", error);
     }
   };
+
+  // const handleSave = async () => {
+  //   try {
+  //     if (images.length > 0) {
+  //       const imageData = images.map((image) => ({
+  //         data: URL.createObjectURL(image),
+  //       }));
+
+  //       await createProductSpecial.mutateAsync({ images: imageData });
+
+  //       console.log("Images uploaded successfully");
+
+  //       setImages([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading images:", error);
+  //   }
+  // };
   const handleMouseEnter = (index: number) => {
     setDeleteIndex(index);
   };
@@ -84,42 +111,15 @@ function Specials() {
     setDeleteIndex(null);
   };
 
-   const handleDelete = (index: number) => {
+  const handleDelete = (index: number) => {
+    deleteSpecial.mutate({ id: index });
+  };
 
-    console.log("handleDelete => ", index)
-    //  const updatedPreviews = [...imagePreviews];
-    //  updatedPreviews.splice(index, 1);
-    //  setImagePreviews(updatedPreviews);
-
-    //  const updatedImages = [...images];
-    //  updatedImages.splice(index, 1);
-    //  setImages(updatedImages);
-
-    console.log('first s', deleteSpecial)
-     deleteSpecial.mutate({ id: index })
-   };
-//   const deleteSpecialMutation = deleteSpecial.mutate;
-
-// const handleDelete = async (index: number) => {
-//   try {
-//     const specialIdToDelete = /* Extract the specialId from your data structure */;
-
-//     // Assuming deleteSpecialMutation takes a parameter for deletion of type ISpecial
-//     deleteSpecialMutation({ specialId: specialIdToDelete });
-    
-//     // ... rest of the function remains the same ...
-//   } catch (error) {
-//     console.error("Error deleting image:", error);
-//   }
-  // };
-  
-  //  Function to open the dialog
   const openDeleteDialog = (index: string) => {
     setDeleteConfirmationIndex(index);
     setOpenDialog(true);
   };
 
-  // Function to close the dialog
   const closeDeleteDialog = () => {
     setDeleteConfirmationIndex(null);
     setOpenDialog(false);
@@ -153,7 +153,6 @@ function Specials() {
               />
             </Button>
           </Box>
-
           <Box
             sx={{
               mt: 3,
@@ -162,39 +161,16 @@ function Specials() {
               flexWrap: "wrap",
             }}
           >
-            {!isLoading && imagePreviews?.data && imagePreviews?.data.map((preview, index) => (
-              <Box
-                key={index}
-                sx={{
-                  position: "relative",
-                  mr: 2,
-                  mb: 2,
-                  display: "inline-block",
-                }}
-                onMouseEnter={() => handleMouseEnter(preview._id)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <img
-                  src={preview.images[0]}
-                  alt={`Preview ${preview._id}`}
-                  style={{ width: 100, height: 100, objectFit: "cover" }}
-                />
-                {deleteIndex === preview._id && (
-                  <Button
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                    }}
-                    onClick={() => openDeleteDialog(preview._id)}
-                    size="small"
-                  >
-                    <DeleteIcon sx={{ color: "#57ccb5" }} />
-                  </Button>
-                   )}
-              </Box>
-            ))}
+            {imagePreview &&
+              imagePreview.map((preview, index) => (
+                <Box key={index} sx={{ mr: 2, mb: 2 }}>
+                  <img
+                    src={preview}
+                    alt={`Preview ${index}`}
+                    style={{ width: 100, height: 100, objectFit: "cover" }}
+                  />
+                </Box>
+              ))}
           </Box>
           <Button
             onClick={handleSave}
@@ -204,6 +180,51 @@ function Specials() {
           >
             Save
           </Button>
+
+          <Box
+            sx={{
+              mt: 3,
+              display: "flex",
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {!isLoading &&
+              imagePreviews?.data &&
+              imagePreviews?.data.map((preview, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    position: "relative",
+                    mr: 2,
+                    mb: 2,
+                    display: "inline-block",
+                  }}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <img
+                    src={preview.images[0]}
+                    alt={`Preview ${preview._id}`}
+                    style={{ width: 100, height: 100, objectFit: "cover" }}
+                  />
+                  {deleteIndex === index && (
+                    <Button
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                      }}
+                      onClick={() => openDeleteDialog(preview._id)}
+                      size="small"
+                    >
+                      <DeleteIcon sx={{ color: "#57ccb5" }} />
+                    </Button>
+                  )}
+                </Box>
+              ))}
+          </Box>
         </Box>
         {/* Dialog should be outside the loop */}
         <Dialog open={openDialog} onClose={closeDeleteDialog}>
