@@ -12,8 +12,9 @@ import {
   updateMenu,
   deleteMenu,
   createSpecials,
-  changeisResponseStatus,
-} from "../services/api";
+  getSpecials,
+  deleteSpecial,
+ } from "../services/api";
 import { queryClient } from "../App";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
@@ -74,6 +75,15 @@ export const useCreateSpecials = () => {
   });
 };
 
+export const useGetSpecials = () => {
+  return useQuery({
+    queryKey: ["specials"],
+    queryFn: () => getSpecials(),
+    refetchOnWindowFocus: false,
+  });
+};
+
+
 export const useGetProducts = (menuId: string, subMenuIds: string[]) => {
   return useQuery({
     queryKey: ["products", menuId, subMenuIds],
@@ -87,6 +97,18 @@ export const useDeleteProduct = () => {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteSpecial = () => {
+  return useMutation({
+    mutationFn: deleteSpecial,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["specials"] });
     },
     onError: (error) => {
       console.log(error);
@@ -144,7 +166,7 @@ export const useUpdateProduct = () => {
 export const useChangeisResponseStatus = () => {
  
   return useMutation({
-    mutationFn: changeisResponseStatus,
+    mutationFn: useChangeisResponseStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isResponse"] });
     },

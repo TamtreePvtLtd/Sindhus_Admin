@@ -1,4 +1,9 @@
-import { ILoginFormInputs, ILoginResponse, ISignUp, IUser } from "../interface/customer";
+import {
+  ILoginFormInputs,
+  ILoginResponse,
+  ISignUp,
+  IUser,
+} from "../interface/customer";
 import { IMenu } from "../interface/menus";
 import {
   ICateringEnquiries,
@@ -7,6 +12,7 @@ import {
   IProduct,
   IProductWithMenu,
   IProductPageMenuDropDown,
+  ISpecial,
 } from "../interface/types";
 import {
   httpWithCredentials,
@@ -116,6 +122,18 @@ const deleteProduct = async (product: IProduct) => {
     throw new Error(message);
   }
 };
+const deleteSpecial = async (specials: ISpecial) => {
+  try {
+    var id = specials.id;
+    const response = await httpWithCredentials.delete(
+      `/specials/deleteSpecial/${id}`
+    );
+    return response;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
 
 const getAllDiningOutMenuWithProducts = async () => {
   try {
@@ -202,8 +220,6 @@ const adminLogin = async (credential: ILoginFormInputs) => {
   }
 };
 
-
-
 const isAuthorized = async () => {
   try {
     const response = await httpWithCredentials.get<IUser>(
@@ -278,6 +294,18 @@ const createSpecials = async (formData) => {
   }
 };
 
+const getSpecials = async () => {
+  try {
+    const response = await httpWithoutCredentials.get<string>(
+      "/specials/getAllSpecials"
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const deleteMenu = async (menuId: string) => {
   try {
     var response = await httpWithCredentials.delete(
@@ -302,25 +330,27 @@ const changeisResponseStatus = async (enquiryId: any) => {
 };
 
 export {
-    getAllEnquiries,
-    getAllMenus,
-    getProductsByMenuId,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    getAllMenusForAddProduct,
-    adminLogin,
-    isAuthorized,
-    logOut,
-    SignupCredentials,
-    getAllDiningOutMenuWithProducts,
-    createDiningOutProduct,
-    getAllDiningOutId,
-    updateDiningOutProduct,
-    deleteMenu,
-    createMenu,
-    deleteEnquiry,
-    updateMenu,
-    createSpecials,
-    changeisResponseStatus
+  getSpecials,
+  deleteSpecial,
+  getAllEnquiries,
+  getAllMenus,
+  getProductsByMenuId,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getAllMenusForAddProduct,
+  adminLogin,
+  isAuthorized,
+  logOut,
+  SignupCredentials,
+  getAllDiningOutMenuWithProducts,
+  createDiningOutProduct,
+  getAllDiningOutId,
+  updateDiningOutProduct,
+  deleteMenu,
+  createMenu,
+  deleteEnquiry,
+  updateMenu,
+  createSpecials,
+  changeisResponseStatus,
 };
