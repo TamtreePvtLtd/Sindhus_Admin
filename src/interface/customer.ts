@@ -3,14 +3,22 @@ export interface IAuthContext {
   updateUserData: (user: IUser | null) => void;
 }
 
+export interface ISignUp {
+  phoneNumber?: string | null;
+  password: string;
+  name: string;
+  email: string;
+  confirmPassword: string;
+}
+
 export interface IUser {
   userId: string | null;
-  phoneNumber: string | null;
+  email: string | null;
   name: string | null;
 }
 
 export interface ILoginFormInputs {
-  phoneNumber: string;
+  email: string;
   password: string;
 }
 

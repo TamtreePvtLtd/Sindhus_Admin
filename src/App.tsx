@@ -14,6 +14,7 @@ import Login from "./pages/login/Login";
 import PrivateRoute from "./common/components/PrivateRoute";
 import AuthProvider from "./context/AuthContext";
 import Specials from "./pages/specials/Specials";
+import Signup from "./pages/login/Signup";
 
 export const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ function App() {
           <SnackBarProvider>
             <BrowserRouter>
               <Routes>
+                <Route path={paths.REGISTER} element={<Signup />} />
                 <Route path={paths.LOGIN} element={<Login />} />
                 <Route path={paths.ROOT} element={<Layout />}>
                   <Route

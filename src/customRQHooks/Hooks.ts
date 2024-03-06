@@ -14,7 +14,7 @@ import {
   createSpecials,
   getSpecials,
   deleteSpecial,
-} from "../services/api";
+ } from "../services/api";
 import { queryClient } from "../App";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
@@ -157,6 +157,18 @@ export const useUpdateProduct = () => {
     mutationFn: updateProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+export const useChangeisResponseStatus = () => {
+ 
+  return useMutation({
+    mutationFn: useChangeisResponseStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isResponse"] });
     },
     onError: (error) => {
       console.log(error);

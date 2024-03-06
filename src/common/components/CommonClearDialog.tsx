@@ -38,10 +38,18 @@ function CommonClearDialog(props: IProps) {
             variant="outlined"
             color="primary"
             size="small"
+            sx={{
+              color: "#038265",
+            }}
           >
             Cancel
           </Button>
-          <Button onClick={onDelete} variant="contained" size="small">
+          <Button
+            onClick={onDelete}
+            variant="contained"
+            size="small"
+            sx={{ "&:hover": { backgroundColor: "#038265" } }}
+          >
             DeSelect
           </Button>
         </DialogActions>

@@ -7,6 +7,7 @@ export interface ICateringEnquiries {
   mobileNumber: string;
   message: string;
   eventDate: string;
+  isResponse: boolean;
 }
 
 export interface IProductPageMenuDropDown {
@@ -24,7 +25,7 @@ export interface IProduct {
   posterURL?: string | File;
   _id?: string;
   title: string;
-  price: number | string;
+  itemSizeWithPrice: IItemSizeWithPrice[];
   images: Array<string | File>;
   description: string;
   netWeight: number;
@@ -40,6 +41,11 @@ export interface IProductMenu {
   subMenuIds: string[];
 }
 
+export interface IItemSizeWithPrice {
+  size: string;
+  price: number;
+  _id?: string;
+}
 export interface IDailyMenuSizeWithPrice {
   size: string;
   price: number;
@@ -83,22 +89,7 @@ export interface IOptionTypes {
   value: string;
 }
 
-export interface IUser {
-  userId: string | null;
-  phoneNumber: string | null;
-  name: string | null;
-}
 
-export interface ILoginFormInputs {
-  phoneNumber: string;
-  password: string;
-}
-
-export interface ILoginResponse {
-  data: IUser | null;
-  message: string;
-  status?: boolean;
-}
 
 export interface IDinningOutMenus {
   _id: string;

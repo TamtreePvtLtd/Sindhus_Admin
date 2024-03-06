@@ -2,6 +2,8 @@ import {
   AppBar,
   Box,
   Button,
+  IconButton,
+  InputAdornment,
   TextField,
   Toolbar,
   Typography,
@@ -16,13 +18,12 @@ import { useSnackBar } from "../../context/SnackBarContext";
 import { useEffect, useState } from "react";
 import { paths } from "../../routes/Paths";
 import { useAuthContext } from "../../context/AuthContext";
+import theme from "../../theme/theme";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Visibility from "@mui/icons-material/Visibility";
 
 const schema = yup.object().shape({
-  phoneNumber: yup
-    .string()
-    .required()
-    .typeError("Please enter the PhoneNumber")
-    .matches(/^[0-9]{10}$/, "Please enter a valid phone number"),
+  email: yup.string().email("Invalid email").required("Email is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -31,6 +32,7 @@ function Login() {
   const { updateSnackBarState } = useSnackBar();
   const { updateUserData } = useAuthContext();
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -46,6 +48,7 @@ function Login() {
       const response = await adminLogin(data);
       if (response.data) {
         updateUserData(response.data);
+        updateSnackBarState(true, "Login Successfully", "success")
         navigate(paths.ROOT);
       } else {
         console.log("Login failed");
@@ -72,7 +75,7 @@ function Login() {
     } catch (error) {
       setIsLoading(false);
       console.error("Error checking authorization:", error);
-      navigate(paths.LOGIN); // Redirect to login page if an error occurs
+      navigate(paths.LOGIN); 
     }
   };
 
@@ -80,11 +83,16 @@ function Login() {
     checkAuthorization();
   }, []);
 
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   return (
     <>
       {isLoading != null && !isLoading && (
         <>
-          <AppBar>
+          <AppBar sx={{ backgroundColor: "white" }}>
             <Toolbar>
               <Box
                 sx={{
@@ -111,14 +119,14 @@ function Login() {
                   />
                 </Link>
                 <Typography
-                  variant="h6"
-                  component="div"
                   sx={{
-                    color: "red",
-                    fontWeight: "bolder",
+                    fontFamily: "Sindhus-Logo-Font",
+                    fontWeight: 800,
+                    fontSize: "2rem",
+                    color: "#038265",
                   }}
                 >
-                  Sindhu's Kitchen
+                  SINDHU'S
                 </Typography>
               </Box>
             </Toolbar>
@@ -129,7 +137,7 @@ function Login() {
               justifyContent: "center",
               alignItems: "center",
               minHeight: "70vh",
-              marginTop: "20px",
+              marginTop: "30px",
             }}
           >
             <Box>
@@ -138,16 +146,16 @@ function Login() {
               </Typography>
               <form onSubmit={handleSubmit(handleLogin)}>
                 <Typography>
-                  PhoneNumber<span style={{ color: "red" }}>*</span>
+                  Email<span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  type="tel"
-                  {...register("phoneNumber")}
-                  error={!!errors.phoneNumber}
-                  helperText={errors.phoneNumber?.message?.toString()}
+                  type="email"
+                  {...register("email")}
+                  error={!!errors.email}
+                  helperText={errors.email?.message?.toString()}
                   FormHelperTextProps={{
                     sx: { color: "red", marginLeft: "0px" },
                   }}
@@ -155,7 +163,6 @@ function Login() {
                     mt: 0,
                     paddingBottom: "10px",
                   }}
-                  autoComplete="new"
                   required
                 />
                 <Typography>
@@ -165,16 +172,36 @@ function Login() {
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="new"
                   {...register("password")}
                   error={!!errors.password}
                   helperText={errors.password?.message?.toString()}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={togglePasswordVisibility}>
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   required
                   sx={{
                     mt: 0,
                   }}
                 />
+                <span
+                  style={{ float: "right", color: theme.palette.primary.main }}
+                >
+                  Forgot Password?
+                </span>
+                    <Link
+                      to={paths.REGISTER}
+                      style={{ textDecoration: "none", color: theme.palette.primary.main, marginLeft: "10px" }}
+                    >
+                      Register Now
+                    </Link>
                 <Button
                   variant="contained"
                   color="primary"

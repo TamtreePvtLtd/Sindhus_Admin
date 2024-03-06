@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Grid, IconButton, Container } from "@mui/material";
+import { Box, Typography, Grid, IconButton } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -72,7 +72,7 @@ function Menus() {
 
   return (
     <>
-      <Container>
+      <Box sx={{ marginLeft: "25px", marginRight: "25px" }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <PaginatedHeader
@@ -81,7 +81,7 @@ function Menus() {
               onRowsPerPageChange={setRowsPerPage}
               onPageChange={setPage}
               onAddClick={handleAddMenuClick}
-              addButtonText={"Add Menu"}
+              addButtonText={" + Add Menu"}
             />
           </Grid>
 
@@ -106,7 +106,7 @@ function Menus() {
                         Name
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ width: "20%" }}>
+                    <TableCell sx={{ width: "20%", textAlign: "center" }}>
                       <Typography
                         variant="subtitle1"
                         fontWeight="bold"
@@ -115,7 +115,7 @@ function Menus() {
                         MenuType
                       </Typography>
                     </TableCell>
-                    <TableCell width={"20%"}>
+                    <TableCell sx={{ width: "20%", textAlign: "center" }}>
                       <Typography
                         variant="subtitle1"
                         fontWeight="bold"
@@ -141,8 +141,10 @@ function Menus() {
                     menus?.items.map((menu) => (
                       <TableRow key={menu._id}>
                         <TableCell>{menu.title}</TableCell>
-                        <TableCell>{menu.menuType}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{ textAlign: "center" }}>
+                          {menu.menuType}
+                        </TableCell>
+                        <TableCell align="center">
                           {menu.subMenus &&
                             menu.subMenus.length > 0 &&
                             menu.subMenus?.map((subMenu, index) => (
@@ -165,7 +167,7 @@ function Menus() {
             </TableContainer>
           </Grid>
         </Grid>
-      </Container>
+      </Box>
       {menuDrawerOpen && (
         <MenuDrawer
           selectedMenu={selectedMenu}
