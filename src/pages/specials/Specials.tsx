@@ -1,75 +1,107 @@
-
-
 import React, { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {  useCreateSpecials } from "../../customRQHooks/Hooks";
-
+import { useCreateSpecials } from "../../customRQHooks/Hooks";
+import imageCompression from "browser-image-compression";
 
 function Specials() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<{ images: (string | File)[] }>({
+    images: [],
+  });
+
   const createProductSpecial = useCreateSpecials();
-   useEffect(() => {
-     // Retrieve image previews from local storage on component mount
-     const storedPreviews = localStorage.getItem("imagePreviews");
-     if (storedPreviews) {
-       setImagePreviews(JSON.parse(storedPreviews));
-     }
-   }, []);
 
-   useEffect(() => {
-     // Save image previews to local storage whenever it changes
-     localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
-   }, [imagePreviews]);
+  useEffect(() => {
+    const storedPreviews = localStorage.getItem("imagePreviews");
+    if (storedPreviews) {
+      setImagePreviews(JSON.parse(storedPreviews));
+    }
+  }, []);
 
-  const handleImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  useEffect(() => {
+    localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
+  }, [imagePreviews]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (!files || files.length === 0) return;
+    const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+    setImagePreviews((prevImages) => [...prevImages, ...urls]);
+
+    if (files) {
+      const filesArray: File[] = Array.from(files);
+      const validFiles = filesArray.filter(
+        (file) =>
+          file.type === "image/png" ||
+          file.type === "image/jpeg" ||
+          file.type === "image/jpg"
+      );
+
+      const compressedFiles = await Promise.all(
+        validFiles.map((file) => handleCompressFile(file))
+      );
+
+      const compressedValidFiles = compressedFiles.filter(
+        (compressedFile) => compressedFile !== undefined
+      ) as File[];
+
+      setImages((prevProduct) => ({
+        ...prevProduct,
+        images: [...prevProduct.images, ...compressedValidFiles],
+      }));
+    } else {
+      console.log(
+        "Invalid file format. Please select a JPEG or PNG or JPG file."
+      );
+    }
+  };
+
+  const handleSave = async (e: any) => {
+    e.preventDefault();
+    const formData = new FormData();
+    console.log("images", images.images);
+
+    images.images.forEach((image, index) => {
+      formData.append(`image_${index}`, image);
+    });
+
     try {
-      const files: FileList | null = event.target.files;
-
-      if (files) {
-        const imageFiles: File[] = Array.from(files);
-        const previews: string[] = [];
-
-        for (let i = 0; i < imageFiles.length; i++) {
-          const file = imageFiles[i];
-          const preview = URL.createObjectURL(file); // Generate preview URL
-          previews.push(preview);
-        }
-
-        setImagePreviews((prevPreviews) => [...prevPreviews, ...previews]);
-        setImages((prevImages) => [...prevImages, ...imageFiles]);
-      }
+      console.log("formData", formData);
+      const response = await createProductSpecial.mutate(formData);
+      console.log("Images uploaded successfully", response);
+      setImages({ images: [] });
     } catch (error) {
       console.error("Error uploading images:", error);
     }
   };
 
-  const handleSave = async () => {
+  async function handleCompressFile(imageFile: File): Promise<File> {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+
     try {
-      if (images.length > 0) {
-        const imageData = images.map((image) => ({
-          data: URL.createObjectURL(image),
-        }));
+      const compressedBlob = await imageCompression(imageFile, options);
+      const compressedFile = new File([compressedBlob], imageFile.name, {
+        type: "image/jpeg",
+        lastModified: Date.now(),
+      });
 
-await createProductSpecial.mutateAsync({ images: imageData });
-
-        console.log("Images uploaded successfully");
-
-        setImages([]);
-      }
+      return compressedFile;
     } catch (error) {
-      console.error("Error uploading images:", error);
+      console.error("Error compressing image:", error);
+      throw error; 
     }
-  };
+  }
 
   const handleCancel = () => {
     setImagePreviews([]);
-    setImages([]);
+    setImages({ images: [] });
   };
-  console.log("imagePreviews", imagePreviews);
 
   return (
     <>
@@ -89,6 +121,7 @@ await createProductSpecial.mutateAsync({ images: imageData });
               component="label"
               variant="outlined"
               startIcon={<AddIcon />}
+              sx={{ color: "#038265" }}
             >
               Upload Images
               <input
@@ -122,7 +155,12 @@ await createProductSpecial.mutateAsync({ images: imageData });
             onClick={handleSave}
             variant="contained"
             color="primary"
-            style={{ marginRight: "8px" }}
+            sx={{
+              marginRight: "8px",
+              "&:hover": {
+                backgroundColor: "#038265",
+              },
+            }}
           >
             Save
           </Button>
@@ -130,7 +168,12 @@ await createProductSpecial.mutateAsync({ images: imageData });
             onClick={handleCancel}
             variant="contained"
             color="primary"
-            style={{ marginRight: "8px" }}
+            sx={{
+              marginRight: "8px",
+              "&:hover": {
+                backgroundColor: "#038265",
+              },
+            }}
           >
             Cancel
           </Button>

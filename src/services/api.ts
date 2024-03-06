@@ -1,13 +1,11 @@
+import { ILoginFormInputs, ILoginResponse, ISignUp, IUser } from "../interface/customer";
 import { IMenu } from "../interface/menus";
 import {
   ICateringEnquiries,
-  ILoginFormInputs,
-  ILoginResponse,
   IDiningOutMenuData,
   IPaginationResult,
   IProduct,
   IProductWithMenu,
-  IUser,
   IProductPageMenuDropDown,
 } from "../interface/types";
 import {
@@ -84,6 +82,7 @@ const createProduct = async (formData) => {
       "/product/createProduct",
       formData
     );
+
     return response.data;
   } catch (error) {
     var message = (error as Error).message;
@@ -179,6 +178,18 @@ const updateDiningOutProduct = async (
   }
 };
 
+const SignupCredentials = async (credential: ISignUp) => {
+  try {
+    const response = await httpWithCredentials.post<ILoginResponse>(
+      "/customer/signup",
+      credential
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const adminLogin = async (credential: ILoginFormInputs) => {
   try {
     const response = await httpWithCredentials.post<ILoginResponse>(
@@ -190,6 +201,8 @@ const adminLogin = async (credential: ILoginFormInputs) => {
     throw error;
   }
 };
+
+
 
 const isAuthorized = async () => {
   try {
@@ -251,14 +264,14 @@ const updateMenu = async (updateMenu: FormData) => {
   }
 };
 
-const createSpecials = async (imageData) => {
+const createSpecials = async (formData) => {
   try {
-    const response = await httpWithoutCredentials.post<string>(
-      "/specials/createSpecials",
-      imageData
+    const response = await httpWithMultipartFormData.post<string[]>(
+      "specials/createSpecials",
+      formData
     );
-    console.log(response.data);
-    
+    console.log("response", response.data);
+
     return response.data;
   } catch (error) {
     throw error;
@@ -276,25 +289,38 @@ const deleteMenu = async (menuId: string) => {
     throw new Error(message);
   }
 };
+const changeisResponseStatus = async (enquiryId: any) => {
+  try {
+    const response = await httpWithCredentials.put(
+      `/enquiry/changeEnquiryisResponseStatus/${enquiryId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return "Internal server error";
+  }
+};
 
 export {
-  getAllEnquiries,
-  getAllMenus,
-  getProductsByMenuId,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  getAllMenusForAddProduct,
-  adminLogin,
-  isAuthorized,
-  logOut,
-  getAllDiningOutMenuWithProducts,
-  createDiningOutProduct,
-  getAllDiningOutId,
-  updateDiningOutProduct,
-  deleteMenu,
-  createMenu,
-  deleteEnquiry,
-  updateMenu,
-  createSpecials,
+    getAllEnquiries,
+    getAllMenus,
+    getProductsByMenuId,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+    getAllMenusForAddProduct,
+    adminLogin,
+    isAuthorized,
+    logOut,
+    SignupCredentials,
+    getAllDiningOutMenuWithProducts,
+    createDiningOutProduct,
+    getAllDiningOutId,
+    updateDiningOutProduct,
+    deleteMenu,
+    createMenu,
+    deleteEnquiry,
+    updateMenu,
+    createSpecials,
+    changeisResponseStatus
 };

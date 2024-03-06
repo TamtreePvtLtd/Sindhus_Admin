@@ -62,6 +62,7 @@ function Login() {
       const response = await adminLogin(data);
       if (response.data) {
         updateUserData(response.data);
+        updateSnackBarState(true, "Login Successfully", "success")
         navigate(paths.ROOT);
         setShowSnackbar(true)
           updateSnackBarState(true, "Login Successfully", "success")
@@ -99,6 +100,8 @@ function Login() {
     checkAuthorization();
   }, []);
 
+
+
   return (
     <>
       {isLoading != null && !isLoading && (
@@ -134,7 +137,7 @@ function Login() {
                     fontFamily: "Sindhus-Logo-Font",
                     fontWeight: 800,
                     fontSize: "2rem",
-                    color: "#57ccb5",
+                    color: "#038265",
                   }}
                 >
                   SINDHU'S
@@ -174,7 +177,6 @@ function Login() {
                     mt: 0,
                     paddingBottom: "10px",
                   }}
-                  autoComplete="new"
                   required
                 />
                  <Typography>
@@ -210,7 +212,12 @@ function Login() {
                 >
                   Forgot Password?
                 </span>
-
+                    <Link
+                      to={paths.REGISTER}
+                      style={{ textDecoration: "none", color: theme.palette.primary.main, marginLeft: "10px" }}
+                    >
+                      Register Now
+                    </Link>
                 <Button
                   variant="contained"
                   color="primary"

@@ -32,10 +32,24 @@ function CommonSaveDialog(props: IProps) {
           <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogclose} variant="outlined" color="primary">
+          <Button
+            onClick={onDialogclose}
+            variant="outlined"
+            sx={{
+              "&:hover": { backgroundColor: "transparent" },
+              color: "#038265",
+            }}
+          >
             Cancel
           </Button>
-          <Button onClick={onSave} variant="contained">
+          <Button
+            onClick={onSave}
+            variant="contained"
+            sx={{
+              backgroundColor: "#038265",
+              "&:hover": { backgroundColor: "#038265" },
+            }}
+          >
             Save
           </Button>
         </DialogActions>

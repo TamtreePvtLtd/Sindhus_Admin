@@ -116,7 +116,7 @@ function ProductsPage() {
 
   return (
     <>
-      <Container sx={{ py: 2 }}>
+      <Box sx={{ py: 2, marginLeft: "25px", marginRight:"25px"}}>
         <Box
           sx={{
             width: "100%",
@@ -164,7 +164,12 @@ function ProductsPage() {
                 />
               ))}
           </Box>
-          <Button variant="outlined" size="small" onClick={clearSearch}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={clearSearch}
+            sx={{ color: "#038265" }}
+          >
             Clear Search
           </Button>
         </Box>
@@ -316,9 +321,18 @@ function ProductsPage() {
                       >
                         {item.description}
                       </TableCell>
-                      <TableCell align="right" sx={{ textAlign: "center" }}>
-                        ${item.price}
+                      <TableCell style={{ textAlign: "center" }}>
+                        {item.itemSizeWithPrice &&
+                          item.itemSizeWithPrice.length > 0 &&
+                          item.itemSizeWithPrice.map((qty, index) => (
+                            <Box key={index} m={1}>
+                              <>
+                                {qty.size} - ${qty.price}
+                              </>
+                            </Box>
+                          ))}
                       </TableCell>
+
                       <TableCell style={{ textAlign: "center" }}>
                         {item.cateringMenuSizeWithPrice.length > 0 &&
                           item.cateringMenuSizeWithPrice.map((qty, index) => (
@@ -370,7 +384,7 @@ function ProductsPage() {
             </Table>
           </TableContainer>
         </Box>
-      </Container>
+      </Box>
       {deleteDialogOpen && (
         <CommonDeleteDialog
           title="Delete Product"

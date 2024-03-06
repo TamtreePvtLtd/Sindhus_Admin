@@ -197,6 +197,15 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     }
   };
 
+  const handleAddItemSize = () => {
+    const updatedProduct = {
+      ...product,
+      itemSizeWithPrice: [...product.itemSizeWithPrice, { size: "", price: 0 }],
+    };
+
+    setProduct(updatedProduct);
+  };
+
   const handleAddCateringSize = () => {
     const updatedProduct = {
       ...product,
@@ -296,14 +305,21 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append("title", product.title);
     formData.append("description", product.description);
     formData.append("netWeight", product.netWeight.toString());
-    formData.append("price", String(product.price));
+    // formData.append("price", String(product.price));
     formData.append("menu", JSON.stringify(product.menu));
+
     product.images.forEach((image, index) => {
       formData.append(`image_${index}`, image);
     });
+
     formData.append(
       "cateringMenuSizeWithPrice",
       JSON.stringify(product.cateringMenuSizeWithPrice)
+    );
+
+    formData.append(
+      "itemSizeWithPrice",
+      JSON.stringify(product.itemSizeWithPrice)
     );
     formData.append(
       "dailyMenuSizeWithPrice",
@@ -317,6 +333,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     formData.append("producId", product._id ?? "");
     formData.append("servingSizeDescription", product.servingSizeDescription);
     formData.append("ingredients", product.ingredients);
+
     try {
       if (isAdd) {
         productCreateMutation.mutate(formData, {
@@ -361,7 +378,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
         }
       }
 
-      setShowPriceField(!!selectedProduct.price);
+      setShowPriceField(!!selectedProduct.itemSizeWithPrice);
       setShowCateringSizeField(
         selectedProduct.cateringMenuSizeWithPrice.length > 0
       );
@@ -395,6 +412,35 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     }));
 
     console.log("onclick", index);
+  };
+
+  const handleSizeChange = (index, newSize) => {
+    const updatedSizes = [...product.itemSizeWithPrice];
+    updatedSizes[index].size = newSize;
+    setProduct((prevState) => ({
+      ...prevState,
+      itemSizeWithPrice: updatedSizes,
+    }));
+  };
+
+  // Function to handle price change
+  const handlePriceChange = (index, newPrice) => {
+    const updatedPrices = [...product.itemSizeWithPrice];
+    updatedPrices[index].price = newPrice;
+    setProduct((prevState) => ({
+      ...prevState,
+      itemSizeWithPrice: updatedPrices,
+    }));
+  };
+
+  // Function to handle deletion of item size
+  const handleDeleteItemSize = (index) => {
+    const updatedSizes = [...product.itemSizeWithPrice];
+    updatedSizes.splice(index, 1);
+    setProduct((prevState) => ({
+      ...prevState,
+      itemSizeWithPrice: updatedSizes,
+    }));
   };
 
   return (
@@ -475,52 +521,51 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                           aria-controls="panel1a-content"
                           id="panel1a-header"
                         >
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {/* <KeyboardDoubleArrowRightIcon fontSize="small" /> */}
-                          <FormGroup
-                            sx={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                            }}
-                          >
-                           
-                            <FormControlLabel
-                              value={data._id}
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{
-                                    "& .MuiCheckbox-root": {
-                                      borderWidth: 0.5,
-                                      borderStyle: "dotted",
-                                    },
-                                  }}
-                                  checked={product.menu.mainMenuIds.includes(
-                                    data._id
-                                  )}
-                                  onChange={(e) => {
-                                    const isChecked = e.target.checked;
-                                    setProduct((prevState) => ({
-                                      ...prevState,
-                                      menu: {
-                                        ...prevState.menu,
-                                        mainMenuIds: isChecked
-                                          ? [
-                                              ...prevState.menu.mainMenuIds,
-                                              data._id,
-                                            ]
-                                          : prevState.menu.mainMenuIds.filter(
-                                              (id) => id !== data._id
-                                            ),
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            {/* <KeyboardDoubleArrowRightIcon fontSize="small" /> */}
+                            <FormGroup
+                              sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <FormControlLabel
+                                value={data._id}
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    sx={{
+                                      "& .MuiCheckbox-root": {
+                                        borderWidth: 0.5,
+                                        borderStyle: "dotted",
                                       },
-                                    }));
-                                  }}
-                                />
-                              }
-                              label={data.title}
-                            />
+                                    }}
+                                    checked={product.menu.mainMenuIds.includes(
+                                      data._id
+                                    )}
+                                    onChange={(e) => {
+                                      const isChecked = e.target.checked;
+                                      setProduct((prevState) => ({
+                                        ...prevState,
+                                        menu: {
+                                          ...prevState.menu,
+                                          mainMenuIds: isChecked
+                                            ? [
+                                                ...prevState.menu.mainMenuIds,
+                                                data._id,
+                                              ]
+                                            : prevState.menu.mainMenuIds.filter(
+                                                (id) => id !== data._id
+                                              ),
+                                        },
+                                      }));
+                                    }}
+                                  />
+                                }
+                                label={data.title}
+                              />
                             </FormGroup>
-                            </Box>
+                          </Box>
                         </AccordionSummary>
                         {data.subMenus.length > 0 && (
                           <AccordionDetails sx={{ marginLeft: "40px" }}>
@@ -707,33 +752,150 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     />
                   </FormGroup>
                 </Box>
+                {/* {showPriceField && (
+                  <>
+                    <Grid container spacing={3} mb={1}>
+                      <Grid item md={5}>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: "15px",
+                            }}
+                          >
+                            Size
+                          </Typography>
+                          <TextField
+                            sx={{ width: "70%" }}
+                            size="small"
+                            // value={product.size}
+                            onChange={(event) =>
+                              setProduct((prevState) => ({
+                                ...prevState,
+                                size: event.target.value,
+                              }))
+                            }
+                          />
+                        </Box>
+                      </Grid>
+                      <Grid item md={5}>
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontSize: "15px",
+                            }}
+                          >
+                            Price($)
+                          </Typography>
+                          <TextField
+                         
+                            
+                            sx={{ width: "70%" }}
+                            size="small"
+                            value={product.price}
+                            onChange={(event) => {
+                              if (/^\d*\.?\d*$/.test(event.target.value)) {
+                                setProduct((prevState) => ({
+                                  ...prevState,
+                                  price: event.target.value,
+                                }));
+                              }
+                            }}
+                            inputProps={{
+                              pattern: "^\\d*\\.?\\d*$",
+                            }}
+                          />
+                        </Box>
+                      </Grid>
+                      <Grid
+                        item
+                        md={2}
+                        sx={{ display: "flex", alignItems: "center",mt:"20px" }}
+                      >
+                        <Box>
+                          <Button variant="contained" size="small">
+                            <AddIcon /> Add
+                          </Button>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </>
+                )} */}
                 {showPriceField && (
-                  <Box mt={3}>
-                    <Typography
-                      sx={{
-                        marginRight: "20px",
-                      }}
-                      variant="subtitle1"
+                  <>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                      mt={2}
                     >
-                      Price($)
-                    </Typography>
-                    <TextField
-                      size="small"
-                      value={product.price}
-                      onChange={(e) => {
-                        if (/^\d*\.?\d*$/.test(e.target.value)) {
-                          setProduct((prevState) => ({
-                            ...prevState,
-                            price: e.target.value,
-                          }));
-                        }
-                      }}
-                      inputProps={{
-                        pattern: "^\\d*\\.?\\d*$",
-                      }}
-                    />
-                  </Box>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ marginRight: "5px" }}
+                      >
+                        Item Price
+                      </Typography>
+                      <Button variant="contained" onClick={handleAddItemSize}>
+                        <AddIcon /> Add
+                      </Button>
+                    </Box>
+                    {product.itemSizeWithPrice.length > 0 &&
+                      product.itemSizeWithPrice.map((value, index) => (
+                        <Grid container spacing={3} mb={1} key={index}>
+                          <Grid item md={5}>
+                            <Box>
+                              <Typography
+                                sx={{
+                                  fontSize: "15px",
+                                }}
+                              >
+                                Size
+                              </Typography>
+                              <TextField
+                                sx={{ width: "70%" }}
+                                size="small"
+                                value={value.size} // Accessing size at the current index
+                                onChange={(event) =>
+                                  handleSizeChange(index, event.target.value)
+                                }
+                              />
+                            </Box>
+                          </Grid>
+                          <Grid item md={5}>
+                            <Box>
+                              <Typography
+                                sx={{
+                                  fontSize: "15px",
+                                }}
+                              >
+                                Price$
+                              </Typography>
+                              <TextField
+                                sx={{ width: "70%" }}
+                                size="small"
+                                value={value.price} // Accessing price at the current index
+                                onChange={(event) =>
+                                  handlePriceChange(index, event.target.value)
+                                }
+                                inputProps={{
+                                  pattern: "^\\d*\\.?\\d*$",
+                                }}
+                              />
+                            </Box>
+                          </Grid>
+                          <Grid
+                            item
+                            md={2}
+                            sx={{ display: "flex", alignItems: "flex-end" }}
+                          >
+                            <IconButton
+                              onClick={() => handleDeleteItemSize(index)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Grid>
+                        </Grid>
+                      ))}
+                  </>
                 )}
+
                 {showCateringSizeField && (
                   <>
                     <Box
@@ -898,7 +1060,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                 )}
 
                 <Box mt={2}>
-                  <Typography variant="subtitle1" sx={{ marginRight: "5px" }}>
+                  {/* <Typography variant="subtitle1" sx={{ marginRight: "5px" }}>
                     Ingredients
                   </Typography>
                   <TextField
@@ -914,7 +1076,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                         ingredients: e.target.value,
                       }))
                     }
-                  />
+                  /> */}
                 </Box>
               </Grid>
             </Grid>
@@ -923,12 +1085,20 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
             <Box mr={3} mb={1} sx={{ position: "fixed", bottom: 0, right: 0 }}>
               <Button
                 variant="outlined"
-                sx={{ marginRight: "5px" }}
+                sx={{ marginRight: "5px", color: "#038265" }}
                 onClick={handleClose}
               >
                 Cancel
               </Button>
-              <Button variant="contained" onClick={handleSaveProduct}>
+              <Button
+                variant="contained"
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#038265",
+                  },
+                }}
+                onClick={handleSaveProduct}
+              >
                 Save
               </Button>
             </Box>

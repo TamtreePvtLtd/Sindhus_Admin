@@ -10,6 +10,7 @@ import {
   MenuItem,
   Toolbar,
   Typography,
+  Tooltip, // Import Tooltip component
 } from "@mui/material";
 
 import { useTheme } from "@mui/material/styles";
@@ -50,8 +51,6 @@ function Navbar() {
   const { user, updateUserData } = useAuthContext();
   const { updateSnackBarState } = useSnackBar();
 
-  console.log(user);
-
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -87,7 +86,7 @@ function Navbar() {
           component="nav"
           sx={{
             backgroundColor: "white",
-            color: "#57ccb5",
+            color: "#038265",
           }}
         >
           <Toolbar>
@@ -108,7 +107,7 @@ function Navbar() {
                 sx={{
                   padding: "10px",
                   fontWeight: 800,
-                  color: theme.palette.primary.main,
+                  color: "#038265",
                   fontSize: "2rem",
                   fontFamily: "Sindhus-Logo-Font",
                   cursor: "pointer",
@@ -140,7 +139,12 @@ function Navbar() {
                           alignItems: "center",
                           fontSize: "large",
                           textTransform: "none",
-                          color: "black",
+                          backgroundColor:
+                            location.pathname === menu.link
+                              ? theme.palette.primary.main
+                              : "transparent",
+                          color:
+                            location.pathname === menu.link ? "white" : "black",
                           "&:hover": {
                             backgroundColor: theme.palette.primary.main,
                             color: "white",
@@ -164,23 +168,27 @@ function Navbar() {
             </Box>
 
             {user && (
-              <IconButton
-                onClick={handleMenuClick}
-                size="small"
-                aria-controls={open ? "account-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-              >
-                <Avatar
-                  sx={{
-                    width: 28,
-                    height: 28,
-                    backgroundColor: "#57ccb5",
-                  }}
-                >
-                  {user?.name ? user.name.toUpperCase()[0] : ""}
-                </Avatar>
-              </IconButton>
+              <Box sx={{ marginLeft: "auto" }}>
+                <Tooltip title="Logout">
+                  <IconButton
+                    onMouseEnter={handleMenuClick}
+                    size="small"
+                    aria-controls={open ? "account-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        backgroundColor: "#57ccb5",
+                      }}
+                    >
+                      {user?.name ? user.name.toUpperCase()[0] : ""}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+              </Box>
             )}
           </Toolbar>
         </AppBar>
