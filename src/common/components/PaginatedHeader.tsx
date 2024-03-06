@@ -25,7 +25,7 @@ function PaginatedHeader(props: IProps) {
   const theme = useTheme();
 
   return (
-    <Box>
+    <Box sx={{ marginLeft: "25px", marginRight: "25px" }}>
       <Grid container alignItems={"center"} my={2}>
         <Grid item xs={12} md={4}>
           <Box display={"flex"} gap={3}>
@@ -48,7 +48,7 @@ function PaginatedHeader(props: IProps) {
                 variant="contained"
                 size="small"
                 onClick={props.onAddClick}
-                sx={{ marginLeft: "72rem", minWidth: "130px", height: "35px" }}
+                sx={{ marginLeft: "69rem", minWidth: "130px", height: "35px" }}
               >
                 {props.addButtonText}
               </Button>
@@ -93,7 +93,7 @@ function PaginatedHeader(props: IProps) {
                   color: "#FFFFFF",
                 },
                 ...(props.pagetitle === "Menus" && {
-                  marginRight: "40rem",
+                  marginRight: "35rem",
                 }),
               }}
             />

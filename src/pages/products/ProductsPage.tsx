@@ -116,7 +116,7 @@ function ProductsPage() {
 
   return (
     <>
-      <Box sx={{ py: 2, marginLeft: "25px", marginRight:"25px"}}>
+      <Box sx={{ py: 2, marginLeft: "40px", marginRight:"40px"}}>
         <Box
           sx={{
             width: "100%",
