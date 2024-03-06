@@ -110,7 +110,7 @@ function CateringEnquiries() {
 
   return (
     <>
-      <Box sx={{ marginLeft: "25px", marginRight: "25px" }}>
+      <Box padding={"20px"}>
         <PaginatedHeader
           pagetitle="Enquires"
           pageInfo={enquiryData?.pageInfo}

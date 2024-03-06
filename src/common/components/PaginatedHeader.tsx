@@ -74,27 +74,28 @@ function PaginatedHeader(props: IProps) {
                   backgroundColor: "#038265",
                   color: "#FFFFFF",
                 },
-                ...(props.pagetitle === "Menus" && {}),
               }}
             />
           </Box>
         </Grid>
-        <Grid>
-          {!!props.addButtonText && (
-            <Button
-              variant="contained"
-              size="small"
-              onClick={props.onAddClick}
-              sx={{
-                height: "36px",
-                width: "130px",
-                marginRight: theme.spacing(5),
-              }}
-            >
-              {props.addButtonText}
-            </Button>
-          )}
-        </Grid>
+        {props.addButtonText && (
+          <Grid>
+            {!!props.addButtonText && (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={props.onAddClick}
+                sx={{
+                  height: "36px",
+                  width: "130px",
+                  marginRight: theme.spacing(5),
+                }}
+              >
+                {props.addButtonText}
+              </Button>
+            )}
+          </Grid>
+        )}
       </Grid>
     </Box>
   );
