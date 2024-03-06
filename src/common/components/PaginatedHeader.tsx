@@ -25,16 +25,17 @@ function PaginatedHeader(props: IProps) {
   const theme = useTheme();
 
   return (
-    <Box>
-      <Grid container alignItems={"center"} my={2}>
+    <Box sx={{ marginLeft: "25px" }}>
+      <Grid
+        alignItems={"center"}
+        display={"flex"}
+        my={2}
+        justifyContent={"space-between"}
+        alignContent={"center"}
+      >
         <Grid item xs={12} md={4}>
-          <Box display={"flex"} gap={3}>
-            <Typography
-              sx={{ mb: 0 }}
-              variant="h4"
-              gutterBottom
-              component="div"
-            >
+          <Box>
+            <Typography sx={{ mb: 0 }} variant="h4">
               {props.pagetitle}&nbsp;
               <Box
                 sx={{ fontWeight: 800, color: "#038265" }}
@@ -43,36 +44,17 @@ function PaginatedHeader(props: IProps) {
                 ({props.pageInfo?.totalItems})
               </Box>
             </Typography>
-            {!!props.addButtonText && (
-              <Button
-                variant="contained"
-                size="small"
-                onClick={props.onAddClick}
-                sx={{ marginLeft: "72rem", minWidth: "130px", height: "35px" }}
-              >
-                {props.addButtonText}
-              </Button>
-            )}
           </Box>
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={8}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-          }}
-        >
+        <Grid item xs={12} md={8}>
           <Box display="flex" alignItems="center">
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-              <InputLabel id="take-count-label">Page</InputLabel>
+              <InputLabel id="take-count-label">Page Count</InputLabel>
               <Select
-                labelId="take-count"
-                id="take-count"
+                labelId="Page Count"
+                id="Page Count"
                 value={props.pageInfo?.pageSize ?? 10}
-                label="Page"
+                label="Page Count"
                 onChange={(_e) => {
                   props.onRowsPerPageChange(Number(_e.target.value));
                   props.onPageChange(1);
@@ -92,12 +74,26 @@ function PaginatedHeader(props: IProps) {
                   backgroundColor: "#038265",
                   color: "#FFFFFF",
                 },
-                ...(props.pagetitle === "Menus" && {
-                  marginRight: "40rem",
-                }),
+                ...(props.pagetitle === "Menus" && {}),
               }}
             />
           </Box>
+        </Grid>
+        <Grid>
+          {!!props.addButtonText && (
+            <Button
+              variant="contained"
+              size="small"
+              onClick={props.onAddClick}
+              sx={{
+                height: "36px",
+                width: "130px",
+                marginRight: theme.spacing(5),
+              }}
+            >
+              {props.addButtonText}
+            </Button>
+          )}
         </Grid>
       </Grid>
     </Box>
