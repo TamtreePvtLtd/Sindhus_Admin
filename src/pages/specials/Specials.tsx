@@ -26,22 +26,26 @@ function Specials() {
     number | null
   >(null);
 
-  let { data: imagePreviews, isLoading } = useGetSpecials();
+  let { data: imagePreviews, isLoading} = useGetSpecials();
 
   useEffect(() => {
-    const storedPreviews = localStorage.getItem("imagePreviews");
+    let storedPreviews = localStorage.getItem("imagePreviews");
     if (storedPreviews) {
       try {
         const parsedPreviews = JSON.parse(storedPreviews);
-        setImagePreview(parsedPreviews.data); // Assuming 'data' holds the array of images
+        setImagePreview(parsedPreviews.data);
       } catch (error) {
         console.error("Error parsing stored previews:", error);
       }
+    } else {
+      setImagePreview([]);
+      console.log("No stored previews found in localStorage.");
     }
   }, []);
 
   useEffect(() => {
-    // Save image previews to local storage whenever it changes
+    setImagePreview([]);
+
     localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
   }, [imagePreviews]);
 
@@ -57,7 +61,7 @@ function Specials() {
 
         for (let i = 0; i < imageFiles.length; i++) {
           const file = imageFiles[i];
-          const preview = URL.createObjectURL(file); // Generate preview URL
+          const preview = URL.createObjectURL(file);
           previews.push(preview);
         }
 
