@@ -54,7 +54,7 @@ const defaultValues = {
 const menuTypes: IOptionTypes[] = [
   { id: "1", label: "Snacks", value: "1" },
   { id: "3", label: "Drinks", value: "3" },
-  { id: "2", label: "Others", value: "2" },
+  { id: "2", label: "Food", value: "2" },
 ];
 
 function MenuDrawer(props: IProps) {

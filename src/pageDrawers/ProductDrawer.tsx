@@ -69,6 +69,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
   const [showPriceField, setShowPriceField] = useState(false);
   const [showCateringSizeField, setShowCateringSizeField] = useState(false);
   const [showDailyMenuSizeField, setShowDailyMenuSizeField] = useState(false);
+  const [error,setError]=useState('')
 
   var updateProductMutation = useUpdateProduct();
   var productCreateMutation = useCreateProduct();
@@ -443,6 +444,19 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     }));
   };
 
+  const handleTitleChange = (e) => {
+    const { value } = e.target;
+    if (value.length <= 18) {
+      setProduct((prevState) => ({
+        ...prevState,
+        title: value,
+      }));
+      setError('');
+    } else {
+      setError('Title must be 18 characters or fewer.');
+    }
+  };
+
   return (
     <>
       <Dialog
@@ -481,13 +495,13 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     size="small"
                     fullWidth
                     value={product.title}
-                    onChange={(e) =>
-                      setProduct((prevState) => ({
-                        ...prevState,
-                        title: e.target.value,
-                      }))
-                    }
+                    onChange={handleTitleChange}
                   />
+                    {error && (
+              <Typography variant="body2" color="error">
+                {error}
+              </Typography>
+            )}
                 </Box>
                 <Box sx={{ margin: "5px 0" }}>
                   <Typography variant="subtitle1">Description</Typography>
