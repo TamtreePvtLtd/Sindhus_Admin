@@ -377,7 +377,7 @@ function DiningOutMenu() {
             display: "flex",
             justifyContent: "flex-end",
             pb: 3,
-            gap: 3,
+            gap: 2,
           }}
         >
           <Button
