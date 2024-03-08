@@ -115,27 +115,17 @@ function ProductsPage() {
   };
 
   return (
-    <>
-      <Box sx={{ py: 2, marginLeft: "40px", marginRight:"40px"}}>
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="h4" gutterBottom component="div">
-            Products
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddProduct}
-          >
-            + Add Product
-          </Button>
-        </Box>
+
+    <Box sx={{ py: 2, marginLeft: "40px", marginRight: "40px" }}>
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+
         <Box sx={{ display: "flex" }}>
           <Autocomplete
             id="combo-box-demo"
@@ -173,218 +163,240 @@ function ProductsPage() {
             Clear Search
           </Button>
         </Box>
-        <Box mt={2}>
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: "bolder",
-                      fontSize: "large",
-                      width: "10%",
-                    }}
+
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAddProduct}
+        >
+          + Add Product
+        </Button>
+      </Box>
+
+      <Box mt={2}>
+        <TableContainer component={Paper}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "10%",
+                    background: theme => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+
                   >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="primary"
-                    >
-                      Image
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: "bolder",
-                      fontSize: "large",
-                      width: "15%",
-                    }}
+                    Image
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "15%",
+                    background: theme => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+
                   >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="primary"
-                    >
-                      Title
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: "bolder",
-                      fontSize: "large",
-                      width: "20%",
-                    }}
+                    Title
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "20%",
+                    background: theme => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+
                   >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="primary"
-                    >
-                      Description
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: "bolder",
-                      fontSize: "large",
-                      width: "10%",
-                    }}
+                    Description
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "10%",
+                    background: theme => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
                   >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="primary"
+                    Price
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "17%",
+                    background: theme => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
                     >
-                      Price
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: "bolder",
-                      fontSize: "large",
-                      width: "17%",
-                    }}
+                    Catering Size-Price
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "17%",
+                    background: theme => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    >
+                    DailyMenu Size-Price
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "10%",
+                    background: theme => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+
                   >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="primary"
+                    Action
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data &&
+                data.length > 0 &&
+                data.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell align="right" sx={{ textAlign: "center" }}>
+                      <img
+                        src={
+                          typeof item.posterURL === "string"
+                            ? item.posterURL
+                            : undefined
+                        }
+                        alt={item.title}
+                        height="50px"
+                        width="50px"
+                      />
+                    </TableCell>
+                    <TableCell align="right" sx={{ textAlign: "center" }}>
+                      {item.title}
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
+                        textAlign: "left",
+                        maxWidth: "50px",
+                      }}
                     >
-                      Catering Size-Price
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: "bolder",
-                      fontSize: "large",
-                      width: "17%",
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="primary"
-                    >
-                      DailyMenu Size-Price
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontWeight: "bolder",
-                      fontSize: "large",
-                      width: "10%",
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      color="primary"
-                    >
-                      Action
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data &&
-                  data.length > 0 &&
-                  data.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell align="right" sx={{ textAlign: "center" }}>
-                        <img
-                          src={
-                            typeof item.posterURL === "string"
-                              ? item.posterURL
-                              : undefined
-                          }
-                          alt={item.title}
-                          height="50px"
-                          width="50px"
-                        />
-                      </TableCell>
-                      <TableCell align="right" sx={{ textAlign: "center" }}>
-                        {item.title}
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        sx={{
-                          textAlign: "left",
-                          maxWidth: "50px",
-                        }}
-                      >
-                        {item.description}
-                      </TableCell>
-                      <TableCell style={{ textAlign: "center" }}>
-                        {item.itemSizeWithPrice &&
-                          item.itemSizeWithPrice.length > 0 &&
-                          item.itemSizeWithPrice.map((qty, index) => (
+                      {item.description}
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      {item.itemSizeWithPrice &&
+                        item.itemSizeWithPrice.length > 0 &&
+                        item.itemSizeWithPrice.map((qty, index) => (
+                          <Box key={index} m={1}>
+                            <>
+                              {qty.size} - ${qty.price}
+                            </>
+                          </Box>
+                        ))}
+                    </TableCell>
+
+                    <TableCell style={{ textAlign: "center" }}>
+                      {item.cateringMenuSizeWithPrice.length > 0 &&
+                        item.cateringMenuSizeWithPrice.map((qty, index) => (
+                          <>
                             <Box key={index} m={1}>
                               <>
                                 {qty.size} - ${qty.price}
                               </>
                             </Box>
-                          ))}
-                      </TableCell>
-
-                      <TableCell style={{ textAlign: "center" }}>
-                        {item.cateringMenuSizeWithPrice.length > 0 &&
-                          item.cateringMenuSizeWithPrice.map((qty, index) => (
-                            <>
-                              <Box key={index} m={1}>
-                                <>
-                                  {qty.size} - ${qty.price}
-                                </>
-                              </Box>
-                              {index <
-                                item.cateringMenuSizeWithPrice.length - 1 && (
+                            {index <
+                              item.cateringMenuSizeWithPrice.length - 1 && (
                                 <Divider />
                               )}
-                            </>
-                          ))}
-                      </TableCell>
-                      <TableCell style={{ textAlign: "center" }}>
-                        {item.dailyMenuSizeWithPrice.length > 0 &&
-                          item.dailyMenuSizeWithPrice.map((qty, index) => (
-                            <>
-                              <Box key={index} m={1}>
-                                <>
-                                  {qty.size} - ${qty.price}
-                                </>
-                              </Box>
-                              {index <
-                                item.dailyMenuSizeWithPrice.length - 1 && (
+                          </>
+                        ))}
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      {item.dailyMenuSizeWithPrice.length > 0 &&
+                        item.dailyMenuSizeWithPrice.map((qty, index) => (
+                          <>
+                            <Box key={index} m={1}>
+                              <>
+                                {qty.size} - ${qty.price}
+                              </>
+                            </Box>
+                            {index <
+                              item.dailyMenuSizeWithPrice.length - 1 && (
                                 <Divider />
                               )}
-                            </>
-                          ))}
-                      </TableCell>
+                          </>
+                        ))}
+                    </TableCell>
 
-                      <TableCell align="right" sx={{ textAlign: "center" }}>
-                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                          <IconButton>
-                            <EditIcon onClick={() => handleEditProduct(item)} />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => handleDeleteDialogOpen(item)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                    <TableCell align="right" sx={{ textAlign: "center" }}>
+                      <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <IconButton>
+                          <EditIcon onClick={() => handleEditProduct(item)} />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleDeleteDialogOpen(item)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
+
       {deleteDialogOpen && (
         <CommonDeleteDialog
           title="Delete Product"
@@ -402,7 +414,7 @@ function ProductsPage() {
           isAdd={isAdd}
         />
       )}
-    </>
+    </Box>
   );
 }
 

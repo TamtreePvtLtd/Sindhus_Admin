@@ -27,6 +27,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CommonDeleteDialog from "../../common/components/CommonDeleteDialog";
 import { SnackbarSeverityEnum } from "../../enums/SnackbarSeverityEnums";
 import { useSnackBar } from "../../context/SnackBarContext";
+import { useTheme } from "@mui/material/styles";
 
 function CateringEnquiries() {
   const { updateSnackBarState } = useSnackBar();
@@ -44,6 +45,7 @@ function CateringEnquiries() {
   useEffect(() => {
     refetch();
   }, [page, rowsPerPage]);
+  const theme = useTheme();
 
   const openEnquiryViewDrawer = (enquiryData: ICateringEnquiries) => {
     setSelectedEnquiryData(enquiryData);
@@ -127,32 +129,46 @@ function CateringEnquiries() {
           <Table stickyHeader aria-label="catering-enquires">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ width: "15%" }}>
+                <TableCell sx={{
+                  width: "15%", backgroundColor: theme.palette.primary.main,
+                  color: "white",
+}}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Full Name
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ width: "20%" }}>
+                <TableCell sx={{
+                  width: "20%", backgroundColor: theme.palette.primary.main,
+                  color: "white", }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Email
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ width: "15%" }}>
+                <TableCell sx={{
+                  width: "15%", backgroundColor: theme.palette.primary.main,
+                  color: "white", }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Mobile Number
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ width: "15%" }}>
+                <TableCell sx={{
+                  width: "15%", backgroundColor: theme.palette.primary.main,
+                  color: "white",
+}}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Enquiry Date
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ width: "20%" }}>
+                <TableCell sx={{
+                  width: "20%", backgroundColor: theme.palette.primary.main,
+                  color: "white", }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Message
                   </Typography>
                 </TableCell>
-                <TableCell sx={{ width: "15%", textAlign: "center" }}>
+                <TableCell sx={{
+                  width: "15%", textAlign: "center", backgroundColor: theme.palette.primary.main,
+                  color: "white", }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Action
                   </Typography>

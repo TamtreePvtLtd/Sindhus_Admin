@@ -35,10 +35,23 @@ function PaginatedHeader(props: IProps) {
       >
         <Grid item xs={12} md={4}>
           <Box>
-            <Typography sx={{ mb: 0 }} variant="h4">
+            <Typography sx={{
+              fontSize: '1.3rem',
+              borderRadius: "60px",
+              // backgroundColor: theme.palette.primary.main,
+              // color: "white",
+              padding: '10px'
+
+            }}  >
               {props.pagetitle}&nbsp;
+
               <Box
-                sx={{ fontWeight: 800, color: "#038265" }}
+                sx={{
+                  fontSize: '1.3rem',
+                  borderRadius: "60px",
+                  // backgroundColor: theme.palette.primary.main,
+                  // color: "white"
+                }}
                 component={"span"}
               >
                 ({props.pageInfo?.totalItems})
@@ -47,7 +60,7 @@ function PaginatedHeader(props: IProps) {
           </Box>
         </Grid>
         <Grid item xs={12} md={8}>
-          <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" >
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
               <InputLabel id="take-count-label">Page Count</InputLabel>
               <Select
