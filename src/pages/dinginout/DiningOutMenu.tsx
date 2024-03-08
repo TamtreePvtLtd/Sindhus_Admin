@@ -262,11 +262,7 @@ function DiningOutMenu() {
   };
   return (
     <>
-      {/* <Box sx={{ marginLeft: "20px", pt: 1 }}>
-        <Typography variant="h4" gutterBottom component="div">
-          Daily Menu
-        </Typography>
-      </Box> */}
+      
       <Container>
         <Box>
           <Grid
@@ -289,7 +285,6 @@ function DiningOutMenu() {
                       marginTop: '10px',
                       padding: "10px",
                       display: "flex",
-                      // flexDirection: "column",
                       gap: 2,
                       cursor: "pointer",
                       backgroundColor: selectedMenu === menuItem._id
@@ -300,7 +295,7 @@ function DiningOutMenu() {
                         color: "white",
                       },
                       color: selectedMenu === menuItem._id
-                        ? "white" // Set text color to white for actively selected item
+                        ? "white" 
                         : "inherit",
 
                     }}
