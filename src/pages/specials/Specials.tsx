@@ -14,8 +14,11 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+
 
 function Specials() {
+  const theme = useTheme();
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
@@ -26,7 +29,7 @@ function Specials() {
     number | null
   >(null);
 
-  let { data: imagePreviews, isLoading} = useGetSpecials();
+  let { data: imagePreviews, isLoading } = useGetSpecials();
 
   useEffect(() => {
     let storedPreviews = localStorage.getItem("imagePreviews");
@@ -134,12 +137,25 @@ function Specials() {
       <Container>
         <Box
           sx={{
-            width: "100%",
+            width: '100%',
             textAlign: "center",
             mt: 5,
+            justifyContent: 'center'
           }}
         >
-          <Typography variant="h4" gutterBottom component="div">
+          <Typography sx={{
+            display: 'flex',
+            fontSize: '1.5rem',
+            borderRadius: '50px',
+            textAlign: 'center',
+            width: '25%',
+            // backgroundColor: theme.palette.primary.main,
+            // color: 'white',
+            padding: '10px',
+            justifyContent: 'center',
+            margin: 'auto',
+            mt: 5,
+          }}>
             Special Offers
           </Typography>
           <Box sx={{ mt: 5 }}>

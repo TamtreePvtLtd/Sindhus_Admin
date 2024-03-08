@@ -15,6 +15,7 @@ import CommonDeleteDialog from "../../common/components/CommonDeleteDialog";
 import { useDeleteMenu, useGetAllMenus } from "../../customRQHooks/Hooks";
 import PaginatedHeader from "../../common/components/PaginatedHeader";
 import { useSnackBar } from "../../context/SnackBarContext";
+import { useTheme } from "@mui/material/styles";
 
 function Menus() {
   const [selectedMenu, setSelectedMenu] = useState<IMenu | null>(null);
@@ -27,6 +28,7 @@ function Menus() {
   const { data: menus, refetch } = useGetAllMenus(page, rowsPerPage);
   const deleteMenuMutation = useDeleteMenu();
   const { updateSnackBarState } = useSnackBar();
+  const theme = useTheme();
 
   useEffect(() => {
     refetch();
@@ -72,101 +74,122 @@ function Menus() {
 
   return (
     <>
-      <Box paddingX={"20px"}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <PaginatedHeader
-              pagetitle="Menus"
-              pageInfo={menus?.pageInfo}
-              onRowsPerPageChange={setRowsPerPage}
-              onPageChange={setPage}
-              onAddClick={handleAddMenuClick}
-              addButtonText={" + Add Menu"}
-            />
-          </Grid>
+      <Box paddingX={"20px"} justifyContent="space-between" alignItems="center">
+        <PaginatedHeader
+          pagetitle="Menus"
+          pageInfo={menus?.pageInfo}
+          onRowsPerPageChange={setRowsPerPage}
+          onPageChange={setPage}
+          onAddClick={handleAddMenuClick}
+          addButtonText={" + Add Menu"}
+        />
 
-          <Grid item xs={12}>
-            <TableContainer
-              elevation={0}
-              sx={{
-                boxShadow: 3,
-                width: "100%",
-              }}
-              component={Paper}
-            >
-              <Table stickyHeader aria-label="menus-table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ width: "35%" }}>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        color="primary"
-                      >
-                        Name
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ width: "20%", textAlign: "center" }}>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        color="primary"
-                      >
-                        MenuType
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ width: "20%", textAlign: "center" }}>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        color="primary"
-                      >
-                        SubMenus
-                      </Typography>
-                    </TableCell>
-                    <TableCell width={"25%"} sx={{ textAlign: "center" }}>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        color="primary"
-                      >
-                        Action
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {menus?.items &&
-                    menus?.items.length > 0 &&
-                    menus?.items.map((menu) => (
-                      <TableRow key={menu._id}>
-                        <TableCell>{menu.title}</TableCell>
-                        <TableCell sx={{ textAlign: "center" }}>
-                          {menu.menuType}
-                        </TableCell>
-                        <TableCell align="center">
-                          {menu.subMenus &&
-                            menu.subMenus.length > 0 &&
-                            menu.subMenus?.map((subMenu, index) => (
-                              <Box key={index}>{subMenu.title}</Box>
-                            ))}
-                        </TableCell>
 
-                        <TableCell sx={{ textAlign: "center" }}>
-                          <IconButton>
-                            <EditIcon onClick={() => handleEditMenu(menu)} />
-                          </IconButton>
-                          <IconButton>
-                            <DeleteIcon onClick={() => handleDelete(menu)} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
+        <Grid item xs={12}>
+          <TableContainer
+            elevation={0}
+            sx={{
+              boxShadow: 3,
+              width: "100%",
+            }}
+            component={Paper}
+          >
+            <Table stickyHeader aria-label="menus-table" >
+              <TableHead >
+                <TableRow >
+                  <TableCell
+                    sx={{
+                      backgroundColor: theme.palette.primary.main,
+                      color: "white",
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+
+                    >
+                      Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      width: "20%",
+                      textAlign: "center",
+                      backgroundColor: theme.palette.primary.main,
+                      color: "white",
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                    >
+                      MenuType
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      width: "20%",
+                      textAlign: "center",
+                      backgroundColor: theme.palette.primary.main,
+                      color: "white",
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                    >
+                      SubMenus
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      width: "25%",
+                      textAlign: "center",
+                      backgroundColor: theme.palette.primary.main,
+                      color: "white",
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                    >
+                      Action
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {menus?.items &&
+                  menus?.items.length > 0 &&
+                  menus?.items.map((menu) => (
+                    <TableRow key={menu._id}>
+                      <TableCell>{menu.title}</TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {menu.menuType}
+                      </TableCell>
+                      <TableCell align="center">
+                        {menu.subMenus &&
+                          menu.subMenus.length > 0 &&
+                          menu.subMenus?.map((subMenu, index) => (
+                            <Box key={index}>{subMenu.title}</Box>
+                          ))}
+                      </TableCell>
+
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <IconButton>
+                          <EditIcon onClick={() => handleEditMenu(menu)} />
+                        </IconButton>
+                        <IconButton>
+                          <DeleteIcon onClick={() => handleDelete(menu)} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
+
       </Box>
       {menuDrawerOpen && (
         <MenuDrawer
