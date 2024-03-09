@@ -38,8 +38,7 @@ function PaginatedHeader(props: IProps) {
             <Typography sx={{
               fontSize: '1.3rem',
               borderRadius: "60px",
-              // backgroundColor: theme.palette.primary.main,
-              // color: "white",
+              fontWeight: 800,
               padding: '10px'
 
             }}  >
@@ -49,9 +48,8 @@ function PaginatedHeader(props: IProps) {
                 sx={{
                   fontSize: '1.3rem',
                   borderRadius: "60px",
-                  // backgroundColor: theme.palette.primary.main,
-                  // color: "white"
-                }}
+                  fontWeight: 800,
+                  }}
                 component={"span"}
               >
                 ({props.pageInfo?.totalItems})
