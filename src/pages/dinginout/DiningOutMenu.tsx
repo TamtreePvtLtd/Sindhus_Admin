@@ -1,12 +1,10 @@
 import {
   Box,
   Button,
-  Card,
   Checkbox,
   Container,
   Grid,
   Typography,
-  CardContent
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useGetAllDiningOutMenuWithProducts } from "../../customRQHooks/Hooks";
@@ -19,11 +17,7 @@ import { useSnackBar } from "../../context/SnackBarContext";
 import { SnackbarSeverityEnum } from "../../enums/SnackbarSeverityEnums";
 import CommonSaveDialog from "../../common/components/CommonSaveDialog";
 import CommonClearDialog from "../../common/components/CommonClearDialog";
-import Divider from "@mui/material/Divider";
-
 import { useTheme } from "@mui/material/styles";
-
-
 
 interface MenuProductCount {
   [key: string]: string[];
@@ -45,7 +39,6 @@ function DiningOutMenu() {
   const [selectedMenuProductIds, setSelectedMenuProductIds] = useState<
     string[]
   >([]);
-  const theme = useTheme();
   const [diningOutId, setDiningOutId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
@@ -54,6 +47,8 @@ function DiningOutMenu() {
   >([]);
   const [originalMenuWiseProductCounts, setOriginalMenuWiseProductCounts] =
     useState<MenuProductCount>({});
+  const theme = useTheme();
+
 
   useEffect(() => {
     getMenuDatas();
@@ -246,7 +241,7 @@ function DiningOutMenu() {
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    resetChanges();
+    resetChanges(); 
   };
 
   useEffect(() => {
@@ -262,155 +257,135 @@ function DiningOutMenu() {
   };
   return (
     <>
-      
+      <Box sx={{ marginLeft: "30px", pt: 2 }}>
+        <Typography sx={{
+          fontSize: '1.3rem',
+          borderRadius: "60px", justifyContent: "center", padding: "20px", fontWeight: 800
+        }}>
+          Daily Menu
+        </Typography>
+      </Box>
       <Container>
-        <Box>
-          <Grid
-            container
-            spacing={2}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-start",
-              marginTop: '20px'
-            }}
-          >
-            {diningOutMenus &&
-              diningOutMenus.data &&
-              diningOutMenus.data.length > 0 ? (
-              diningOutMenus.data.map((menuItem) => (
-                <Grid item xs={2} key={menuItem._id}>
-                  <Box
-                    sx={{
-                      marginTop: '10px',
-                      padding: "10px",
-                      display: "flex",
-                      gap: 2,
-                      cursor: "pointer",
-                      backgroundColor: selectedMenu === menuItem._id
-                        ? theme.palette.primary.main
-                        : "white",
-                      "&:hover": {
-                        backgroundColor: theme.palette.primary.main,
-                        color: "white",
-                      },
-                      color: selectedMenu === menuItem._id
-                        ? "white" 
-                        : "inherit",
 
-                    }}
-                    onClick={() => handleMenuSelect(menuItem._id)}
-                  >
-                    <Typography>{menuItem.title}</Typography>
-                    <Typography>
-                      ({getSelectedMenuProductCount(menuItem._id)})
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))
-            ) : (
-              <Typography variant="body1">
-                No menu items available
-              </Typography>
-            )}
-          </Grid>
-          <Box>
-            <Divider sx={{ marginY: 4 }} />
-          </Box>
-        </Box>
-        <Grid container style={{ height: '50vh' }}>
-          <Grid item xs={9}>
-            {selectedMenu !== null && (
-              <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto" }}>
-                <Grid item container>
-                  {diningOutMenus &&
-                    diningOutMenus.data &&
-                    diningOutMenus.data
-                      .find((item) => item._id === selectedMenu)
-                      ?.products.map((product) => (
-                        <Grid item xs={3} key={product._id}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              borderRadius: "10px",
-                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                              cursor: "pointer",
-                              margin: "8px",
-                            }}
-                            onClick={() => handleProductSelect(product._id)}
-                          >
-                            <Typography
-                              sx={{
-                                marginLeft: "8px",
-                                overflowY: "hidden",
-                                lineHeight: 1.2,
-                                wordWrap: "break-word",
-                              }}
-                            >
-                              {product.title}
-                            </Typography>
+        <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+              <Box
+                sx={{
+                  padding: "10px",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  overflowY: "auto",
+                  maxHeight: "420px",
+                }}
+              >
+                {diningOutMenus &&
+                  diningOutMenus.data &&
+                  diningOutMenus.data.length > 0 ? (
+                  diningOutMenus.data.map((menuItem) => (
+                    <Box key={menuItem._id} sx={{ padding: "2px" }}>
+                      <Box
+                        sx={{
+                          padding: "20px",
+                          display: "flex",
+                          gap: 2,
+                          cursor: "pointer",
+                          backgroundColor:
+                            selectedMenu === menuItem._id
+                              ? theme.palette.primary.main
+                              : "white",
+                          color:
+                            selectedMenu === menuItem._id
+                              ? "white"
+                              : theme.palette.text.primary,
+                        }}
+                        onClick={() => handleMenuSelect(menuItem._id)}
+                      >
+                        <Typography>{menuItem.title}</Typography>
+                        <Typography>
+                          ({getSelectedMenuProductCount(menuItem._id)})
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography variant="body1">
+                    No menu items available
+                  </Typography>
+                )}
+              </Box>
+            </Grid>
+            <Grid item xs={9}>
+              {selectedMenu !== null && (
+                <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto" }}>
+                  <Grid item container>
+                    {diningOutMenus &&
+                      diningOutMenus.data &&
+                      diningOutMenus.data
+                        .find((item) => item._id === selectedMenu)
+                        ?.products.map((product) => (
+                          <Grid item xs={3} key={product._id}>
                             <Box
                               sx={{
-                                flex: 1,
                                 display: "flex",
-                                justifyContent: "flex-end",
+                                borderRadius: "10px",
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                cursor: "pointer",
+                                margin: "8px",
                               }}
+                              onClick={() => handleProductSelect(product._id)}
                             >
-                              <Checkbox
-                                checked={selectedMenuProductIds.includes(
-                                  product._id
-                                )}
-                              />
+                              <Typography
+                                sx={{
+                                  marginLeft: "8px",
+                                  overflowY: "hidden",
+                                  lineHeight: 1.2,
+                                  wordWrap: "break-word",
+                                }}
+                              >
+                                {product.title}
+                              </Typography>
+                              <Box
+                                sx={{
+                                  flex: 1,
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                }}
+                              >
+                                <Checkbox
+                                  checked={selectedMenuProductIds.includes(
+                                    product._id
+                                  )}
+                                />
+                              </Box>
                             </Box>
-                          </Box>
-                        </Grid>
-                      ))}
-                </Grid>
-              </Box>
-            )}
+                          </Grid>
+                        ))}
+                  </Grid>
+                </Box>
+              )}
+            </Grid>
           </Grid>
-        </Grid>
-        <Box>
         </Box>
         <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
             pb: 3,
-            gap: 2,
+            gap: 3,
           }}
         >
-          <Button
-            variant="contained"
-            onClick={() => setClearDialogOpen(true)}
-            sx={{
-              backgroundColor: "#038265",
-              "&:hover": {
-                backgroundColor: "#038265",
-              },
-            }}
-          >
+          <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
             Clear Products
           </Button>
           <Button
             variant="outlined"
             onClick={handleCancel}
-            sx={{
-              maxWidth: "64px",
-              color: "#038265",
-            }}
+            sx={{ maxWidth: "64px" }}
           >
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            sx={{
-              "&:hover": {
-                backgroundColor: "#038265",
-              },
-            }}
-          >
+          <Button variant="contained" onClick={handleSave}>
             Save
           </Button>
         </Box>

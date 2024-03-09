@@ -155,6 +155,7 @@ function Specials() {
             justifyContent: 'center',
             margin: 'auto',
             mt: 5,
+            fontWeight: 600,
           }}>
             Special Offers
           </Typography>

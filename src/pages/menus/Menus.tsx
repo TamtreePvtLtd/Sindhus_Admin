@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Grid, IconButton, Container } from "@mui/material";
+import { Box, Typography, Grid, IconButton } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -89,14 +89,15 @@ function Menus() {
           <TableContainer
             elevation={0}
             sx={{
-              boxShadow: 3,
-              width: "100%",
+              // boxShadow: 3,
+              // width: "100%",
             }}
             component={Paper}
           >
             <Table stickyHeader aria-label="menus-table" >
-              <TableHead >
-                <TableRow >
+              <TableHead className='table-header'>
+                <TableRow className='table-header-row'>
+
                   <TableCell
                     sx={{
                       backgroundColor: theme.palette.primary.main,
@@ -106,7 +107,6 @@ function Menus() {
                     <Typography
                       variant="subtitle1"
                       fontWeight="bold"
-
                     >
                       Name
                     </Typography>
@@ -143,7 +143,7 @@ function Menus() {
                   </TableCell>
                   <TableCell
                     sx={{
-                      width: "25%",
+                      width: "20%",
                       textAlign: "center",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
@@ -163,15 +163,15 @@ function Menus() {
                   menus?.items.length > 0 &&
                   menus?.items.map((menu) => (
                     <TableRow key={menu._id}>
-                      <TableCell>{menu.title}</TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>
+                      <TableCell sx={{ fontWeight: 600 }}>{menu.title}</TableCell>
+                      <TableCell sx={{ textAlign: "center", fontWeight: 600 }}>
                         {menu.menuType}
                       </TableCell>
                       <TableCell align="center">
                         {menu.subMenus &&
                           menu.subMenus.length > 0 &&
                           menu.subMenus?.map((subMenu, index) => (
-                            <Box key={index}>{subMenu.title}</Box>
+                            <Box key={index} sx={{ fontWeight: 600 }}>{subMenu.title}</Box>
                           ))}
                       </TableCell>
 

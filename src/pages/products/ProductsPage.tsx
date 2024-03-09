@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Container,
   Divider,
   FormControlLabel,
   IconButton,
@@ -135,10 +134,11 @@ function ProductsPage() {
             onChange={handleMenuChange}
             sx={{ width: 300 }}
             renderInput={(params) => (
-              <TextField {...params} placeholder="Select Menu" size="small" />
+              <TextField {...params} placeholder="Select Menu" size="small"
+              />
             )}
           />
-          <Box ml={2}>
+          <Box ml={2} >
             {selectedMenuValue &&
               selectedMenuValue.subMenus.length > 0 &&
               selectedMenuValue.subMenus.map((data, index) => (
@@ -163,8 +163,6 @@ function ProductsPage() {
             Clear Search
           </Button>
         </Box>
-
-
         <Button
           variant="contained"
           color="primary"
@@ -192,7 +190,6 @@ function ProductsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-
                   >
                     Image
                   </Typography>
@@ -210,7 +207,6 @@ function ProductsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-
                   >
                     Title
                   </Typography>
@@ -263,7 +259,7 @@ function ProductsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    >
+                  >
                     Catering Size-Price
                   </Typography>
                 </TableCell>
@@ -275,12 +271,13 @@ function ProductsPage() {
                     width: "17%",
                     background: theme => theme.palette.primary.main,
                     color: "white",
+
                   }}
                 >
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    >
+                  >
                     DailyMenu Size-Price
                   </Typography>
                 </TableCell>
@@ -319,9 +316,10 @@ function ProductsPage() {
                         alt={item.title}
                         height="50px"
                         width="50px"
+
                       />
                     </TableCell>
-                    <TableCell align="right" sx={{ textAlign: "center" }}>
+                    <TableCell align="right" sx={{ textAlign: "center", fontWeight: 600 }}>
                       {item.title}
                     </TableCell>
                     <TableCell
@@ -329,11 +327,12 @@ function ProductsPage() {
                       sx={{
                         textAlign: "left",
                         maxWidth: "50px",
+                        fontWeight: 600
                       }}
                     >
                       {item.description}
                     </TableCell>
-                    <TableCell style={{ textAlign: "center" }}>
+                    <TableCell style={{ textAlign: "center", fontWeight: 600 }}>
                       {item.itemSizeWithPrice &&
                         item.itemSizeWithPrice.length > 0 &&
                         item.itemSizeWithPrice.map((qty, index) => (
@@ -345,7 +344,7 @@ function ProductsPage() {
                         ))}
                     </TableCell>
 
-                    <TableCell style={{ textAlign: "center" }}>
+                    <TableCell style={{ textAlign: "center", fontWeight: 600 }}>
                       {item.cateringMenuSizeWithPrice.length > 0 &&
                         item.cateringMenuSizeWithPrice.map((qty, index) => (
                           <>
@@ -361,7 +360,7 @@ function ProductsPage() {
                           </>
                         ))}
                     </TableCell>
-                    <TableCell style={{ textAlign: "center" }}>
+                    <TableCell style={{ textAlign: "center", fontWeight: 600 }}>
                       {item.dailyMenuSizeWithPrice.length > 0 &&
                         item.dailyMenuSizeWithPrice.map((qty, index) => (
                           <>

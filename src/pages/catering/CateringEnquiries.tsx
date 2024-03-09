@@ -127,26 +127,28 @@ function CateringEnquiries() {
           component={Paper}
         >
           <Table stickyHeader aria-label="catering-enquires">
-            <TableHead>
-              <TableRow>
+            <TableHead >
+              <TableRow >
                 <TableCell sx={{
-                  width: "15%", backgroundColor: theme.palette.primary.main,
+                  width: "10%", backgroundColor: theme.palette.primary.main,
                   color: "white",
-}}>
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Full Name
                   </Typography>
                 </TableCell>
                 <TableCell sx={{
                   width: "20%", backgroundColor: theme.palette.primary.main,
-                  color: "white", }}>
+                  color: "white",
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Email
                   </Typography>
                 </TableCell>
                 <TableCell sx={{
                   width: "15%", backgroundColor: theme.palette.primary.main,
-                  color: "white", }}>
+                  color: "white",
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Mobile Number
                   </Typography>
@@ -154,21 +156,23 @@ function CateringEnquiries() {
                 <TableCell sx={{
                   width: "15%", backgroundColor: theme.palette.primary.main,
                   color: "white",
-}}>
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Enquiry Date
                   </Typography>
                 </TableCell>
                 <TableCell sx={{
                   width: "20%", backgroundColor: theme.palette.primary.main,
-                  color: "white", }}>
+                  color: "white",
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Message
                   </Typography>
                 </TableCell>
                 <TableCell sx={{
                   width: "15%", textAlign: "center", backgroundColor: theme.palette.primary.main,
-                  color: "white", }}>
+                  color: "white",
+                }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Action
                   </Typography>
@@ -180,10 +184,10 @@ function CateringEnquiries() {
                 enquiryData.items.length > 0 &&
                 enquiryData.items.map((enquiryData, index) => (
                   <TableRow key={index}>
-                    <TableCell>{enquiryData.fullName}</TableCell>
-                    <TableCell>{enquiryData.email}</TableCell>
-                    <TableCell>{enquiryData.mobileNumber}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{enquiryData.fullName}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{enquiryData.email}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{enquiryData.mobileNumber}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>
                       {enquiryData.eventDate
                         ? format(new Date(enquiryData.eventDate), "dd-MM-yyyy")
                         : ""}
@@ -194,6 +198,7 @@ function CateringEnquiries() {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         maxWidth: "50px",
+                        fontWeight: 600,
                       }}
                     >
                       {enquiryData.message}
