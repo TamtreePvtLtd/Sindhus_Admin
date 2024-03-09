@@ -241,7 +241,7 @@ function DiningOutMenu() {
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    resetChanges(); 
+    resetChanges();
   };
 
   useEffect(() => {
@@ -276,17 +276,17 @@ function DiningOutMenu() {
                   borderRadius: "10px",
                   boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                   overflowY: "auto",
-                  maxHeight: "420px",
+                  maxHeight: "400px",
                 }}
               >
                 {diningOutMenus &&
                   diningOutMenus.data &&
                   diningOutMenus.data.length > 0 ? (
                   diningOutMenus.data.map((menuItem) => (
-                    <Box key={menuItem._id} sx={{ padding: "2px" }}>
+                    <Box key={menuItem._id} sx={{ padding: "1px" }}>
                       <Box
                         sx={{
-                          padding: "20px",
+                          padding: "10px",
                           display: "flex",
                           gap: 2,
                           cursor: "pointer",
