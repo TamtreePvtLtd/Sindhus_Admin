@@ -114,7 +114,7 @@ function Menus() {
                   <TableCell
                     sx={{
                       width: "20%",
-                      textAlign: "center",
+                      // textAlign: "center",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
@@ -129,7 +129,7 @@ function Menus() {
                   <TableCell
                     sx={{
                       width: "20%",
-                      textAlign: "center",
+                      // textAlign: "left",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
@@ -144,7 +144,7 @@ function Menus() {
                   <TableCell
                     sx={{
                       width: "20%",
-                      textAlign: "center",
+                      // textAlign: "center",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
@@ -164,10 +164,10 @@ function Menus() {
                   menus?.items.map((menu) => (
                     <TableRow key={menu._id}>
                       <TableCell sx={{ fontWeight: 600 }}>{menu.title}</TableCell>
-                      <TableCell sx={{ textAlign: "center", fontWeight: 600 }}>
+                      <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
                         {menu.menuType}
                       </TableCell>
-                      <TableCell align="center">
+                      <TableCell >
                         {menu.subMenus &&
                           menu.subMenus.length > 0 &&
                           menu.subMenus?.map((subMenu, index) => (
@@ -175,7 +175,7 @@ function Menus() {
                           ))}
                       </TableCell>
 
-                      <TableCell sx={{ textAlign: "center" }}>
+                      <TableCell >
                         <IconButton>
                           <EditIcon onClick={() => handleEditMenu(menu)} />
                         </IconButton>

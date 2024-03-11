@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Card,
   Checkbox,
   Container,
   Grid,
@@ -257,116 +258,117 @@ function DiningOutMenu() {
   };
   return (
     <>
-      <Box sx={{ marginLeft: "30px", pt: 2 }}>
-        <Typography sx={{
-          fontSize: '1.3rem',
-          borderRadius: "60px", justifyContent: "center", padding: "20px", fontWeight: 800
-        }}>
-          Daily Menu
-        </Typography>
-      </Box>
       <Container>
+        <Box sx={{ pt: 2 }}>
+          <Typography sx={{
+            fontSize: '1.3rem', display: 'flex',
+            padding: "10px", fontWeight: 800
+          }}>
+            Daily Menu
+          </Typography>
+        </Box>
 
-        <Box>
-          <Grid container spacing={2}>
-            <Grid item xs={3}>
-              <Box
-                sx={{
-                  padding: "10px",
-                  borderRadius: "10px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                  overflowY: "auto",
-                  maxHeight: "400px",
-                }}
-              >
-                {diningOutMenus &&
-                  diningOutMenus.data &&
-                  diningOutMenus.data.length > 0 ? (
-                  diningOutMenus.data.map((menuItem) => (
-                    <Box key={menuItem._id} sx={{ padding: "1px" }}>
-                      <Box
-                        sx={{
-                          padding: "10px",
-                          display: "flex",
-                          gap: 2,
-                          cursor: "pointer",
-                          backgroundColor:
-                            selectedMenu === menuItem._id
-                              ? theme.palette.primary.main
-                              : "white",
-                          color:
-                            selectedMenu === menuItem._id
-                              ? "white"
-                              : theme.palette.text.primary,
-                        }}
-                        onClick={() => handleMenuSelect(menuItem._id)}
-                      >
-                        <Typography>{menuItem.title}</Typography>
-                        <Typography>
-                          ({getSelectedMenuProductCount(menuItem._id)})
-                        </Typography>
-                      </Box>
+        <Grid container spacing={2} >
+          <Grid item xs={3} >
+
+            <Box
+              sx={{
+                // borderRadius: "10px",
+                // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                overflowY: "auto",
+                maxHeight: "500px",
+              }}
+            >
+              {diningOutMenus &&
+                diningOutMenus.data &&
+                diningOutMenus.data.length > 0 ? (
+                diningOutMenus.data.map((menuItem) => (
+                  <Box key={menuItem._id} sx={{ padding: "1px" }}>
+                    <Box
+                      sx={{
+                        padding: "10px",
+                        display: "flex",
+                        justifyContent: 'start',
+                        gap: 2,
+                        cursor: "pointer",
+                        backgroundColor:
+                          selectedMenu === menuItem._id
+                            ? theme.palette.primary.main
+                            : "white",
+                        color:
+                          selectedMenu === menuItem._id
+                            ? "white"
+                            : theme.palette.text.primary,
+                      }}
+                      onClick={() => handleMenuSelect(menuItem._id)}
+                    >
+                      <Typography>{menuItem.title}</Typography>
+                      <Typography>
+                        ({getSelectedMenuProductCount(menuItem._id)})
+                      </Typography>
                     </Box>
-                  ))
-                ) : (
-                  <Typography variant="body1">
-                    No menu items available
-                  </Typography>
-                )}
-              </Box>
-            </Grid>
-            <Grid item xs={9}>
-              {selectedMenu !== null && (
-                <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto" }}>
-                  <Grid item container>
-                    {diningOutMenus &&
-                      diningOutMenus.data &&
-                      diningOutMenus.data
-                        .find((item) => item._id === selectedMenu)
-                        ?.products.map((product) => (
-                          <Grid item xs={3} key={product._id}>
+                  </Box>
+                ))
+              ) : (
+                <Typography variant="body1">
+                  No menu items available
+                </Typography>
+              )}
+            </Box>
+
+          </Grid>
+          <Grid item xs={9}>
+            {selectedMenu !== null && (
+              <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto" }}>
+                <Grid item container>
+                  {diningOutMenus &&
+                    diningOutMenus.data &&
+                    diningOutMenus.data
+                      .find((item) => item._id === selectedMenu)
+                      ?.products.map((product) => (
+                        <Grid item xs={3} key={product._id}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              borderRadius: "10px",
+                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                              cursor: "pointer",
+                              margin: "8px",
+                            }}
+                            onClick={() => handleProductSelect(product._id)}
+                          >
+                            <Typography
+                              sx={{
+                                marginLeft: "8px",
+                                overflowY: "hidden",
+                                lineHeight: 1.2,
+                                wordWrap: "break-word",
+                              }}
+                            >
+                              {product.title}
+                            </Typography>
                             <Box
                               sx={{
+                                flex: 1,
                                 display: "flex",
-                                borderRadius: "10px",
-                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                cursor: "pointer",
-                                margin: "8px",
+                                justifyContent: "flex-end",
                               }}
-                              onClick={() => handleProductSelect(product._id)}
                             >
-                              <Typography
-                                sx={{
-                                  marginLeft: "8px",
-                                  overflowY: "hidden",
-                                  lineHeight: 1.2,
-                                  wordWrap: "break-word",
-                                }}
-                              >
-                                {product.title}
-                              </Typography>
-                              <Box
-                                sx={{
-                                  flex: 1,
-                                  display: "flex",
-                                  justifyContent: "flex-end",
-                                }}
-                              >
-                                <Checkbox
-                                  checked={selectedMenuProductIds.includes(
-                                    product._id
-                                  )}
-                                />
-                              </Box>
+                              <Checkbox
+                                checked={selectedMenuProductIds.includes(
+                                  product._id
+                                )}
+                              />
                             </Box>
-                          </Grid>
-                        ))}
-                  </Grid>
-                </Box>
-              )}
-            </Grid>
+                          </Box>
+                        </Grid>
+                      ))}
+                </Grid>
+              </Box>
+            )}
           </Grid>
-        </Box>
+        </Grid>
+
         <Box
           sx={{
             display: "flex",
