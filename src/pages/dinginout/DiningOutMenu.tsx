@@ -367,7 +367,7 @@ function DiningOutMenu() {
             </Grid>
           </Grid>
         </Box>
-        <Box
+        <Box  
           sx={{
             display: "flex",
             justifyContent: "flex-end",
