@@ -22,9 +22,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CommonDeleteDialog from "../../common/components/CommonDeleteDialog";
 import { getAllMenusForAddProduct } from "../../services/api";
-import { useDeleteProduct, useGetProducts } from "../../customRQHooks/Hooks";
+import {
+  useDeleteProduct,
+  useGetAllProduct,
+  useGetProducts,
+} from "../../customRQHooks/Hooks";
 import { useSnackBar } from "../../context/SnackBarContext";
 import { IProduct, IProductPageMenuDropDown } from "../../interface/types";
+import PaginatedHeader from "../../common/components/PaginatedHeader";
 
 function ProductsPage() {
   const [isProductDrawerOpen, setIsProductDrawerOpen] = useState(false);
@@ -36,6 +41,9 @@ function ProductsPage() {
   const [selectedSubmenuValues, setSelectedSubmenuValues] = useState<string[]>(
     []
   );
+  const [displayedData, setDisplayedData] = useState<IProduct[]>([]);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const deleteProductMutation = useDeleteProduct();
   const { updateSnackBarState } = useSnackBar();
@@ -44,6 +52,14 @@ function ProductsPage() {
     selectedMenuValue?._id || "",
     selectedSubmenuValues
   );
+  const { data: allProduct, refetch } = useGetAllProduct(page, rowsPerPage);
+  useEffect(() => {
+    if (selectedMenuValue === null) {
+      setDisplayedData(allProduct?.items || []);
+    } else {
+      setDisplayedData(data || []);
+    }
+  }, [selectedMenuValue, allProduct, data]);
 
   const openDrawer = () => {
     setIsProductDrawerOpen(true);
@@ -80,9 +96,11 @@ function ProductsPage() {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getAllMenusData();
-  }, []);
+    refetch();
+  }, [page, rowsPerPage]);
 
   const clearSearch = () => {
     setSelectedMenuValue(null);
@@ -113,8 +131,15 @@ function ProductsPage() {
     }
   };
 
-  return (
+  const handleGetAllProducts = () => {
+    clearSearch();
+    setPage(1);
+    setSelectedMenuValue(null);
+    setSelectedSubmenuValues([]);
+    refetch();
+  };
 
+  return (
     <Box sx={{ py: 2, marginLeft: "40px", marginRight: "40px" }}>
       <Box
         sx={{
@@ -122,23 +147,23 @@ function ProductsPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          marginBottom: 2,
         }}
       >
-
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Autocomplete
             id="combo-box-demo"
             options={menuData || []}
             getOptionLabel={(option) => option.title}
             value={selectedMenuValue}
             onChange={handleMenuChange}
-            sx={{ width: 300 }}
+            sx={{ width: 300, marginRight: 2 }}
             renderInput={(params) => (
-              <TextField {...params} placeholder="Select Menu" size="small"
-              />
+              <TextField {...params} placeholder="Select Menu" size="small" />
             )}
           />
-          <Box ml={2} >
+
+          <Box ml={2}>
             {selectedMenuValue &&
               selectedMenuValue.subMenus.length > 0 &&
               selectedMenuValue.subMenus.map((data, index) => (
@@ -154,27 +179,46 @@ function ProductsPage() {
                 />
               ))}
           </Box>
+
+          <Box ml={2}>
+            {selectedMenuValue === null && (
+              <PaginatedHeader
+                pagetitle="product"
+                pageInfo={allProduct?.pageInfo}
+                onRowsPerPageChange={setRowsPerPage}
+                onPageChange={setPage}
+              />
+            )}
+          </Box>
+        </Box>
+
+        <Box sx={{ float: "left" }}>
           <Button
             variant="outlined"
             size="small"
             onClick={clearSearch}
-            sx={{ color: "#038265" }}
+            sx={{ color: "#038265", marginRight: 1 }}
           >
             Clear Search
           </Button>
+          {/* <Button
+            variant="outlined"
+            size="small"
+            onClick={handleGetAllProducts}
+            sx={{ color: "#038265" }}
+          >
+            All
+          </Button> */}
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddProduct}
-        >
+
+        <Button variant="contained" color="primary" onClick={handleAddProduct}>
           + Add Product
         </Button>
       </Box>
 
       <Box mt={2}>
         <TableContainer component={Paper}>
-          <Table aria-label="simple table">
+          <Table stickyHeader aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell
@@ -183,14 +227,11 @@ function ProductsPage() {
                     fontWeight: "bolder",
                     fontSize: "large",
                     width: "10%",
-                    background: theme => theme.palette.primary.main,
+                    background: (theme) => theme.palette.primary.main,
                     color: "white",
                   }}
                 >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     Image
                   </Typography>
                 </TableCell>
@@ -200,14 +241,11 @@ function ProductsPage() {
                     fontWeight: "bolder",
                     fontSize: "large",
                     width: "15%",
-                    background: theme => theme.palette.primary.main,
+                    background: (theme) => theme.palette.primary.main,
                     color: "white",
                   }}
                 >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     Title
                   </Typography>
                 </TableCell>
@@ -217,15 +255,11 @@ function ProductsPage() {
                     fontWeight: "bolder",
                     fontSize: "large",
                     width: "20%",
-                    background: theme => theme.palette.primary.main,
+                    background: (theme) => theme.palette.primary.main,
                     color: "white",
                   }}
                 >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     Description
                   </Typography>
                 </TableCell>
@@ -235,14 +269,11 @@ function ProductsPage() {
                     fontWeight: "bolder",
                     fontSize: "large",
                     width: "10%",
-                    background: theme => theme.palette.primary.main,
+                    background: (theme) => theme.palette.primary.main,
                     color: "white",
                   }}
                 >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     Price
                   </Typography>
                 </TableCell>
@@ -252,14 +283,11 @@ function ProductsPage() {
                     fontWeight: "bolder",
                     fontSize: "large",
                     width: "17%",
-                    background: theme => theme.palette.primary.main,
+                    background: (theme) => theme.palette.primary.main,
                     color: "white",
                   }}
                 >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     Catering Size-Price
                   </Typography>
                 </TableCell>
@@ -269,15 +297,11 @@ function ProductsPage() {
                     fontWeight: "bolder",
                     fontSize: "large",
                     width: "17%",
-                    background: theme => theme.palette.primary.main,
+                    background: (theme) => theme.palette.primary.main,
                     color: "white",
-
                   }}
                 >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     DailyMenu Size-Price
                   </Typography>
                 </TableCell>
@@ -287,24 +311,20 @@ function ProductsPage() {
                     fontWeight: "bolder",
                     fontSize: "large",
                     width: "10%",
-                    background: theme => theme.palette.primary.main,
+                    background: (theme) => theme.palette.primary.main,
                     color: "white",
                   }}
                 >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-
-                  >
+                  <Typography variant="subtitle1" fontWeight="bold">
                     Action
                   </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {data &&
-                data.length > 0 &&
-                data.map((item, index) => (
+              {displayedData &&
+                displayedData.length > 0 &&
+                displayedData.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell align="left" sx={{ textAlign: "left" }}>
                       <img
@@ -316,10 +336,12 @@ function ProductsPage() {
                         alt={item.title}
                         height="50px"
                         width="50px"
-
                       />
                     </TableCell>
-                    <TableCell align="left" sx={{ textAlign: "left", fontWeight: 600 }}>
+                    <TableCell
+                      align="left"
+                      sx={{ textAlign: "left", fontWeight: 600 }}
+                    >
                       {item.title}
                     </TableCell>
                     <TableCell
@@ -327,7 +349,7 @@ function ProductsPage() {
                       sx={{
                         textAlign: "left",
                         maxWidth: "50px",
-                        fontWeight: 600
+                        fontWeight: 600,
                       }}
                     >
                       {item.description}
@@ -355,8 +377,8 @@ function ProductsPage() {
                             </Box>
                             {index <
                               item.cateringMenuSizeWithPrice.length - 1 && (
-                                <Divider />
-                              )}
+                              <Divider />
+                            )}
                           </>
                         ))}
                     </TableCell>
@@ -369,10 +391,9 @@ function ProductsPage() {
                                 {qty.size} - ${qty.price}
                               </>
                             </Box>
-                            {index <
-                              item.dailyMenuSizeWithPrice.length - 1 && (
-                                <Divider />
-                              )}
+                            {index < item.dailyMenuSizeWithPrice.length - 1 && (
+                              <Divider />
+                            )}
                           </>
                         ))}
                     </TableCell>

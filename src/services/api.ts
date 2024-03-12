@@ -306,6 +306,21 @@ const getSpecials = async () => {
   }
 };
 
+const getAllProduct = async (page: number, pageSize: number) => {
+  try {
+    const response = await httpWithoutCredentials.get<
+      IPaginationResult<IProduct>
+    >("/product/adminGetAllProduct", {
+      params: {
+        page,
+        pageSize,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 const deleteMenu = async (menuId: string) => {
   try {
     var response = await httpWithCredentials.delete(
@@ -330,6 +345,7 @@ const changeisResponseStatus = async (enquiryId: any) => {
 };
 
 export {
+  getAllProduct,
   getSpecials,
   deleteSpecial,
   getAllEnquiries,

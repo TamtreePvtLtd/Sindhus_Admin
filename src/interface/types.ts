@@ -37,6 +37,7 @@ export interface IProduct {
 }
 
 export interface IProductMenu {
+  _id: string;
   mainMenuIds: string[];
   subMenuIds: string[];
 }

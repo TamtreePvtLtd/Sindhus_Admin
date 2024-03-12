@@ -14,6 +14,7 @@ import {
   createSpecials,
   getSpecials,
   deleteSpecial,
+  getAllProduct,
  } from "../services/api";
 import { queryClient } from "../App";
 
@@ -80,6 +81,7 @@ export const useGetSpecials = () => {
     queryKey: ["specials"],
     queryFn: () => getSpecials(),
     refetchOnWindowFocus: false,
+  
   });
 };
 
@@ -173,5 +175,13 @@ export const useChangeisResponseStatus = () => {
     onError: (error) => {
       console.log(error);
     },
+  });
+};
+
+export const useGetAllProduct = (page: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ["product"],
+    queryFn: () => getAllProduct(page, pageSize),
+    refetchOnWindowFocus: false,
   });
 };
