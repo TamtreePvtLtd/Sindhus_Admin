@@ -218,7 +218,7 @@ function ProductsPage() {
 
       <Box mt={2}>
         <TableContainer component={Paper}>
-          <Table aria-label="simple table">
+          <Table stickyHeader aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell
@@ -338,7 +338,10 @@ function ProductsPage() {
                         width="50px"
                       />
                     </TableCell>
-                    <TableCell align="left" sx={{ textAlign: "left", fontWeight: 600 }}>
+                    <TableCell
+                      align="left"
+                      sx={{ textAlign: "left", fontWeight: 600 }}
+                    >
                       {item.title}
                     </TableCell>
                     <TableCell
