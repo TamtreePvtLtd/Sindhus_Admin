@@ -222,7 +222,7 @@ function ProductsPage() {
             <TableHead>
               <TableRow>
                 <TableCell
-                  align="center"
+                  align="left"
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
@@ -236,7 +236,7 @@ function ProductsPage() {
                   </Typography>
                 </TableCell>
                 <TableCell
-                  align="center"
+                  align="left"
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
@@ -250,7 +250,7 @@ function ProductsPage() {
                   </Typography>
                 </TableCell>
                 <TableCell
-                  align="center"
+                  align="left"
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
@@ -264,7 +264,7 @@ function ProductsPage() {
                   </Typography>
                 </TableCell>
                 <TableCell
-                  align="center"
+                  align="left"
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
@@ -278,7 +278,7 @@ function ProductsPage() {
                   </Typography>
                 </TableCell>
                 <TableCell
-                  align="center"
+                  align="left"
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
@@ -292,7 +292,7 @@ function ProductsPage() {
                   </Typography>
                 </TableCell>
                 <TableCell
-                  align="center"
+                  align="left"
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
@@ -306,7 +306,7 @@ function ProductsPage() {
                   </Typography>
                 </TableCell>
                 <TableCell
-                  align="center"
+                  align="left"
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
@@ -326,7 +326,7 @@ function ProductsPage() {
                 displayedData.length > 0 &&
                 displayedData.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell align="right" sx={{ textAlign: "center" }}>
+                    <TableCell align="left" sx={{ textAlign: "left" }}>
                       <img
                         src={
                           typeof item.posterURL === "string"
@@ -338,14 +338,11 @@ function ProductsPage() {
                         width="50px"
                       />
                     </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{ textAlign: "center", fontWeight: 600 }}
-                    >
+                    <TableCell align="left" sx={{ textAlign: "left", fontWeight: 600 }}>
                       {item.title}
                     </TableCell>
                     <TableCell
-                      align="right"
+                      align="left"
                       sx={{
                         textAlign: "left",
                         maxWidth: "50px",
@@ -354,7 +351,7 @@ function ProductsPage() {
                     >
                       {item.description}
                     </TableCell>
-                    <TableCell style={{ textAlign: "center", fontWeight: 600 }}>
+                    <TableCell style={{ textAlign: "left", fontWeight: 600 }}>
                       {item.itemSizeWithPrice &&
                         item.itemSizeWithPrice.length > 0 &&
                         item.itemSizeWithPrice.map((qty, index) => (
@@ -366,7 +363,7 @@ function ProductsPage() {
                         ))}
                     </TableCell>
 
-                    <TableCell style={{ textAlign: "center", fontWeight: 600 }}>
+                    <TableCell style={{ textAlign: "left", fontWeight: 600 }}>
                       {item.cateringMenuSizeWithPrice.length > 0 &&
                         item.cateringMenuSizeWithPrice.map((qty, index) => (
                           <>
@@ -382,7 +379,7 @@ function ProductsPage() {
                           </>
                         ))}
                     </TableCell>
-                    <TableCell style={{ textAlign: "center", fontWeight: 600 }}>
+                    <TableCell style={{ textAlign: "left", fontWeight: 600 }}>
                       {item.dailyMenuSizeWithPrice.length > 0 &&
                         item.dailyMenuSizeWithPrice.map((qty, index) => (
                           <>
@@ -398,7 +395,7 @@ function ProductsPage() {
                         ))}
                     </TableCell>
 
-                    <TableCell align="right" sx={{ textAlign: "center" }}>
+                    <TableCell align="left" sx={{ textAlign: "left" }}>
                       <Box sx={{ display: "flex", justifyContent: "center" }}>
                         <IconButton>
                           <EditIcon onClick={() => handleEditProduct(item)} />

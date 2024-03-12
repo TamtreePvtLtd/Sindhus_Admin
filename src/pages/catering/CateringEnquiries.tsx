@@ -170,7 +170,7 @@ function CateringEnquiries() {
                   </Typography>
                 </TableCell>
                 <TableCell sx={{
-                  width: "15%", textAlign: "center", backgroundColor: theme.palette.primary.main,
+                  width: "15%", backgroundColor: theme.palette.primary.main,
                   color: "white",
                 }}>
                   <Typography variant="subtitle1" fontWeight="bold">
@@ -208,7 +208,7 @@ function CateringEnquiries() {
                         sx={{
                           cursor: "pointer",
                           display: "flex",
-                          justifyContent: "space-around",
+                          justifyContent: "start",
                         }}
                       >
                         <Tooltip title="View Details" arrow>
