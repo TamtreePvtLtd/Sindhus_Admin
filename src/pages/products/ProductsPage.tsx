@@ -306,7 +306,7 @@ function ProductsPage() {
                 data.length > 0 &&
                 data.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell align="left" sx={{ textAlign: "center" }}>
+                    <TableCell align="left" sx={{ textAlign: "left" }}>
                       <img
                         src={
                           typeof item.posterURL === "string"
