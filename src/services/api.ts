@@ -306,12 +306,11 @@ const getSpecials = async () => {
   }
 };
 
-
 const getAllProduct = async (page: number, pageSize: number) => {
   try {
-    const response =
-      await httpWithoutCredentials.get <
-        IPaginationResult<IProduct>>("/product/getAllproduct", {
+    const response = await httpWithoutCredentials.get<
+      IPaginationResult<IProduct>
+    >("/product/adminGetAllProduct", {
       params: {
         page,
         pageSize,

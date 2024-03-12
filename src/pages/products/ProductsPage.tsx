@@ -52,13 +52,10 @@ function ProductsPage() {
     selectedMenuValue?._id || "",
     selectedSubmenuValues
   );
-  const { data: allProduct, refetch } = useGetAllProduct(
-    page,
-    rowsPerPage
-  );
+  const { data: allProduct, refetch } = useGetAllProduct(page, rowsPerPage);
   useEffect(() => {
     if (selectedMenuValue === null) {
-      setDisplayedData(allProduct || []);
+      setDisplayedData(allProduct?.items || []);
     } else {
       setDisplayedData(data || []);
     }
@@ -89,9 +86,6 @@ function ProductsPage() {
   const handleMenuChange = (event, value) => {
     setSelectedMenuValue(value);
   };
-   useEffect(() => {
-     refetch();
-   }, [page, rowsPerPage]);
 
   const getAllMenusData = async () => {
     try {
@@ -105,7 +99,8 @@ function ProductsPage() {
 
   useEffect(() => {
     getAllMenusData();
-  }, []);
+    refetch();
+  }, [page, rowsPerPage]);
 
   const clearSearch = () => {
     setSelectedMenuValue(null);
@@ -138,8 +133,9 @@ function ProductsPage() {
 
   const handleGetAllProducts = () => {
     clearSearch();
-     setPage(1); 
+    setPage(1);
     setSelectedMenuValue(null);
+    setSelectedSubmenuValues([]);
     refetch();
   };
 
@@ -151,20 +147,22 @@ function ProductsPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          marginBottom: 2,
         }}
       >
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Autocomplete
             id="combo-box-demo"
             options={menuData || []}
             getOptionLabel={(option) => option.title}
             value={selectedMenuValue}
             onChange={handleMenuChange}
-            sx={{ width: 300 }}
+            sx={{ width: 300, marginRight: 2 }}
             renderInput={(params) => (
               <TextField {...params} placeholder="Select Menu" size="small" />
             )}
           />
+
           <Box ml={2}>
             {selectedMenuValue &&
               selectedMenuValue.subMenus.length > 0 &&
@@ -181,38 +179,38 @@ function ProductsPage() {
                 />
               ))}
           </Box>
-          <PaginatedHeader
-            pagetitle="product"
-            pageInfo={allProduct?.pageInfo}
-            onRowsPerPageChange={setRowsPerPage}
-            onPageChange={setPage}
-          />
-          <Box
-            sx={{
-              display: "flex",
-              pb: 3,
-              gap: 3,
-            }}
-          >
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={clearSearch}
-              sx={{ color: "#038265" }}
-            >
-              Clear Search
-            </Button>
 
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleGetAllProducts}
-              sx={{ color: "#038265" }}
-            >
-              All
-            </Button>
+          <Box ml={2}>
+            {selectedMenuValue === null && (
+              <PaginatedHeader
+                pagetitle="product"
+                pageInfo={allProduct?.pageInfo}
+                onRowsPerPageChange={setRowsPerPage}
+                onPageChange={setPage}
+              />
+            )}
           </Box>
         </Box>
+
+        <Box sx={{ float: "left" }}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={clearSearch}
+            sx={{ color: "#038265", marginRight: 1 }}
+          >
+            Clear Search
+          </Button>
+          {/* <Button
+            variant="outlined"
+            size="small"
+            onClick={handleGetAllProducts}
+            sx={{ color: "#038265" }}
+          >
+            All
+          </Button> */}
+        </Box>
+
         <Button variant="contained" color="primary" onClick={handleAddProduct}>
           + Add Product
         </Button>
