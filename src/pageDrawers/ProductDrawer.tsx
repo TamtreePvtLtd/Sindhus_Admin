@@ -369,117 +369,8 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
   //   }
   // };
 
-  //   const handleSaveProduct = async (e: any) => {
-  //   e.preventDefault();
-  //   const formData = new FormData();
-  //   if (!product.title) {
-  //     updateSnackBarState(true, "Title is required.", "error");
-  //     return;
-  //   }
-  //   if (product.menu.mainMenuIds.length === 0) {
-  //     updateSnackBarState(true, "Menu is required", "error");
-  //     return;
-  //   }
-  //   if (!product.posterURL) {
-  //     updateSnackBarState(true, "Poster image is required.", "error");
-  //     return;
-  //   }
-
-  //   // Validate item sizes and prices
-  //   if (
-  //     showPriceField &&
-  //     product.itemSizeWithPrice.some(
-  //       (value) => value.size.trim() === '' || value.price.trim() === ''
-  //     )
-  //   ) {
-  //     updateSnackBarState(true, "Please fill all fields for Item Price.", "error");
-  //     return;
-  //   }
-
-  //   // Validate catering sizes and prices
-  //   if (
-  //     showCateringSizeField &&
-  //     product.cateringMenuSizeWithPrice.some(
-  //       (value) => value.size.trim() === '' || value.price.trim() === ''
-  //     )
-  //   ) {
-  //     updateSnackBarState(true, "Please fill all fields for Catering Size.", "error");
-  //     return;
-  //   }
-
-  //   // Validate daily menu sizes and prices
-  //   if (
-  //     showDailyMenuSizeField &&
-  //     product.dailyMenuSizeWithPrice.some(
-  //       (value) => value.size.trim() === '' || value.price.trim() === ''
-  //     )
-  //   ) {
-  //     updateSnackBarState(true, "Please fill all fields for DailyMenu Size.", "error");
-  //     return;
-  //   }
-
-  //   formData.append("title", product.title);
-  //   formData.append("description", product.description);
-  //   formData.append("netWeight", product.netWeight.toString());
-  //   formData.append("menu", JSON.stringify(product.menu));
-
-  //   product.images.forEach((image, index) => {
-  //     formData.append(`image_${index}`, image);
-  //   });
-
-  //   formData.append(
-  //     "cateringMenuSizeWithPrice",
-  //     JSON.stringify(product.cateringMenuSizeWithPrice)
-  //   );
-
-  //   formData.append(
-  //     "itemSizeWithPrice",
-  //     JSON.stringify(product.itemSizeWithPrice)
-  //   );
-  //   formData.append(
-  //     "dailyMenuSizeWithPrice",
-  //     JSON.stringify(product.dailyMenuSizeWithPrice)
-  //   );
-
-  //   formData.append("imagesToRemove", JSON.stringify(imagesToRemove));
-  //   if (product.posterURL) {
-  //     formData.append("posterImage", product.posterURL);
-  //   }
-  //   formData.append("producId", product._id ?? "");
-  //   formData.append("servingSizeDescription", product.servingSizeDescription);
-  //   formData.append("ingredients", product.ingredients);
-
-  //   try {
-  //     if (isAdd) {
-  //       productCreateMutation.mutate(formData, {
-  //         onSuccess: () => {
-  //           updateSnackBarState(true, "Product added successfully.", "success");
-  //           onCloseDialog();
-  //         },
-  //         onError: () => {
-  //           updateSnackBarState(true, "Error while add Product.", "error");
-  //         },
-  //       });
-  //     } else {
-  //       updateProductMutation.mutate(formData, {
-  //         onSuccess: () => {
-  //           updateSnackBarState(
-  //             true,
-  //             "Product updated successfully.",
-  //             "success"
-  //           );
-  //           onCloseDialog();
-  //         },
-  //         onError: () => {
-  //           updateSnackBarState(true, "Error while update Product.", "error");
-  //         },
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
+  
+  
   const handleSaveProduct = async (e: any) => {
     e.preventDefault();
     const formData = new FormData();
@@ -503,6 +394,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     // Validate item sizes and prices
     if (showPriceField) {
       product.itemSizeWithPrice.forEach((value, index) => {
+        const price = String(value.price); // Ensure value.price is always a string
         if (value.size.trim() === "" || value.size.trim().length > 9) {
           updateSnackBarState(
             true,
@@ -513,7 +405,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
           );
           validationError = true;
         }
-        if (value.price.trim() === "" || value.price.trim().length > 7) {
+        if (price.trim() === "" || price.trim().length > 7) {
           updateSnackBarState(
             true,
             `Price cannot be empty or exceed 7 characters for Item ${
@@ -528,20 +420,21 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
 
     if (showDailyMenuSizeField) {
       product.dailyMenuSizeWithPrice.forEach((value, index) => {
+        const price = String(value.price); // Ensure value.price is always a string
         if (value.size.trim() === "" || value.size.trim().length > 9) {
           updateSnackBarState(
             true,
-            `Size cannot be empty or exceed 9 characters for Catering Size ${
+            `Size cannot be empty or exceed 9 characters for DailyMenu Size ${
               index + 1
             }.`,
             "error"
           );
           validationError = true;
         }
-        if (value.price.trim() === "" || value.price.trim().length > 7) {
+        if (price.trim() === "" || price.trim().length > 7) {
           updateSnackBarState(
             true,
-            `Price cannot be empty or exceed 7 characters for Catering Size ${
+            `Price cannot be empty or exceed 7 characters for DailyMenu Size ${
               index + 1
             }.`,
             "error"
@@ -554,6 +447,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     // Validate catering sizes and prices
     if (showCateringSizeField) {
       product.cateringMenuSizeWithPrice.forEach((value, index) => {
+        const price = String(value.price); // Ensure value.price is always a string
         if (value.size.trim() === "" || value.size.trim().length > 9) {
           updateSnackBarState(
             true,
@@ -564,7 +458,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
           );
           validationError = true;
         }
-        if (value.price.trim() === "" || value.price.trim().length > 7) {
+        if (price.trim() === "" || price.trim().length > 7) {
           updateSnackBarState(
             true,
             `Price cannot be empty or exceed 7 characters for Catering Size ${
@@ -576,12 +470,31 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
         }
       });
     }
+const missingSubmenu = menuData.find(
+    (menu) =>
+      product.menu.mainMenuIds.includes(menu._id) &&
+      !menu.subMenus.some((submenu) =>
+        product.menu.subMenuIds.includes(submenu._id)
+      )
+  );
 
+  if (missingSubmenu) {
+    updateSnackBarState(
+      true,
+      `Please select a submenu for "${missingSubmenu.title}".`,
+      "error"
+    );
+    validationError = true;
+  }
     if (validationError) {
-      return; // Exit function early if there are validation errors
+      return; 
+      
     }
 
-    // Continue with saving the product if no validation errors
+  
+    
+    const imagesToRemove = []; 
+    
     formData.append("title", product.title);
     formData.append("description", product.description);
     formData.append("netWeight", product.netWeight.toString());
@@ -1139,7 +1052,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size
+                                Size <span style={{ color: "red" }}>*</span>
                               </Typography>
                               <TextField
                                 sx={{ width: "70%" }}
@@ -1158,7 +1071,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Price$
+                                Price$ <span style={{ color: "red" }}>*</span>
                               </Typography>
                               <TextField
                                 sx={{ width: "70%" }}
@@ -1218,7 +1131,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size
+                                Size <span style={{ color: "red" }}>*</span>
                               </Typography>
                               <TextField
                                 fullWidth
@@ -1237,7 +1150,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Price($)
+                                Price($) <span style={{ color: "red" }}>*</span>
                               </Typography>
                               <TextField
                                 fullWidth
@@ -1297,7 +1210,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Size
+                                Size <span style={{ color: "red" }}>*</span>
                               </Typography>
                               <TextField
                                 fullWidth
@@ -1320,7 +1233,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                   fontSize: "15px",
                                 }}
                               >
-                                Price($)
+                                Price($) <span style={{ color: "red" }}>*</span>
                               </Typography>
                               <TextField
                                 fullWidth
