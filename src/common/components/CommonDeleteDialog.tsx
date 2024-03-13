@@ -15,9 +15,11 @@ interface IProps {
   title: string;
   content: string;
 }
+import { useTheme } from '@mui/material/styles';
 
 function CommonDeleteDialog(props: IProps) {
   const { dialogOpen, onDialogclose, onDelete, title, content } = props;
+  const theme = useTheme();
 
   return (
     <>
@@ -33,7 +35,7 @@ function CommonDeleteDialog(props: IProps) {
           <DialogContentText>{content}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogclose} variant="outlined" color="primary">
+          <Button onClick={onDialogclose} variant="outlined" sx={{ color: theme.palette.primary.main }}>
             Cancel
           </Button>
           <Button onClick={onDelete} variant="contained">

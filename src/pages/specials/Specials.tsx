@@ -164,6 +164,7 @@ function Specials() {
               component="label"
               variant="outlined"
               startIcon={<AddIcon />}
+              sx={{ color: theme.palette.primary.main }}
             >
               Upload Images
               <input
@@ -240,7 +241,7 @@ function Specials() {
                       onClick={() => openDeleteDialog(preview._id)}
                       size="small"
                     >
-                      <DeleteIcon sx={{ color: "#57ccb5" }} />
+                      <DeleteIcon sx={{ color: theme.palette.primary.main }} />
                     </Button>
                   )}
                 </Box>
@@ -256,7 +257,7 @@ function Specials() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={closeDeleteDialog} color="primary">
+            <Button onClick={closeDeleteDialog} color="primary" variant="outlined" sx={{ color: theme.palette.primary.main }}>
               Cancel
             </Button>
             <Button
@@ -267,6 +268,13 @@ function Specials() {
                 closeDeleteDialog();
               }}
               color="primary"
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: theme.palette.primary.dark, // Adjust hover background color as needed
+                },
+              }}
             >
               Delete
             </Button>

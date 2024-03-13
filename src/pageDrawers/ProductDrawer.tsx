@@ -757,12 +757,12 @@ const missingSubmenu = menuData.find(
                                           ...prevState.menu,
                                           mainMenuIds: isChecked
                                             ? [
-                                                ...prevState.menu.mainMenuIds,
-                                                data._id,
-                                              ]
+                                              ...prevState.menu.mainMenuIds,
+                                              data._id,
+                                            ]
                                             : prevState.menu.mainMenuIds.filter(
-                                                (id) => id !== data._id
-                                              ),
+                                              (id) => id !== data._id
+                                            ),
                                         },
                                       }));
                                     }}
@@ -818,12 +818,12 @@ const missingSubmenu = menuData.find(
                                             ...prevState.menu,
                                             subMenuIds: isChecked
                                               ? [
-                                                  ...prevState.menu.subMenuIds,
-                                                  submenu._id,
-                                                ]
+                                                ...prevState.menu.subMenuIds,
+                                                submenu._id,
+                                              ]
                                               : prevState.menu.subMenuIds.filter(
-                                                  (id) => id !== submenu._id
-                                                ),
+                                                (id) => id !== submenu._id
+                                              ),
                                           },
                                         }));
                                       }}
@@ -850,11 +850,12 @@ const missingSubmenu = menuData.find(
                   >
                     Poster Image <span style={{ color: "red" }}>*</span>
                   </Typography>
-                  <Box>
+                  <Box >
                     <Button
                       component="label"
                       variant="outlined"
                       startIcon={<AddIcon />}
+                      style={{ color: '#038265' }}
                     >
                       Upload Images
                       <input
@@ -892,6 +893,8 @@ const missingSubmenu = menuData.find(
                       component="label"
                       variant="outlined"
                       startIcon={<AddIcon />}
+                      style={{ color: '#038265' }}
+
                     >
                       Upload Images
                       <input
