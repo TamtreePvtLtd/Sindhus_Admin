@@ -44,18 +44,18 @@ export interface IProductMenu {
 
 export interface IItemSizeWithPrice {
   size: string;
-  price: number;
+  price: string;
   _id?: string;
 }
 export interface IDailyMenuSizeWithPrice {
   size: string;
-  price: number;
+  price: string;
   _id?: string;
 }
 
 export interface ICateringMenuSizeWithPrice {
   size: string;
-  price: number;
+  price: string;
   quantity: number;
   _id?: string;
 }
