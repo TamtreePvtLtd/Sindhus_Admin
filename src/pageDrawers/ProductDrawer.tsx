@@ -69,7 +69,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
   const [showPriceField, setShowPriceField] = useState(false);
   const [showCateringSizeField, setShowCateringSizeField] = useState(false);
   const [showDailyMenuSizeField, setShowDailyMenuSizeField] = useState(false);
-  const [error,setError]=useState('')
+  const [error, setError] = useState('')
 
   var updateProductMutation = useUpdateProduct();
   var productCreateMutation = useCreateProduct();
@@ -497,11 +497,11 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                     value={product.title}
                     onChange={handleTitleChange}
                   />
-                    {error && (
-              <Typography variant="body2" color="error">
-                {error}
-              </Typography>
-            )}
+                  {error && (
+                    <Typography variant="body2" color="error">
+                      {error}
+                    </Typography>
+                  )}
                 </Box>
                 <Box sx={{ margin: "5px 0" }}>
                   <Typography variant="subtitle1">Description</Typography>
@@ -565,12 +565,12 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                           ...prevState.menu,
                                           mainMenuIds: isChecked
                                             ? [
-                                                ...prevState.menu.mainMenuIds,
-                                                data._id,
-                                              ]
+                                              ...prevState.menu.mainMenuIds,
+                                              data._id,
+                                            ]
                                             : prevState.menu.mainMenuIds.filter(
-                                                (id) => id !== data._id
-                                              ),
+                                              (id) => id !== data._id
+                                            ),
                                         },
                                       }));
                                     }}
@@ -626,12 +626,12 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                             ...prevState.menu,
                                             subMenuIds: isChecked
                                               ? [
-                                                  ...prevState.menu.subMenuIds,
-                                                  submenu._id,
-                                                ]
+                                                ...prevState.menu.subMenuIds,
+                                                submenu._id,
+                                              ]
                                               : prevState.menu.subMenuIds.filter(
-                                                  (id) => id !== submenu._id
-                                                ),
+                                                (id) => id !== submenu._id
+                                              ),
                                           },
                                         }));
                                       }}
@@ -658,11 +658,12 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                   >
                     Poster Image <span style={{ color: "red" }}>*</span>
                   </Typography>
-                  <Box>
+                  <Box >
                     <Button
                       component="label"
                       variant="outlined"
                       startIcon={<AddIcon />}
+                      style={{ color: '#038265' }}
                     >
                       Upload Images
                       <input
@@ -700,6 +701,8 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                       component="label"
                       variant="outlined"
                       startIcon={<AddIcon />}
+                      style={{ color: '#038265' }}
+
                     >
                       Upload Images
                       <input

@@ -258,15 +258,15 @@ function DiningOutMenu() {
   };
   return (
     <>
-      <Container>
-        <Box sx={{ pt: 2 }}>
+      <Grid sx={{ p: 2 }}>
+        {/* <Box >
           <Typography sx={{
             fontSize: '1.3rem', display: 'flex',
-            padding: "10px", fontWeight: 800
+            fontWeight: 800
           }}>
             Daily Menu
           </Typography>
-        </Box>
+        </Box> */}
 
         <Grid container spacing={2} >
           <Grid item xs={3} >
@@ -277,6 +277,7 @@ function DiningOutMenu() {
                 // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 overflowY: "auto",
                 maxHeight: "500px",
+                maxWidth: '250px'
               }}
             >
               {diningOutMenus &&
@@ -319,7 +320,7 @@ function DiningOutMenu() {
           </Grid>
           <Grid item xs={9}>
             {selectedMenu !== null && (
-              <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto" }}>
+              <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto", marginRight: '15px' }}>
                 <Grid item container>
                   {diningOutMenus &&
                     diningOutMenus.data &&
@@ -383,7 +384,7 @@ function DiningOutMenu() {
           <Button
             variant="outlined"
             onClick={handleCancel}
-            sx={{ maxWidth: "64px" }}
+            sx={{ maxWidth: "64px", color: theme.palette.primary.main }}
           >
             Cancel
           </Button>
@@ -407,7 +408,7 @@ function DiningOutMenu() {
             onDelete={handleClearButtonClick}
           />
         )}
-      </Container>
+      </Grid>
     </>
   );
 }
