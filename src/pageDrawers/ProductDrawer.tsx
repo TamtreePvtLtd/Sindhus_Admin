@@ -369,8 +369,6 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
   //   }
   // };
 
-  
-  
   const handleSaveProduct = async (e: any) => {
     e.preventDefault();
     const formData = new FormData();
@@ -470,31 +468,30 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
         }
       });
     }
-const missingSubmenu = menuData.find(
-    (menu) =>
-      product.menu.mainMenuIds.includes(menu._id) &&
-      !menu.subMenus.some((submenu) =>
-        product.menu.subMenuIds.includes(submenu._id)
-      )
+    const snacksMenu = menuData.find(menu => menu.title === 'Snacks');
+    
+if (
+  snacksMenu &&
+  product.menu.mainMenuIds.includes(snacksMenu._id) &&
+  !snacksMenu.subMenus.some(submenu =>
+    product.menu.subMenuIds.includes(submenu._id)
+  )
+) {
+  updateSnackBarState(
+    true,
+    `Please select a submenu for "${snacksMenu.title}".`,
+    "error"
   );
+  validationError = true;
+}
 
-  if (missingSubmenu) {
-    updateSnackBarState(
-      true,
-      `Please select a submenu for "${missingSubmenu.title}".`,
-      "error"
-    );
-    validationError = true;
-  }
+    
     if (validationError) {
-      return; 
-      
+      return;
     }
 
-  
-    
-    const imagesToRemove = []; 
-    
+    const imagesToRemove = [];
+
     formData.append("title", product.title);
     formData.append("description", product.description);
     formData.append("netWeight", product.netWeight.toString());
@@ -757,12 +754,12 @@ const missingSubmenu = menuData.find(
                                           ...prevState.menu,
                                           mainMenuIds: isChecked
                                             ? [
-                                              ...prevState.menu.mainMenuIds,
-                                              data._id,
-                                            ]
+                                                ...prevState.menu.mainMenuIds,
+                                                data._id,
+                                              ]
                                             : prevState.menu.mainMenuIds.filter(
-                                              (id) => id !== data._id
-                                            ),
+                                                (id) => id !== data._id
+                                              ),
                                         },
                                       }));
                                     }}
@@ -818,12 +815,12 @@ const missingSubmenu = menuData.find(
                                             ...prevState.menu,
                                             subMenuIds: isChecked
                                               ? [
-                                                ...prevState.menu.subMenuIds,
-                                                submenu._id,
-                                              ]
+                                                  ...prevState.menu.subMenuIds,
+                                                  submenu._id,
+                                                ]
                                               : prevState.menu.subMenuIds.filter(
-                                                (id) => id !== submenu._id
-                                              ),
+                                                  (id) => id !== submenu._id
+                                                ),
                                           },
                                         }));
                                       }}
@@ -850,12 +847,12 @@ const missingSubmenu = menuData.find(
                   >
                     Poster Image <span style={{ color: "red" }}>*</span>
                   </Typography>
-                  <Box >
+                  <Box>
                     <Button
                       component="label"
                       variant="outlined"
                       startIcon={<AddIcon />}
-                      style={{ color: '#038265' }}
+                      style={{ color: "#038265" }}
                     >
                       Upload Images
                       <input
@@ -893,8 +890,7 @@ const missingSubmenu = menuData.find(
                       component="label"
                       variant="outlined"
                       startIcon={<AddIcon />}
-                      style={{ color: '#038265' }}
-
+                      style={{ color: "#038265" }}
                     >
                       Upload Images
                       <input
