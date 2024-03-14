@@ -156,11 +156,13 @@ function MenuDrawer(props: IProps) {
     if (selectedMenu && selectedMenu._id) {
       setIsEdit(!!selectedMenu._id);
       setValue("title", selectedMenu.title);
-
       setValue("menuType", selectedMenu.menuType.toString());
       setValue("subMenus", selectedMenu.subMenus ?? []);
-
       setSubMenuItems([...selectedMenu.subMenus]);
+
+      setShowAddSubMenu(
+        !!(selectedMenu.subMenus && selectedMenu.subMenus.length)
+      );
     }
   }, [selectedMenu]);
 
@@ -279,7 +281,13 @@ function MenuDrawer(props: IProps) {
               <Typography variant="body1" fontWeight="bold">
                 SubMenu
               </Typography>
-              <Button variant="outlined" onClick={handleAddSubMenu}>
+              <Button
+                variant="outlined"
+                onClick={handleAddSubMenu}
+                sx={{
+                  color: "#038265",
+                }}
+              >
                 <AddIcon />
                 Add Submenu
               </Button>
@@ -328,7 +336,7 @@ function MenuDrawer(props: IProps) {
             variant="contained"
             sx={{
               "&:hover": {
-                backgroundColor: "#038265", 
+                backgroundColor: "#038265",
               },
             }}
           >
