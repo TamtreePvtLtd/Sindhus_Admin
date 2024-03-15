@@ -446,10 +446,10 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     if (showCateringSizeField) {
       product.cateringMenuSizeWithPrice.forEach((value, index) => {
         const price = String(value.price); // Ensure value.price is always a string
-        if (value.size.trim() === "" || value.size.trim().length > 9) {
+        if (value.size.trim() === "" || value.size.trim().length > 11) {
           updateSnackBarState(
             true,
-            `Size cannot be empty or exceed 9 characters for Catering Size ${
+            `Size cannot be empty or exceed 11 characters for Catering Size ${
               index + 1
             }.`,
             "error"
