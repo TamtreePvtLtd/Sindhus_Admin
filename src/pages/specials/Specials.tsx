@@ -15,8 +15,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-
-
+import SpecialsDrawer from "../../pageDrawers/SpecialsDrawer";
 function Specials() {
   const theme = useTheme();
   const [imagePreview, setImagePreview] = useState<string[]>([]);
@@ -93,23 +92,6 @@ function Specials() {
     }
   };
 
-  // const handleSave = async () => {
-  //   try {
-  //     if (images.length > 0) {
-  //       const imageData = images.map((image) => ({
-  //         data: URL.createObjectURL(image),
-  //       }));
-
-  //       await createProductSpecial.mutateAsync({ images: imageData });
-
-  //       console.log("Images uploaded successfully");
-
-  //       setImages([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error uploading images:", error);
-  //   }
-  // };
   const handleMouseEnter = (index: number) => {
     setDeleteIndex(index);
   };
@@ -132,47 +114,53 @@ function Specials() {
     setOpenDialog(false);
   };
 
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpenDrawer(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
+
   return (
     <>
       <Container>
         <Box
           sx={{
-            width: '100%',
+            width: "100%",
             textAlign: "center",
             mt: 5,
-            justifyContent: 'center'
+            justifyContent: "center",
           }}
         >
-          <Typography sx={{
-            display: 'flex',
-            fontSize: '1.5rem',
-            borderRadius: '50px',
-            textAlign: 'center',
-            width: '25%',
-            // backgroundColor: theme.palette.primary.main,
-            // color: 'white',
-            padding: '10px',
-            justifyContent: 'center',
-            margin: 'auto',
-            mt: 5,
-            fontWeight: 600,
-          }}>
+          <Typography
+            sx={{
+              display: "flex",
+              fontSize: "1.5rem",
+              borderRadius: "50px",
+              textAlign: "center",
+              width: "25%",
+              // backgroundColor: theme.palette.primary.main,
+              // color: 'white',
+              padding: "10px",
+              justifyContent: "center",
+              margin: "auto",
+              mt: 5,
+              fontWeight: 600,
+            }}
+          >
             Special Offers
           </Typography>
           <Box sx={{ mt: 5 }}>
             <Button
-              component="label"
               variant="outlined"
               startIcon={<AddIcon />}
+              onClick={handleDrawerOpen}
               sx={{ color: theme.palette.primary.main }}
             >
-              Upload Images
-              <input
-                type="file"
-                style={{ display: "none" }}
-                onChange={handleImageChange}
-                multiple
-              />
+              Add Specials
             </Button>
           </Box>
           <Box
@@ -248,7 +236,6 @@ function Specials() {
               ))}
           </Box>
         </Box>
-        {/* Dialog should be outside the loop */}
         <Dialog open={openDialog} onClose={closeDeleteDialog}>
           <DialogTitle>Delete Confirmation</DialogTitle>
           <DialogContent>
@@ -257,7 +244,12 @@ function Specials() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={closeDeleteDialog} color="primary" variant="outlined" sx={{ color: theme.palette.primary.main }}>
+            <Button
+              onClick={closeDeleteDialog}
+              color="primary"
+              variant="outlined"
+              sx={{ color: theme.palette.primary.main }}
+            >
               Cancel
             </Button>
             <Button
@@ -270,9 +262,9 @@ function Specials() {
               color="primary"
               sx={{
                 backgroundColor: theme.palette.primary.main,
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: theme.palette.primary.dark, // Adjust hover background color as needed
+                color: "white",
+                "&:hover": {
+                  backgroundColor: theme.palette.primary.dark,
                 },
               }}
             >
@@ -280,6 +272,7 @@ function Specials() {
             </Button>
           </DialogActions>
         </Dialog>
+        <SpecialsDrawer open={openDrawer} onClose={handleDrawerClose} />
       </Container>
     </>
   );
