@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Typography } from '@mui/material';
 import UpdatePasswordDialog from './UpdatePasswordDialog';
 import { httpWithoutCredentials } from '../services/http';
 import { useSnackBar } from '../context/SnackBarContext';
+import ForgotPasswordDialog from './ForgotPasswordDialog';
 
 interface OTPVerificationProps {
   open: boolean;
@@ -10,9 +11,10 @@ interface OTPVerificationProps {
   email: string;
 }
 
-const OTPVerificationDialog = ({ open, onClose, email }: OTPVerificationProps) => {
+const OTPVerificationDialog = ({ open, onClose, email}: OTPVerificationProps) => {
   const [otp, setOtp] = useState('');
   const [showUpdatePasswordDialog, setShowUpdatePasswordDialog] = useState(false);
+  const [showForgotPasswordDialog, setShowForgotPasswordDialog] = useState(false);
   const { updateSnackBarState } = useSnackBar();
 
   const handleVerifyOTP = async (enteredOTP: string, email: string) => {
@@ -34,29 +36,50 @@ const OTPVerificationDialog = ({ open, onClose, email }: OTPVerificationProps) =
     }
   };
 
+
+  const handleResendOTP = async () => {
+    try {
+      await httpWithoutCredentials.post('/customer/resend-otp', { email });
+      console.log('Password updated successfully');
+      updateSnackBarState(true, "OTP resent Successfully", "success");
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        console.log(error.response.data);
+        updateSnackBarState(true, error.response.data.message, "error");
+      }
+    }
+  };
+
+  const handleForgotPassword = () => {
+    onClose();
+    setShowForgotPasswordDialog(true);
+  }
+
   return (
+    <>
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Verify OTP</DialogTitle>
       <DialogContent>
-        <TextField
-          margin="dense"
-          id="email"
-          label="Email"
-          type="text"
-          fullWidth
-          value={email}
-          disabled
-        />
+      <Typography variant="body1" gutterBottom>
+          Check the email {email} for a verification code.
+        </Typography>
+        <Typography variant="body2" color="primary" onClick={handleForgotPassword} style={{ cursor: 'pointer' }}>
+        <a style={{ color: 'blue', textDecoration: 'underline' }}>Change email</a>     
+        </Typography>
         <TextField
           autoFocus
           margin="dense"
           id="otp"
-          label="OTP"
+          label="Enter OTP"
           type="text"
           fullWidth
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
         />
+
+<Typography variant="body2" color="primary" style={{ cursor: 'pointer' }}>
+          <a style={{ textDecoration: 'underline' }} onClick={handleResendOTP}>Resend OTP</a>     
+        </Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
@@ -66,14 +89,21 @@ const OTPVerificationDialog = ({ open, onClose, email }: OTPVerificationProps) =
           Verify OTP
         </Button>
       </DialogActions>
-      {showUpdatePasswordDialog && (
+    </Dialog>
+    {showUpdatePasswordDialog && (
         <UpdatePasswordDialog
           open={showUpdatePasswordDialog}
           onClose={() => setShowUpdatePasswordDialog(false)}
           email={email}
         />
       )}
-    </Dialog>
+      {showForgotPasswordDialog && (
+        <ForgotPasswordDialog
+          open={showForgotPasswordDialog}
+          onClose={() => setShowForgotPasswordDialog(false)}
+        />
+      )}
+    </>
   );
 };
 

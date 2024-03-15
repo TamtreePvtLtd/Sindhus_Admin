@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, IconButton, InputAdornment } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, IconButton, InputAdornment, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { httpWithoutCredentials } from '../services/http';
 import { useSnackBar } from '../context/SnackBarContext';
@@ -10,7 +10,7 @@ interface UpdatePasswordDialogProps {
     email: string;
 }
 
-const UpdatePasswordDialog = ({ open, onClose, email }:UpdatePasswordDialogProps) => {
+const UpdatePasswordDialog = ({ open, onClose, email }: UpdatePasswordDialogProps) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { updateSnackBarState } = useSnackBar();
@@ -20,35 +20,26 @@ const UpdatePasswordDialog = ({ open, onClose, email }:UpdatePasswordDialogProps
             await httpWithoutCredentials.post('/customer/update-password', { email, newPassword: password });
             console.log('Password updated successfully');
             onClose();
-          updateSnackBarState(true, "Password updated Successfully", "success")
-        } catch (error:any) {
+            updateSnackBarState(true, "Password updated Successfully", "success");
+        } catch (error: any) {
             if (error.response && error.response.data) {
                 console.log(error.response.data);
                 updateSnackBarState(true, error.response.data.message, "error");
             }
+        }
     };
-}
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
 
     return (
-        <>
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Update Password</DialogTitle>
             <DialogContent>
-
-            <TextField
-                    margin="dense"
-                    id="email"
-                    label="Email"
-                    type="text"
-                    fullWidth
-                    value={email}
-                    disabled
-                />
-
+                <Typography variant="body1" gutterBottom>
+                    Change password for {email}
+                </Typography>
                 <TextField
                     autoFocus
                     margin="dense"
@@ -78,7 +69,6 @@ const UpdatePasswordDialog = ({ open, onClose, email }:UpdatePasswordDialogProps
                 </Button>
             </DialogActions>
         </Dialog>
-        </>
     );
 };
 

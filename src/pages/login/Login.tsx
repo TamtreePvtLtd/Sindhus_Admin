@@ -227,7 +227,7 @@ function Login() {
 
             </Box>
           </Box>
-          <ForgotPasswordDialog open={isForgotPasswordDialogOpen} onClose={handleCloseForgotPasswordDialog} />
+          <ForgotPasswordDialog open={isForgotPasswordDialogOpen} onClose={handleCloseForgotPasswordDialog}  />
         </>
       )}
     </>
