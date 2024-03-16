@@ -25,7 +25,7 @@ function ImagePreview({ preview }) {
 
 function SpecialsDrawer({ open, onClose }) {
   const [specialData, setSpecialData] = useState({
-    name: "", // Changed title to name
+    name: "", 
     description: "",
     images: [],
   });

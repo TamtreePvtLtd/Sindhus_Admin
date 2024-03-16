@@ -136,7 +136,7 @@ function SpecialsPage() {
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
-                    width: "10%",
+                    width: "20%",
                     background: (theme) => theme.palette.primary.main,
                     color: "white",
                   }}
@@ -153,7 +153,10 @@ function SpecialsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    sx={{ color: "white" }}
+                    sx={{
+                      color: "white",
+                      justifyContent: "flex-start",
+                    }}
                   >
                     Name
                   </Typography>
@@ -197,13 +200,16 @@ function SpecialsPage() {
                         onClick={() => handleImageClick(preview.images[0])}
                       />
                     </TableCell>
-                    <TableCell>{preview.name}</TableCell>
+                    <TableCell sx={{ justifyContent: "flex-start" }}>
+                      {preview.name}
+                    </TableCell>
                     <TableCell>
                       {new Date(preview.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <IconButton
                         onClick={() => handleDeleteDialogOpen(preview._id)}
+                        sx={{ zIndex: -1 }}
                       >
                         <DeleteIcon />
                       </IconButton>
