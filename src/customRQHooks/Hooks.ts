@@ -180,7 +180,7 @@ export const useChangeisResponseStatus = () => {
 
 export const useGetAllProduct = (page: number, pageSize: number) => {
   return useQuery({
-    queryKey: ["product"],
+    queryKey: ["products"],
     queryFn: () => getAllProduct(page, pageSize),
     refetchOnWindowFocus: false,
   });
