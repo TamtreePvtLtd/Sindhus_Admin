@@ -48,11 +48,12 @@ function ProductsPage() {
   const deleteProductMutation = useDeleteProduct();
   const { updateSnackBarState } = useSnackBar();
 
-  const { data } = useGetProducts(
+  const { data, refetch: refetchProduct } = useGetProducts(
     selectedMenuValue?._id || "",
     selectedSubmenuValues
   );
   const { data: allProduct, refetch } = useGetAllProduct(page, rowsPerPage);
+
   useEffect(() => {
     if (selectedMenuValue === null) {
       setDisplayedData(allProduct?.items || []);
@@ -73,6 +74,7 @@ function ProductsPage() {
     setIsAdd(true);
   };
   const handleEditProduct = (product: IProduct) => {
+    refetchProduct();
     setSelectedProduct({ ...product });
     openDrawer();
     setIsAdd(false);
@@ -315,7 +317,11 @@ function ProductsPage() {
                     color: "white",
                   }}
                 >
-                  <Typography variant="subtitle1" fontWeight="bold">
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    align="center"
+                  >
                     Action
                   </Typography>
                 </TableCell>

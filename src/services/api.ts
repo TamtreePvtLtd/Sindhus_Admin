@@ -134,6 +134,17 @@ const deleteSpecial = async (specials: ISpecial) => {
     throw new Error(message);
   }
 };
+const deleteAllSpecial = async() => {
+  try {
+    const response = await httpWithCredentials.delete(
+      `/specials/deleteAllSpecials`
+    );
+    return response;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
 
 const getAllDiningOutMenuWithProducts = async () => {
   try {
@@ -287,7 +298,7 @@ const createSpecials = async (formData) => {
       formData
     );
     console.log("response", response.data);
-
+      
     return response.data;
   } catch (error) {
     throw error;
@@ -332,6 +343,7 @@ const deleteMenu = async (menuId: string) => {
     throw new Error(message);
   }
 };
+
 const changeisResponseStatus = async (enquiryId: any) => {
   try {
     const response = await httpWithCredentials.put(
@@ -369,4 +381,5 @@ export {
   updateMenu,
   createSpecials,
   changeisResponseStatus,
+  deleteAllSpecial
 };

@@ -14,6 +14,7 @@ import {
   createSpecials,
   getSpecials,
   deleteSpecial,
+  deleteAllSpecial,
   getAllProduct,
  } from "../services/api";
 import { queryClient } from "../App";
@@ -117,6 +118,17 @@ export const useDeleteSpecial = () => {
     },
   });
 };
+export const useDeleteAllSpecial = () => {
+  return useMutation({
+    mutationFn: deleteAllSpecial,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["specials"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
 
 export const useUpdateMenu = () => {
   return useMutation({
@@ -180,7 +192,7 @@ export const useChangeisResponseStatus = () => {
 
 export const useGetAllProduct = (page: number, pageSize: number) => {
   return useQuery({
-    queryKey: ["product"],
+    queryKey: ["products"],
     queryFn: () => getAllProduct(page, pageSize),
     refetchOnWindowFocus: false,
   });

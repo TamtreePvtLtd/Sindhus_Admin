@@ -171,7 +171,7 @@ function Navbar() {
               <Box sx={{ marginLeft: "auto" }}>
                 <Tooltip title="Logout">
                   <IconButton
-                    onMouseEnter={handleMenuClick}
+                    onClick={handleMenuClick}
                     size="small"
                     aria-controls={open ? "account-menu" : undefined}
                     aria-haspopup="true"

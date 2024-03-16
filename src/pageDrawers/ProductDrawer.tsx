@@ -52,10 +52,6 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     selectedProduct,
   } = props;
 
-  const handleClose = () => {
-    onCloseDialog();
-  };
-
   const [selectedImages, setSelectedImages] = useState<Array<string | File>>(
     []
   );
@@ -75,6 +71,11 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
   var productCreateMutation = useCreateProduct();
 
   const { updateSnackBarState } = useSnackBar();
+
+  const handleClose = () => {
+    onCloseDialog();
+    setImagesToRemove([]);
+  };
 
   // Get All Menus
   const getAllMenusData = async () => {
@@ -468,29 +469,26 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
         }
       });
     }
-    const snacksMenu = menuData.find(menu => menu.title === 'Snacks');
-    
-if (
-  snacksMenu &&
-  product.menu.mainMenuIds.includes(snacksMenu._id) &&
-  !snacksMenu.subMenus.some(submenu =>
-    product.menu.subMenuIds.includes(submenu._id)
-  )
-) {
-  updateSnackBarState(
-    true,
-    `Please select a submenu for "${snacksMenu.title}".`,
-    "error"
-  );
-  validationError = true;
-}
+    const snacksMenu = menuData.find((menu) => menu.title === "Snacks");
 
-    
+    if (
+      snacksMenu &&
+      product.menu.mainMenuIds.includes(snacksMenu._id) &&
+      !snacksMenu.subMenus.some((submenu) =>
+        product.menu.subMenuIds.includes(submenu._id)
+      )
+    ) {
+      updateSnackBarState(
+        true,
+        `Please select a submenu for "${snacksMenu.title}".`,
+        "error"
+      );
+      validationError = true;
+    }
+
     if (validationError) {
       return;
     }
-
-    const imagesToRemove = [];
 
     formData.append("title", product.title);
     formData.append("description", product.description);
@@ -600,8 +598,6 @@ if (
       ...prevProduct,
       images: updatedProductImages,
     }));
-
-    console.log("onclick", index);
   };
 
   const handleSizeChange = (index, newSize) => {
@@ -798,9 +794,11 @@ if (
                                             left: 0,
                                             right: 0,
                                             bottom: 0,
-                                            border: "1px dotted #000", // Adjust color and thickness as needed
-                                            borderRadius: 4, // Adjust border radius as needed
-                                            pointerEvents: "none", // Ensure clicks pass through the pseudo-element
+                                            border: "1px dotted #000",
+
+                                            borderRadius: 4,
+
+                                            pointerEvents: "none",
                                           },
                                         },
                                       }}
@@ -835,6 +833,8 @@ if (
                       </Accordion>
                     ))}
                 </Box>
+              </Grid>
+              <Grid item md={7}>
                 <Box
                   sx={{ display: "flex", justifyContent: "space-between" }}
                   mt={3}
@@ -917,9 +917,10 @@ if (
                       />
                     ))}
                 </Box>
-              </Grid>
-              <Grid item md={7}>
                 <Box mt={3}>
+                  <Typography variant="subtitle1">
+                    Product Price <span style={{ color: "red" }}>*</span>
+                  </Typography>
                   <FormGroup row>
                     <FormControlLabel
                       control={
