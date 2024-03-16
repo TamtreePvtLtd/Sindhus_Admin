@@ -74,10 +74,8 @@ function ProductsPage() {
     setIsAdd(true);
   };
   const handleEditProduct = (product: IProduct) => {
-    console.log("product", product);
     refetchProduct();
     setSelectedProduct({ ...product });
-
     openDrawer();
     setIsAdd(false);
   };
