@@ -221,7 +221,7 @@ const Signup = () => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={togglePasswordVisibility}>
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -243,11 +243,7 @@ const Signup = () => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={toggleConfirmPasswordVisibility}>
-                            {showConfirmPassword ? (
-                              <VisibilityOff />
-                            ) : (
-                              <Visibility />
-                            )}
+                            {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       ),
