@@ -1,28 +1,43 @@
-import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
-import UpdatePasswordDialog from './UpdatePasswordDialog';
-import { httpWithoutCredentials } from '../services/http';
-import { useSnackBar } from '../context/SnackBarContext';
+// OTPVerificationDialog.tsx
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+} from "@mui/material";
+import { httpWithoutCredentials } from "../services/http";
+import { useSnackBar } from "../context/SnackBarContext";
 
 interface OTPVerificationProps {
   open: boolean;
   onClose: () => void;
   email: string;
+  onVerifySuccess: () => void; // Callback function for successful OTP verification
 }
 
-const OTPVerificationDialog = ({ open, onClose, email }: OTPVerificationProps) => {
-  const [otp, setOtp] = useState('');
-  const [showUpdatePasswordDialog, setShowUpdatePasswordDialog] = useState(false);
+const OTPVerificationDialog = ({
+  open,
+  onClose,
+  email,
+  onVerifySuccess,
+}: OTPVerificationProps) => {
+  const [otp, setOtp] = useState("");
   const { updateSnackBarState } = useSnackBar();
 
   const handleVerifyOTP = async (enteredOTP: string, email: string) => {
     try {
-      const response = await httpWithoutCredentials.post('/customer/verify-otp', { otp: enteredOTP, email });
+      const response = await httpWithoutCredentials.post(
+        "/customer/verify-otp",
+        { otp: enteredOTP, email }
+      );
       if (response.status === 200) {
-        console.log('OTP verified successfully');
+        console.log("OTP verified successfully");
         updateSnackBarState(true, "OTP verified Successfully", "success");
         onClose();
-        setShowUpdatePasswordDialog(true)
+        onVerifySuccess(); // Call the callback function for successful OTP verification
       } else {
         updateSnackBarState(true, "Failed to send OTP", "error");
       }
@@ -66,13 +81,6 @@ const OTPVerificationDialog = ({ open, onClose, email }: OTPVerificationProps) =
           Verify OTP
         </Button>
       </DialogActions>
-      {showUpdatePasswordDialog && (
-        <UpdatePasswordDialog
-          open={showUpdatePasswordDialog}
-          onClose={() => setShowUpdatePasswordDialog(false)}
-          email={email}
-        />
-      )}
     </Dialog>
   );
 };

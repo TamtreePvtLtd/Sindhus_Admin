@@ -151,8 +151,14 @@ function Login() {
             }}
           >
             <Box>
-              <Typography variant="h5" align="center" gutterBottom>
-                <b> Login</b>
+              <Typography
+                variant="h5"
+                align="center"
+                gutterBottom
+                color={theme.palette.primary.main}
+                sx={{ fontFamily: "Sindhus-Logo-Font",fontWeight:700}}
+              >
+                Welcome to SINDHU'S Kitchen
               </Typography>
               <form onSubmit={handleSubmit(handleLogin)}>
                 <Typography>
@@ -175,45 +181,56 @@ function Login() {
                   }}
                   required
                 />
-                 <Typography>
+                <Typography>
                   Password<span style={{ color: "red" }}>*</span>
                 </Typography>
                 <TextField
-  variant="outlined"
-  margin="normal"
-  fullWidth
-  type={showPassword ? "text" : "password"}
-  autoComplete="new"
-  {...register("password")}
-  error={!!errors.password}
-  helperText={errors.password?.message?.toString()}
-  FormHelperTextProps={{
-    sx: { color: "red", marginLeft: "0px" },
-  }}
-  required
-  InputProps={{
-    endAdornment: (
-      <IconButton
-        onClick={handleTogglePasswordVisibility}
-        edge="end"
-        aria-label={showPassword ? "Hide password" : "Show password"}
-      >
-        {showPassword ? <VisibilityOff /> : <Visibility />}
-      </IconButton>
-    ),
-  }}
-/>
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new"
+                  {...register("password")}
+                  error={!!errors.password}
+                  helperText={errors.password?.message?.toString()}
+                  FormHelperTextProps={{
+                    sx: { color: "red", marginLeft: "0px" },
+                  }}
+                  required
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={handleTogglePasswordVisibility}
+                        edge="end"
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
+                      >
+                        {showPassword ? <Visibility />: <VisibilityOff /> }
+                      </IconButton>
+                    ),
+                  }}
+                />
                 <span
-                  style={{ float: "right", color: theme.palette.primary.main,cursor:"pointer" }} onClick={handleOpenForgotPasswordDialog}
+                  style={{
+                    float: "right",
+                    color: theme.palette.primary.main,
+                    cursor: "pointer",
+                  }}
+                  onClick={handleOpenForgotPasswordDialog}
                 >
                   Forgot Password?
                 </span>
-                    <Link
-                      to={paths.REGISTER}
-                      style={{ textDecoration: "none", color: theme.palette.primary.main, marginLeft: "10px" }}
-                    >
-                      Register Now
-                    </Link>
+                <Link
+                  to={paths.REGISTER}
+                  style={{
+                    textDecoration: "none",
+                    color: theme.palette.primary.main,
+                    marginLeft: "10px",
+                  }}
+                >
+                  Register Now
+                </Link>
                 <Button
                   variant="contained"
                   color="primary"
@@ -224,10 +241,12 @@ function Login() {
                   Login
                 </Button>
               </form>
-
             </Box>
           </Box>
-          <ForgotPasswordDialog open={isForgotPasswordDialogOpen} onClose={handleCloseForgotPasswordDialog} />
+          <ForgotPasswordDialog
+            open={isForgotPasswordDialogOpen}
+            onClose={handleCloseForgotPasswordDialog}
+          />
         </>
       )}
     </>
