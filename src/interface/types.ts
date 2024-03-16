@@ -140,5 +140,8 @@ export interface IDiningOutMenu {
 }
  export interface ISpecial {
   id: string;
-  image: string;
+   image: string;
+   name: string;
+   created_at: string
+
 }

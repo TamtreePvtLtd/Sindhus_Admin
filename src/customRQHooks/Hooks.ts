@@ -14,6 +14,7 @@ import {
   createSpecials,
   getSpecials,
   deleteSpecial,
+  deleteAllSpecial,
   getAllProduct,
  } from "../services/api";
 import { queryClient } from "../App";
@@ -109,6 +110,17 @@ export const useDeleteProduct = () => {
 export const useDeleteSpecial = () => {
   return useMutation({
     mutationFn: deleteSpecial,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["specials"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+export const useDeleteAllSpecial = () => {
+  return useMutation({
+    mutationFn: deleteAllSpecial,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["specials"] });
     },
