@@ -48,11 +48,12 @@ function ProductsPage() {
   const deleteProductMutation = useDeleteProduct();
   const { updateSnackBarState } = useSnackBar();
 
-  const { data } = useGetProducts(
+  const { data, refetch: refetchProduct } = useGetProducts(
     selectedMenuValue?._id || "",
     selectedSubmenuValues
   );
   const { data: allProduct, refetch } = useGetAllProduct(page, rowsPerPage);
+
   useEffect(() => {
     if (selectedMenuValue === null) {
       setDisplayedData(allProduct?.items || []);
@@ -73,7 +74,10 @@ function ProductsPage() {
     setIsAdd(true);
   };
   const handleEditProduct = (product: IProduct) => {
+    console.log("product", product);
+    refetchProduct();
     setSelectedProduct({ ...product });
+
     openDrawer();
     setIsAdd(false);
   };
