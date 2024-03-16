@@ -1,19 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Drawer,
   Typography,
-  TextField,
   Button,
   Divider,
+  TextField,
+  IconButton,
 } from "@mui/material";
 import theme from "../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import { useCreateSpecials } from "../customRQHooks/Hooks";
+
+function ImagePreview({ preview }) {
+  return (
+    <img
+      src={preview}
+      alt="Image Preview"
+      style={{ width: "100px", height: "100px", marginRight: "10px" }}
+    />
+  );
+}
 
 function SpecialsDrawer({ open, onClose }) {
   const [specialData, setSpecialData] = useState({
-    title: "",
+    name: "", // Changed title to name
     description: "",
     images: [],
   });
@@ -56,6 +68,10 @@ function SpecialsDrawer({ open, onClose }) {
     e.preventDefault();
     const formData = new FormData();
 
+    // Append name to formData
+    formData.append("name", specialData.name);
+
+    // Append images to formData
     images.forEach((image, index) => {
       formData.append(`image_${index}`, image);
     });
@@ -65,55 +81,37 @@ function SpecialsDrawer({ open, onClose }) {
       setImagePreview([]);
       setImages([]);
       onClose();
+      setSpecialData((prevData) => ({ ...prevData, name: "" }));
     } catch (error) {
       console.error("Error uploading images:", error);
     }
-    };
-    
-    useEffect(() => {
-      let storedPreviews = localStorage.getItem("imagePreviews");
-      if (storedPreviews) {
-        try {
-          const parsedPreviews = JSON.parse(storedPreviews);
-          setImagePreview(parsedPreviews.data);
-        } catch (error) {
-          console.error("Error parsing stored previews:", error);
-        }
-      } else {
-        setImagePreview([]);
-        console.log("No stored previews found in localStorage.");
-      }
-    }, []);
-
-    useEffect(() => {
-      setImagePreview([]);
-
-      localStorage.setItem("imagePreviews", JSON.stringify(imagePreview));
-    }, [imagePreview]);
+  };
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <Box sx={{ p: 2 }}>
-        <Typography variant="h6">Add Special</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6">Add Special</Typography>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <Divider sx={{ my: 2 }} />
         <TextField
-          label="Title"
+          label="Name"
           variant="outlined"
-          value={specialData.title}
-          onChange={(e) => handleInputChange("title", e.target.value)}
+          value={specialData.name}
+          onChange={(e) => handleInputChange("name", e.target.value)}
           fullWidth
           sx={{ mb: 2 }}
         />
-        <TextField
-          label="Description"
-          variant="outlined"
-          value={specialData.description}
-          onChange={(e) => handleInputChange("description", e.target.value)}
-          multiline
-          fullWidth
-          rows={4}
-          sx={{ mb: 2 }}
-        />
+
         <Button
           component="label"
           variant="outlined"
@@ -128,6 +126,11 @@ function SpecialsDrawer({ open, onClose }) {
             multiple
           />
         </Button>
+        <div style={{ display: "flex", marginBottom: "10px" }}>
+          {imagePreview.map((preview, index) => (
+            <ImagePreview key={index} preview={preview} />
+          ))}
+        </div>
         <Button
           variant="contained"
           color="primary"

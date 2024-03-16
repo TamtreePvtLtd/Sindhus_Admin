@@ -1,120 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { Box, Button, Container, Typography } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import { useState } from "react";
 import {
-  useCreateSpecials,
-  useDeleteSpecial,
-  useGetSpecials,
-} from "../../customRQHooks/Hooks";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
+  Box,
+  Button,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/material/styles";
+import { useGetSpecials, useDeleteSpecial } from "../../customRQHooks/Hooks";
+import CommonDeleteDialog from "../../common/components/CommonDeleteDialog";
 import SpecialsDrawer from "../../pageDrawers/SpecialsDrawer";
-function Specials() {
+
+function SpecialsPage() {
   const theme = useTheme();
-  const [imagePreview, setImagePreview] = useState<string[]>([]);
-  const [images, setImages] = useState<File[]>([]);
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-  const createProductSpecial = useCreateSpecials();
-  const deleteSpecial = useDeleteSpecial();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState<
-    number | null
-  >(null);
-
-  let { data: imagePreviews, isLoading } = useGetSpecials();
-
-  useEffect(() => {
-    let storedPreviews = localStorage.getItem("imagePreviews");
-    if (storedPreviews) {
-      try {
-        const parsedPreviews = JSON.parse(storedPreviews);
-        setImagePreview(parsedPreviews.data);
-      } catch (error) {
-        console.error("Error parsing stored previews:", error);
-      }
-    } else {
-      setImagePreview([]);
-      console.log("No stored previews found in localStorage.");
-    }
-  }, []);
-
-  useEffect(() => {
-    setImagePreview([]);
-
-    localStorage.setItem("imagePreviews", JSON.stringify(imagePreviews));
-  }, [imagePreviews]);
-
-  const handleImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    try {
-      const files: FileList | null = event.target.files;
-
-      if (files) {
-        const imageFiles: File[] = Array.from(files);
-        const previews: string[] = [];
-
-        for (let i = 0; i < imageFiles.length; i++) {
-          const file = imageFiles[i];
-          const preview = URL.createObjectURL(file);
-          previews.push(preview);
-        }
-
-        setImagePreview((prevPreviews) => [...prevPreviews, ...previews]);
-        setImages((prevImages) => [...prevImages, ...imageFiles]);
-      }
-    } catch (error) {
-      console.error("Error uploading images:", error);
-    }
-  };
-
-  const handleSave = async (e: any) => {
-    e.preventDefault();
-    const formData = new FormData();
-
-    images.forEach((image, index) => {
-      formData.append(`image_${index}`, image);
-    });
-
-    try {
-      const response = await createProductSpecial.mutate(formData);
-      setImagePreview([]);
-      setImages([]);
-    } catch (error) {
-      console.error("Error uploading images:", error);
-    }
-  };
-
-  const handleMouseEnter = (index: number) => {
-    setDeleteIndex(index);
-  };
-
-  const handleMouseLeave = () => {
-    setDeleteIndex(null);
-  };
-
-  const handleDelete = (index: number) => {
-    deleteSpecial.mutate({ id: index });
-  };
-
-  const openDeleteDialog = (index: string) => {
-    setDeleteConfirmationIndex(index);
-    setOpenDialog(true);
-  };
-
-  const closeDeleteDialog = () => {
-    setDeleteConfirmationIndex(null);
-    setOpenDialog(false);
-  };
-
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
+  const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [fullscreenImageOpen, setFullscreenImageOpen] = useState(false);
+  const { data: imagePreviews, isLoading, refetch } = useGetSpecials();
+  const deleteSpecial = useDeleteSpecial();
 
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
@@ -124,158 +37,233 @@ function Specials() {
     setOpenDrawer(false);
   };
 
+  const handleDeleteDialogOpen = (index) => {
+    setDeleteConfirmationIndex(index);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteConfirmationIndex(null);
+    setDeleteDialogOpen(false);
+  };
+
+  const handleDelete = () => {
+    if (deleteConfirmationIndex !== null) {
+      deleteSpecial.mutate({ id: deleteConfirmationIndex });
+    }
+    handleDeleteDialogClose();
+  };
+
+  const handleDeleteAllDialogOpen = () => {
+    setDeleteAllDialogOpen(true);
+  };
+
+  const handleDeleteAllDialogClose = () => {
+    setDeleteAllDialogOpen(false);
+  };
+
+  const handleDeleteAll = () => {
+    handleDeleteAllDialogClose();
+    if (imagePreviews?.data) {
+      imagePreviews.data.forEach((preview) => {
+        deleteSpecial.mutate({ id: preview._id });
+      });
+    }
+    refetch();
+  };
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setFullscreenImageOpen(true);
+  };
+
+  const handleCloseFullscreenImage = () => {
+    setSelectedImage(null);
+    setFullscreenImageOpen(false);
+  };
+
   return (
-    <>
-      <Container>
-        <Box
+    <Box sx={{ marginLeft: "40px", marginRight: "40px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "15px",
+          marginTop: "50px",
+        }}
+      >
+        <Typography
+          variant="h4"
           sx={{
-            width: "100%",
-            textAlign: "center",
-            mt: 5,
-            justifyContent: "center",
+            fontSize: "1.3rem",
+            borderRadius: "50px",
+            fontWeight: 800,
+            display: "flex",
+            justifyContent: "flex-start",
+            marginRight: "42%",
           }}
         >
-          <Typography
-            sx={{
-              display: "flex",
-              fontSize: "1.5rem",
-              borderRadius: "50px",
-              textAlign: "center",
-              width: "25%",
-              // backgroundColor: theme.palette.primary.main,
-              // color: 'white',
-              padding: "10px",
-              justifyContent: "center",
-              margin: "auto",
-              mt: 5,
-              fontWeight: 600,
-            }}
-          >
-            Special Offers
-          </Typography>
-          <Box sx={{ mt: 5 }}>
-            <Button
-              variant="outlined"
-              startIcon={<AddIcon />}
-              onClick={handleDrawerOpen}
-              sx={{ color: theme.palette.primary.main }}
-            >
-              Add Specials
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              mt: 3,
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            {imagePreview &&
-              imagePreview.map((preview, index) => (
-                <Box key={index} sx={{ mr: 2, mb: 2 }}>
-                  <img
-                    src={preview}
-                    alt={`Preview ${index}`}
-                    style={{ width: 100, height: 100, objectFit: "cover" }}
-                  />
-                </Box>
-              ))}
-          </Box>
-          <Button
-            onClick={handleSave}
-            variant="contained"
-            color="primary"
-            style={{ marginRight: "8px" }}
-          >
-            Save
-          </Button>
+          Special Offers
+        </Typography>
 
-          <Box
-            sx={{
-              mt: 3,
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            {!isLoading &&
-              imagePreviews?.data &&
-              imagePreviews?.data.map((preview, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    position: "relative",
-                    mr: 2,
-                    mb: 2,
-                    display: "inline-block",
-                  }}
-                  onMouseEnter={() => handleMouseEnter(index)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <img
-                    src={preview.images[0]}
-                    alt={`Preview ${preview._id}`}
-                    style={{ width: 100, height: 100, objectFit: "cover" }}
-                  />
-                  {deleteIndex === index && (
-                    <Button
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                      }}
-                      onClick={() => openDeleteDialog(preview._id)}
-                      size="small"
-                    >
-                      <DeleteIcon sx={{ color: theme.palette.primary.main }} />
-                    </Button>
-                  )}
-                </Box>
-              ))}
-          </Box>
-        </Box>
-        <Dialog open={openDialog} onClose={closeDeleteDialog}>
-          <DialogTitle>Delete Confirmation</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to delete the uploaded image?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={closeDeleteDialog}
-              color="primary"
-              variant="outlined"
-              sx={{ color: theme.palette.primary.main }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                if (deleteConfirmationIndex !== null) {
-                  handleDelete(deleteConfirmationIndex);
-                }
-                closeDeleteDialog();
-              }}
-              color="primary"
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleDeleteAllDialogOpen}
+          sx={{ color: "#038265", marginRight: "33%" }}
+        >
+          Delete All
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleDrawerOpen}>
+          <AddIcon /> Add Specials
+        </Button>
+      </Box>
+
+      <Box marginTop="5px" style={{ overflowY: "auto" }}>
+        <TableContainer>
+          <Table aria-label="simple-table">
+            <TableHead
               sx={{
-                backgroundColor: theme.palette.primary.main,
+                backgroundColor: "#038265",
                 color: "white",
-                "&:hover": {
-                  backgroundColor: theme.palette.primary.dark,
-                },
+                position: "sticky",
+                top: 0,
               }}
             >
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <SpecialsDrawer open={openDrawer} onClose={handleDrawerClose} />
-      </Container>
-    </>
+              <TableRow>
+                <TableCell
+                  align="left"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "10%",
+                    background: (theme) => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    sx={{ color: "white" }}
+                  >
+                    Image
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    sx={{ color: "white" }}
+                  >
+                    Name
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    sx={{ color: "white" }}
+                  >
+                    Created At
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    sx={{ color: "white" }}
+                  >
+                    Action
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {!isLoading &&
+                imagePreviews?.data &&
+                imagePreviews?.data.map((preview, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <img
+                        src={preview.images[0]}
+                        alt={`Preview ${preview._id}`}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          objectFit: "cover",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleImageClick(preview.images[0])}
+                      />
+                    </TableCell>
+                    <TableCell>{preview.name}</TableCell>
+                    <TableCell>
+                      {new Date(preview.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={() => handleDeleteDialogOpen(preview._id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+
+      <CommonDeleteDialog
+        dialogOpen={deleteDialogOpen || deleteAllDialogOpen}
+        onDialogclose={() => {
+          handleDeleteDialogClose();
+          handleDeleteAllDialogClose();
+        }}
+        onDelete={() => {
+          if (deleteAllDialogOpen) {
+            handleDeleteAll();
+          } else {
+            handleDelete();
+          }
+        }}
+        title={
+          deleteAllDialogOpen
+            ? "Delete All Confirmation"
+            : "Delete Confirmation"
+        }
+        content={
+          deleteAllDialogOpen
+            ? "Are you sure you want to delete all uploaded images?"
+            : "Are you sure you want to delete the uploaded image?"
+        }
+        deleteAll={deleteAllDialogOpen}
+      />
+
+      <SpecialsDrawer
+        open={openDrawer}
+        onClose={handleDrawerClose}
+        isAdd={false}
+      />
+      <Box>
+        <Box>
+          {fullscreenImageOpen && (
+            <div
+              className="fullscreen-overlay"
+              onClick={handleCloseFullscreenImage}
+            >
+              <img
+                src={selectedImage}
+                alt="Full screen"
+                className="fullscreen-image"
+              />
+            </div>
+          )}
+        </Box>
+      </Box>
+    </Box>
   );
 }
 
-export default Specials;
+export default SpecialsPage;
