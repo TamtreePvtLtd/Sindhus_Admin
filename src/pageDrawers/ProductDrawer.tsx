@@ -794,9 +794,11 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                                             left: 0,
                                             right: 0,
                                             bottom: 0,
-                                            border: "1px dotted #000", // Adjust color and thickness as needed
-                                            borderRadius: 4, // Adjust border radius as needed
-                                            pointerEvents: "none", // Ensure clicks pass through the pseudo-element
+                                            border: "1px dotted #000",
+
+                                            borderRadius: 4,
+
+                                            pointerEvents: "none",
                                           },
                                         },
                                       }}
@@ -831,6 +833,8 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                       </Accordion>
                     ))}
                 </Box>
+              </Grid>
+              <Grid item md={7}>
                 <Box
                   sx={{ display: "flex", justifyContent: "space-between" }}
                   mt={3}
@@ -913,9 +917,10 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
                       />
                     ))}
                 </Box>
-              </Grid>
-              <Grid item md={7}>
                 <Box mt={3}>
+                  <Typography variant="subtitle1">
+                    Product Price <span style={{ color: "red" }}>*</span>
+                  </Typography>
                   <FormGroup row>
                     <FormControlLabel
                       control={

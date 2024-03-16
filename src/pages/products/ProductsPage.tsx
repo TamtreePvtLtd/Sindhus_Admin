@@ -319,7 +319,11 @@ function ProductsPage() {
                     color: "white",
                   }}
                 >
-                  <Typography variant="subtitle1" fontWeight="bold">
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    align="center"
+                  >
                     Action
                   </Typography>
                 </TableCell>
