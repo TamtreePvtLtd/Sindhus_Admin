@@ -629,18 +629,27 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     }));
   };
 
-  const handleTitleChange = (e) => {
-    const { value } = e.target;
-    if (value.length <= 18) {
-      setProduct((prevState) => ({
-        ...prevState,
-        title: value,
-      }));
-      setError("");
-    } else {
-      setError("Title must be 18 characters or fewer.");
-    }
-  };
+const handleTitleChange = (e) => {
+  const { value } = e.target;
+  if (value.length <= 18) {
+    setProduct((prevState) => ({
+      ...prevState,
+      title: value,
+    }));
+    setError(""); 
+  } else if (
+    value.length > 18 &&
+    e.nativeEvent.inputType === "deleteContentBackward"
+  ) {
+    setProduct((prevState) => ({
+      ...prevState,
+      title: value,
+    }));
+    setError("");
+  } else {
+    setError("Title must be 18 characters or fewer.");
+  }
+};
 
   return (
     <>
