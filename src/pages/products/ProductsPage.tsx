@@ -364,7 +364,7 @@ function ProductsPage() {
                       {item.itemSizeWithPrice &&
                         item.itemSizeWithPrice.length > 0 &&
                         item.itemSizeWithPrice.map((qty, index) => (
-                          <Box key={index} m={1}>
+                          <Box key={index}>
                             <>
                               {qty.size} - ${qty.price}
                             </>
@@ -376,7 +376,7 @@ function ProductsPage() {
                       {item.cateringMenuSizeWithPrice.length > 0 &&
                         item.cateringMenuSizeWithPrice.map((qty, index) => (
                           <>
-                            <Box key={index} m={1}>
+                            <Box key={index}>
                               <>
                                 {qty.size} - ${qty.price}
                               </>
@@ -392,7 +392,7 @@ function ProductsPage() {
                       {item.dailyMenuSizeWithPrice.length > 0 &&
                         item.dailyMenuSizeWithPrice.map((qty, index) => (
                           <>
-                            <Box key={index} m={1}>
+                            <Box key={index} >
                               <>
                                 {qty.size} - ${qty.price}
                               </>
