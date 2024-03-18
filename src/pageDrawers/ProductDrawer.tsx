@@ -291,89 +291,11 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     });
   };
 
-  // const handleSaveProduct = async (e: any) => {
-  //   e.preventDefault();
-  //   const formData = new FormData();
-  //   if (!product.title) {
-  //     updateSnackBarState(true, "Title is required.", "error");
-  //     return;
-  //   }
-  //   if (product.menu.mainMenuIds.length === 0) {
-  //     updateSnackBarState(true, "Menu is required", "error");
-  //     return;
-  //   }
-
-  //   if (!product.posterURL) {
-  //     updateSnackBarState(true, "Poster image is required.", "error");
-  //     return;
-  //   }
-  //   formData.append("title", product.title);
-  //   formData.append("description", product.description);
-  //   formData.append("netWeight", product.netWeight.toString());
-  //   // formData.append("price", String(product.price));
-  //   formData.append("menu", JSON.stringify(product.menu));
-
-  //   product.images.forEach((image, index) => {
-  //     formData.append(`image_${index}`, image);
-  //   });
-
-  //   formData.append(
-  //     "cateringMenuSizeWithPrice",
-  //     JSON.stringify(product.cateringMenuSizeWithPrice)
-  //   );
-
-  //   formData.append(
-  //     "itemSizeWithPrice",
-  //     JSON.stringify(product.itemSizeWithPrice)
-  //   );
-  //   formData.append(
-  //     "dailyMenuSizeWithPrice",
-  //     JSON.stringify(product.dailyMenuSizeWithPrice)
-  //   );
-
-  //   formData.append("imagesToRemove", JSON.stringify(imagesToRemove));
-  //   if (product.posterURL) {
-  //     formData.append("posterImage", product.posterURL);
-  //   }
-  //   formData.append("producId", product._id ?? "");
-  //   formData.append("servingSizeDescription", product.servingSizeDescription);
-  //   formData.append("ingredients", product.ingredients);
-
-  //   try {
-  //     if (isAdd) {
-  //       productCreateMutation.mutate(formData, {
-  //         onSuccess: () => {
-  //           updateSnackBarState(true, "Product added successfully.", "success");
-  //           onCloseDialog();
-  //         },
-  //         onError: () => {
-  //           updateSnackBarState(true, "Error while add Product.", "error");
-  //         },
-  //       });
-  //     } else {
-  //       updateProductMutation.mutate(formData, {
-  //         onSuccess: () => {
-  //           updateSnackBarState(
-  //             true,
-  //             "Product updated successfully.",
-  //             "success"
-  //           );
-  //           onCloseDialog();
-  //         },
-  //         onError: () => {
-  //           updateSnackBarState(true, "Error while update Product.", "error");
-  //         },
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handleSaveProduct = async (e: any) => {
     e.preventDefault();
     const formData = new FormData();
     let validationError = false;
+    let atLeastOnePriceSelected = false;
 
     if (!product.title) {
       updateSnackBarState(true, "Title is required.", "error");
@@ -393,7 +315,8 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     // Validate item sizes and prices
     if (showPriceField) {
       product.itemSizeWithPrice.forEach((value, index) => {
-        const price = String(value.price); // Ensure value.price is always a string
+        const price = String(value.price);
+
         if (value.size.trim() === "" || value.size.trim().length > 9) {
           updateSnackBarState(
             true,
@@ -413,13 +336,16 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
             "error"
           );
           validationError = true;
+        } else {
+          atLeastOnePriceSelected = true;
         }
       });
     }
 
+    // Validate daily menu sizes and prices
     if (showDailyMenuSizeField) {
       product.dailyMenuSizeWithPrice.forEach((value, index) => {
-        const price = String(value.price); // Ensure value.price is always a string
+        const price = String(value.price);
         if (value.size.trim() === "" || value.size.trim().length > 9) {
           updateSnackBarState(
             true,
@@ -439,6 +365,8 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
             "error"
           );
           validationError = true;
+        } else {
+          atLeastOnePriceSelected = true;
         }
       });
     }
@@ -446,7 +374,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     // Validate catering sizes and prices
     if (showCateringSizeField) {
       product.cateringMenuSizeWithPrice.forEach((value, index) => {
-        const price = String(value.price); // Ensure value.price is always a string
+        const price = String(value.price);
         if (value.size.trim() === "" || value.size.trim().length > 11) {
           updateSnackBarState(
             true,
@@ -466,9 +394,12 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
             "error"
           );
           validationError = true;
+        } else {
+          atLeastOnePriceSelected = true;
         }
       });
     }
+
     const snacksMenu = menuData.find((menu) => menu.title === "Snacks");
 
     if (
@@ -481,6 +412,15 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
       updateSnackBarState(
         true,
         `Please select a submenu for "${snacksMenu.title}".`,
+        "error"
+      );
+      validationError = true;
+    }
+
+    if (!atLeastOnePriceSelected) {
+      updateSnackBarState(
+        true,
+        "At least one price must be selected.",
         "error"
       );
       validationError = true;
@@ -565,8 +505,12 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
           setSelectedPosterImage("");
         }
       }
+      if (selectedProduct.itemSizeWithPrice.length === 0) {
+        setShowPriceField(false);
+      } else {
+        setShowPriceField(true);
+      }
 
-      setShowPriceField(!!selectedProduct.itemSizeWithPrice);
       setShowCateringSizeField(
         selectedProduct.cateringMenuSizeWithPrice.length > 0
       );
@@ -629,27 +573,27 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
     }));
   };
 
-const handleTitleChange = (e) => {
-  const { value } = e.target;
-  if (value.length <= 18) {
-    setProduct((prevState) => ({
-      ...prevState,
-      title: value,
-    }));
-    setError(""); 
-  } else if (
-    value.length > 18 &&
-    e.nativeEvent.inputType === "deleteContentBackward"
-  ) {
-    setProduct((prevState) => ({
-      ...prevState,
-      title: value,
-    }));
-    setError("");
-  } else {
-    setError("Title must be 18 characters or fewer.");
-  }
-};
+  const handleTitleChange = (e) => {
+    const { value } = e.target;
+    if (value.length <= 18) {
+      setProduct((prevState) => ({
+        ...prevState,
+        title: value,
+      }));
+      setError("");
+    } else if (
+      value.length > 18 &&
+      e.nativeEvent.inputType === "deleteContentBackward"
+    ) {
+      setProduct((prevState) => ({
+        ...prevState,
+        title: value,
+      }));
+      setError("");
+    } else {
+      setError("Title must be 18 characters or fewer.");
+    }
+  };
 
   return (
     <>
@@ -967,74 +911,7 @@ const handleTitleChange = (e) => {
                     />
                   </FormGroup>
                 </Box>
-                {/* {showPriceField && (
-                  <>
-                    <Grid container spacing={3} mb={1}>
-                      <Grid item md={5}>
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontSize: "15px",
-                            }}
-                          >
-                            Size
-                          </Typography>
-                          <TextField
-                            sx={{ width: "70%" }}
-                            size="small"
-                            // value={product.size}
-                            onChange={(event) =>
-                              setProduct((prevState) => ({
-                                ...prevState,
-                                size: event.target.value,
-                              }))
-                            }
-                          />
-                        </Box>
-                      </Grid>
-                      <Grid item md={5}>
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontSize: "15px",
-                            }}
-                          >
-                            Price($)
-                          </Typography>
-                          <TextField
-                         
-                            
-                            sx={{ width: "70%" }}
-                            size="small"
-                            value={product.price}
-                            onChange={(event) => {
-                              if (/^\d*\.?\d*$/.test(event.target.value)) {
-                                setProduct((prevState) => ({
-                                  ...prevState,
-                                  price: event.target.value,
-                                }));
-                              }
-                            }}
-                            inputProps={{
-                              pattern: "^\\d*\\.?\\d*$",
-                            }}
-                          />
-                        </Box>
-                      </Grid>
-                      <Grid
-                        item
-                        md={2}
-                        sx={{ display: "flex", alignItems: "center",mt:"20px" }}
-                      >
-                        <Box>
-                          <Button variant="contained" size="small">
-                            <AddIcon /> Add
-                          </Button>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  </>
-                )} */}
+
                 {showPriceField && (
                   <>
                     <Box
@@ -1066,7 +943,7 @@ const handleTitleChange = (e) => {
                               <TextField
                                 sx={{ width: "70%" }}
                                 size="small"
-                                value={value.size} // Accessing size at the current index
+                                value={value.size}
                                 onChange={(event) =>
                                   handleSizeChange(index, event.target.value)
                                 }
@@ -1085,7 +962,7 @@ const handleTitleChange = (e) => {
                               <TextField
                                 sx={{ width: "70%" }}
                                 size="small"
-                                value={value.price} // Accessing price at the current index
+                                value={value.price}
                                 onChange={(event) =>
                                   handlePriceChange(index, event.target.value)
                                 }
