@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -22,7 +22,6 @@ function SpecialsPage() {
   const theme = useTheme();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
   const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [fullscreenImageOpen, setFullscreenImageOpen] = useState(false);
@@ -55,15 +54,12 @@ function SpecialsPage() {
   };
 
   const handleDeleteAllDialogOpen = () => {
-    setDeleteAllDialogOpen(true);
-  };
-
-  const handleDeleteAllDialogClose = () => {
-    setDeleteAllDialogOpen(false);
+    setDeleteConfirmationIndex(null);
+    setDeleteDialogOpen(true);
   };
 
   const handleDeleteAll = () => {
-    handleDeleteAllDialogClose();
+    setDeleteDialogOpen(false);
     if (imagePreviews?.data) {
       imagePreviews.data.forEach((preview) => {
         deleteSpecial.mutate({ id: preview._id });
@@ -83,13 +79,13 @@ function SpecialsPage() {
   };
 
   return (
-    <Box sx={{ marginLeft: "40px", marginRight: "40px" }}>
+    <Box paddingX={"20px"}>
       <Box
         sx={{
           display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "15px",
+          justifyContent: "space-between",
           marginTop: "50px",
+          margin: 3,
         }}
       >
         <Typography
@@ -98,9 +94,6 @@ function SpecialsPage() {
             fontSize: "1.3rem",
             borderRadius: "50px",
             fontWeight: 800,
-            display: "flex",
-            justifyContent: "flex-start",
-            marginRight: "42%",
           }}
         >
           Special Offers
@@ -110,17 +103,26 @@ function SpecialsPage() {
           variant="outlined"
           size="small"
           onClick={handleDeleteAllDialogOpen}
-          sx={{ color: "#038265", marginRight: "33%" }}
+          sx={{
+            color: "#038265",
+          }}
         >
           Delete All
         </Button>
-        <Button variant="contained" color="primary" onClick={handleDrawerOpen}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleDrawerOpen}
+          sx={{
+            alignSelf: "flex-end",
+          }}
+        >
           <AddIcon /> Add Specials
         </Button>
       </Box>
 
-      <Box marginTop="5px" style={{ overflowY: "auto" }}>
-        <TableContainer>
+      <Box marginTop="5px">
+        <TableContainer style={{ overflowX: "auto" }}>
           <Table aria-label="simple-table">
             <TableHead
               sx={{
@@ -128,6 +130,7 @@ function SpecialsPage() {
                 color: "white",
                 position: "sticky",
                 top: 0,
+                zIndex: 99,
               }}
             >
               <TableRow>
@@ -144,7 +147,10 @@ function SpecialsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    sx={{ color: "white" }}
+                    sx={{
+                      backgroundColor: "#038265",
+                      color: "white",
+                    }}
                   >
                     Image
                   </Typography>
@@ -153,10 +159,7 @@ function SpecialsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    sx={{
-                      color: "white",
-                      justifyContent: "flex-start",
-                    }}
+                    sx={{ backgroundColor: "#038265", color: "white" }}
                   >
                     Name
                   </Typography>
@@ -165,7 +168,7 @@ function SpecialsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    sx={{ color: "white" }}
+                    sx={{ backgroundColor: "#038265", color: "white" }}
                   >
                     Created At
                   </Typography>
@@ -174,7 +177,7 @@ function SpecialsPage() {
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
-                    sx={{ color: "white" }}
+                    sx={{ backgroundColor: "#038265", color: "white" }}
                   >
                     Action
                   </Typography>
@@ -200,16 +203,14 @@ function SpecialsPage() {
                         onClick={() => handleImageClick(preview.images[0])}
                       />
                     </TableCell>
-                    <TableCell sx={{ justifyContent: "flex-start" }}>
-                      {preview.name}
-                    </TableCell>
+                    <TableCell>{preview.name}</TableCell>
                     <TableCell>
                       {new Date(preview.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <IconButton
                         onClick={() => handleDeleteDialogOpen(preview._id)}
-                        sx={{ zIndex: -1 }}
+                        size="small"
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -222,29 +223,21 @@ function SpecialsPage() {
       </Box>
 
       <CommonDeleteDialog
-        dialogOpen={deleteDialogOpen || deleteAllDialogOpen}
-        onDialogclose={() => {
-          handleDeleteDialogClose();
-          handleDeleteAllDialogClose();
-        }}
-        onDelete={() => {
-          if (deleteAllDialogOpen) {
-            handleDeleteAll();
-          } else {
-            handleDelete();
-          }
-        }}
+        dialogOpen={deleteDialogOpen}
+        onDialogclose={handleDeleteDialogClose}
+        onDelete={
+          deleteConfirmationIndex !== null ? handleDelete : handleDeleteAll
+        }
         title={
-          deleteAllDialogOpen
-            ? "Delete All Confirmation"
-            : "Delete Confirmation"
+          deleteConfirmationIndex !== null
+            ? "Delete Confirmation"
+            : "Delete All Confirmation"
         }
         content={
-          deleteAllDialogOpen
-            ? "Are you sure you want to delete all uploaded images?"
-            : "Are you sure you want to delete the uploaded image?"
+          deleteConfirmationIndex !== null
+            ? "Are you sure you want to delete the uploaded image?"
+            : "Are you sure you want to delete all uploaded Special Offers"
         }
-        deleteAll={deleteAllDialogOpen}
       />
 
       <SpecialsDrawer

@@ -25,7 +25,7 @@ function ImagePreview({ preview }) {
 
 function SpecialsDrawer({ open, onClose }) {
   const [specialData, setSpecialData] = useState({
-    name: "", 
+    name: "",
     description: "",
     images: [],
   });
@@ -68,10 +68,8 @@ function SpecialsDrawer({ open, onClose }) {
     e.preventDefault();
     const formData = new FormData();
 
-    // Append name to formData
     formData.append("name", specialData.name);
 
-    // Append images to formData
     images.forEach((image, index) => {
       formData.append(`image_${index}`, image);
     });
@@ -126,7 +124,7 @@ function SpecialsDrawer({ open, onClose }) {
             multiple
           />
         </Button>
-        <div style={{ display: "flex", marginBottom: "10px" }}>
+        <div style={{ display: "flex", marginTop: "10px" }}>
           {imagePreview.map((preview, index) => (
             <ImagePreview key={index} preview={preview} />
           ))}
