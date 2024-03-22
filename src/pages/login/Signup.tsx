@@ -30,11 +30,11 @@ interface ISignUpFormFields {
 }
 
 const schema = yup.object().shape({
-  // phoneNumber: yup
-  //   .string()
-  //   .required()
-  //   .typeError("Please enter the PhoneNumber")
-  //   .matches(/^\d{10}$/, "Please enter a valid 10-digit phone number"),
+  phoneNumber: yup
+    .string()
+    .required()
+    .typeError("Please enter the PhoneNumber")
+    .matches(/^\d{10}$/, "Please enter a valid 10-digit phone number"),
 
   password: yup.string().required("Password is required"),
   confirmPassword: yup
