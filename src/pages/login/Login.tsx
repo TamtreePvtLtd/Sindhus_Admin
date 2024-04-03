@@ -158,7 +158,7 @@ function Login() {
                 color={theme.palette.primary.main}
                 sx={{ fontFamily: "Sindhus-Logo-Font",fontWeight:700}}
               >
-                Welcome to SINDHU'S Kitchen
+                Welcome to SINDHU'S
               </Typography>
               <form onSubmit={handleSubmit(handleLogin)}>
                 <Typography>
@@ -221,7 +221,7 @@ function Login() {
                 >
                   Forgot Password?
                 </span>
-                <Link
+                {/* <Link
                   to={paths.REGISTER}
                   style={{
                     textDecoration: "none",
@@ -230,7 +230,7 @@ function Login() {
                   }}
                 >
                   Register Now
-                </Link>
+                </Link> */}
                 <Button
                   variant="contained"
                   color="primary"
