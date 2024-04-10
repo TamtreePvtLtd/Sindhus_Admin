@@ -15,6 +15,7 @@ import PrivateRoute from "./common/components/PrivateRoute";
 import AuthProvider from "./context/AuthContext";
 import Specials from "./pages/specials/Specials";
 import Signup from "./pages/login/Signup";
+import Banner from "./pages/banner/Banner";
 
 export const queryClient = new QueryClient();
 
@@ -78,6 +79,14 @@ function App() {
                     }
                   />
                 </Route>
+                <Route
+                  path={paths.BANNER}
+                  element={
+                    <PrivateRoute>
+                      <DiningOutMenu />
+                    </PrivateRoute>
+                  }
+                />
               </Routes>
             </BrowserRouter>
             <CustomSnackBar />
