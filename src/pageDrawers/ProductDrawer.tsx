@@ -575,14 +575,14 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
 
   const handleTitleChange = (e) => {
     const { value } = e.target;
-    if (value.length <= 18) {
+    if (value.length <= 30) {
       setProduct((prevState) => ({
         ...prevState,
         title: value,
       }));
       setError("");
     } else if (
-      value.length > 18 &&
+      value.length > 30 &&
       e.nativeEvent.inputType === "deleteContentBackward"
     ) {
       setProduct((prevState) => ({
@@ -591,7 +591,7 @@ function ProductPageDrawer(props: IProductPageDrawerProps) {
       }));
       setError("");
     } else {
-      setError("Title must be 18 characters or fewer.");
+      setError("Title must be 30 characters or fewer.");
     }
   };
 
