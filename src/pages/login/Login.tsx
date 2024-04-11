@@ -168,7 +168,7 @@ function Login() {
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  type="tel"
+                  type="email"
                   {...register("email")}
                   error={!!errors.email}
                   helperText={errors.email?.message?.toString()}
