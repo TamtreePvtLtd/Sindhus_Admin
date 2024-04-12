@@ -195,7 +195,6 @@ const getAllBanners = async () => {
     const response = await httpWithoutCredentials.get<IBanner>(
       "/banner/getAllBanners"
     );
-
     return response.data;
   } catch (error) {
     throw error;

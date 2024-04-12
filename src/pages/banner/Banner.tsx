@@ -17,7 +17,11 @@ import BannerDrawer from "../../pageDrawers/BannerDrawer";
 import { useGetBanners } from "../../customRQHooks/Hooks";
 
 function Banner() {
-  const { data: banners } = useGetBanners();
+ const { data: responseData } = useGetBanners();
+ const banners =
+   responseData && responseData.length > 0 ? responseData[0].data : [];
+console.log("data",responseData)
+
   const [bannerDrawerOpen, setBannerDrawerOpen] = useState(false);
 
   const handleOpenDrawer = () => {
@@ -136,18 +140,17 @@ function Banner() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {banners! && banners.length > 0 ? (
-                banners!.map((banner) => (
+              {banners.length > 0 ? (
+                banners.map((banner) => (
                   <TableRow key={banner._id}>
                     <TableCell align="left" sx={{ textAlign: "left" }}>
                       <img
                         src={banner.image}
-                        alt="Banner"
-                        height="50px"
-                        width="50px"
+                        height="100px"
+                        width="100px"
                       />
                     </TableCell>
-                    <TableCell align="left">{banner.pageTitle}</TableCell>
+                    <TableCell align="left">{banner.pagetitle}</TableCell>
                     <TableCell align="left">{banner.title}</TableCell>
                     <TableCell align="left">{banner.description}</TableCell>
                     <TableCell align="left">
