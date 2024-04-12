@@ -16,8 +16,10 @@ import {
   deleteSpecial,
   deleteAllSpecial,
   getAllProduct,
+  getAllBanners,
  } from "../services/api";
 import { queryClient } from "../App";
+import { IBanner } from "../interface/types";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
   return useQuery({
@@ -197,3 +199,19 @@ export const useGetAllProduct = (page: number, pageSize: number) => {
     refetchOnWindowFocus: false,
   });
 };
+
+export const useGetBanners = () => {
+  return useQuery<IBanner[], Error>({
+    queryKey: "banners",
+    queryFn: async () => {
+      try {
+        const response = await getAllBanners();
+        return [response]; 
+      } catch (error) {
+        throw error;
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+

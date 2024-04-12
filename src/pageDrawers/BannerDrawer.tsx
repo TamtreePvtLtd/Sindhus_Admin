@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -11,12 +11,15 @@ import {
   Grid,
   Radio,
   RadioGroup,
+  TextField,
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller, useForm } from "react-hook-form";
 import { IOptionTypes } from "../interface/types";
 import { MenudrawerWidth } from "../constants/Constants";
+import { createBanner } from "../services/api";
+import AddIcon from "@mui/icons-material/Add";
 
 const Bannertitle: IOptionTypes[] = [
   { id: "1", label: "Home", value: "1" },
@@ -27,18 +30,82 @@ const Bannertitle: IOptionTypes[] = [
 
 const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose }) => {
   const [showAddSubMenu, setShowAddSubMenu] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     register,
+    reset,
   } = useForm();
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedImage(file);
+  const filePosterRef = useRef<HTMLInputElement>(null);
+
+  const handleUploadButtonClick = () => {
+    if (filePosterRef.current) {
+      filePosterRef.current?.click();
+    }
+  };
+
+  const handleRadioChange = (e) => {
+    setShowAddSubMenu(true);
+     setSelectedImage(null);
+    setImage(null);
+    setTitle("");
+    setDescription("");
+  };
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        setSelectedImage(URL.createObjectURL(file));
+        setImage(file);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log("No file selected.");
+    }
+  };
+
+  const handleSubmitForm = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("pagetitle", data.pagetitle);
+      formData.append("title", title);
+      formData.append("description", description);
+      if (image) {
+        formData.append("image", image.name);
+      }
+
+      const responseData = await createBanner(formData);
+      console.log("Banner created successfully:", responseData);
+      
+       reset({
+         pagetitle: "", // Reset the radio button selection
+       });
+       setTitle(""); // Reset the title state
+       setDescription(""); // Reset the description state
+       setImage(null); // Reset the image state
+       setSelectedImage(null); // Reset the selectedImage state
+
+       // Close the drawer
+       handleClose();
+    } catch (error) {
+      // Handle errors, e.g., show error message
+      // console.error("Error creating banner:", error.message);
+    }
+  };
+
+  const onSubmitHandler = (data) => {
+    handleSubmitForm(data);
   };
 
   const drawer = (
@@ -64,7 +131,7 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose }) => {
             <Box pt={2}>
               <Typography variant="subtitle1">Banner Title *</Typography>
               <Controller
-                name="Bannertitle"
+                name="pagetitle"
                 control={control}
                 render={({ field, fieldState }) => (
                   <FormControl fullWidth>
@@ -73,7 +140,7 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose }) => {
                       row
                       onChange={(e) => {
                         field.onChange(e);
-                        setShowAddSubMenu(true);
+                        handleRadioChange(e);
                       }}
                     >
                       {Bannertitle.map((option) => (
@@ -98,14 +165,40 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose }) => {
         {showAddSubMenu && (
           <Box p={2}>
             <Typography variant="subtitle1">Upload Image</Typography>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            {selectedImage && (
+            <Button variant="outlined" onClick={handleUploadButtonClick}>
+              <AddIcon />
+              Upload Image
+            </Button>
+            <input
+              type="file"
+              style={{ display: "none" }}
+              ref={filePosterRef}
+              onChange={handleImageUpload}
+            />
+
+            {selectedImage != null && (
               <img
-                src={URL.createObjectURL(selectedImage)}
-                alt="Uploaded"
-                style={{ maxWidth: "20%", marginTop: "10px" }}
+                src={selectedImage}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                }}
               />
             )}
+            <Box>
+              <Typography>Title</Typography>
+              <TextField
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </Box>
+            <Box>
+              <Typography>Description</Typography>
+              <TextField
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Box>
           </Box>
         )}
       </Container>
@@ -123,7 +216,11 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose }) => {
       }}
       onClose={handleClose}
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form
+        onSubmit={(e) => {
+          handleSubmit(onSubmitHandler)(e);
+        }}
+      >
         {drawer}
         <Box
           sx={{

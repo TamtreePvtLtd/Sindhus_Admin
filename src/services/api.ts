@@ -13,6 +13,7 @@ import {
   IProductWithMenu,
   IProductPageMenuDropDown,
   ISpecial,
+  IBanner,
 } from "../interface/types";
 import {
   httpWithCredentials,
@@ -175,6 +176,33 @@ const createDiningOutProduct = async (requestData: {
     throw new Error(message);
   }
 };
+const createBanner = async (formData) => {
+  try {
+    const response = await httpWithMultipartFormData.post(
+      "/banner/createBanner",
+      formData
+    );
+console.log("data",response.data)
+    return response.data;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+
+const getAllBanners = async () => {
+  try {
+    const response = await httpWithoutCredentials.get<IBanner>(
+      "/banner/getAllBanners"
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+//api.ts
+
 
 const getAllDiningOutId = async () => {
   try {
@@ -381,5 +409,7 @@ export {
   updateMenu,
   createSpecials,
   changeisResponseStatus,
-  deleteAllSpecial
+  deleteAllSpecial,
+  createBanner,
+  getAllBanners,
 };

@@ -83,7 +83,7 @@ function App() {
                   path={paths.BANNER}
                   element={
                     <PrivateRoute>
-                      <DiningOutMenu />
+                      <Banner />
                     </PrivateRoute>
                   }
                 />

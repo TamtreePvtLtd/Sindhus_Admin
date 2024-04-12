@@ -145,3 +145,12 @@ export interface IDiningOutMenu {
    created_at: string
 
 }
+
+export interface IBanner {
+  _id: string;
+  image: string;
+  pageTitle: string;
+  title: string;
+  description: string;
+}
+
