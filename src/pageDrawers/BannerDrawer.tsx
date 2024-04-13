@@ -28,12 +28,13 @@ const Bannertitle: IOptionTypes[] = [
   { id: "4", label: "Snacks", value: "4" },
 ];
 
-const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose }) => {
+const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }) => {
   const [showAddSubMenu, setShowAddSubMenu] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+   const [isEdit, setIsEdit] = useState(!!selectedBanner);
 
   const {
     control,
@@ -119,7 +120,7 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose }) => {
         p={2}
       >
         <Typography variant="h6" fontWeight="700" component="div">
-          Banner
+          {isEdit ? "Edit Menu" : "Add Menu"}
         </Typography>
         <CloseIcon sx={{ cursor: "pointer" }} onClick={handleClose} />
       </Box>

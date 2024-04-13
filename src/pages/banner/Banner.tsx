@@ -23,6 +23,7 @@ function Banner() {
 console.log("data",responseData)
 
   const [bannerDrawerOpen, setBannerDrawerOpen] = useState(false);
+   const [selectedBanner, setSelectedBanner] = useState(null);
 
   const handleOpenDrawer = () => {
     setBannerDrawerOpen(true);
@@ -35,6 +36,11 @@ console.log("data",responseData)
   const handleSubmit = (data) => {
     handleCloseDrawer();
   };
+
+    const handleEditBanner = (banner) => {
+      setSelectedBanner(banner); 
+      handleOpenDrawer();
+    };
 
   return (
     <>
@@ -144,18 +150,14 @@ console.log("data",responseData)
                 banners.map((banner) => (
                   <TableRow key={banner._id}>
                     <TableCell align="left" sx={{ textAlign: "left" }}>
-                      <img
-                        src={banner.image}
-                        height="100px"
-                        width="100px"
-                      />
+                      <img src={banner.image} height="100px" width="100px" />
                     </TableCell>
                     <TableCell align="left">{banner.pagetitle}</TableCell>
                     <TableCell align="left">{banner.title}</TableCell>
                     <TableCell align="left">{banner.description}</TableCell>
                     <TableCell align="left">
                       <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <IconButton>
+                        <IconButton onClick={() => handleEditBanner(banner)}>
                           <EditIcon />
                         </IconButton>
                         <IconButton>
@@ -179,6 +181,7 @@ console.log("data",responseData)
         bannerDrawerOpen={bannerDrawerOpen}
         onSubmit={handleSubmit}
         handleClose={handleCloseDrawer}
+        selectedBanner={selectedBanner}
       />
     </>
   );

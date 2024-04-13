@@ -318,6 +318,18 @@ const updateMenu = async (updateMenu: FormData) => {
   }
 };
 
+const updateBanner = async (id:string) => {
+  try {
+        var response = await httpWithMultipartFormData.put<IBanner>(
+      `banner/updateBanner/${id}`,
+      updateMenu
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const createSpecials = async (formData) => {
   try {
     const response = await httpWithMultipartFormData.post<string[]>(
@@ -411,4 +423,5 @@ export {
   deleteAllSpecial,
   createBanner,
   getAllBanners,
+  updateBanner
 };
