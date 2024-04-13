@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BannerDrawer from "../../pageDrawers/BannerDrawer";
 import { useGetBanners } from "../../customRQHooks/Hooks";
+import { deleteBanner } from "../../services/api";
 
 function Banner() {
  const { data: responseData } = useGetBanners();
@@ -40,7 +41,18 @@ console.log("data",responseData)
     const handleEditBanner = (banner) => {
       setSelectedBanner(banner); 
       handleOpenDrawer();
-    };
+  };
+  
+  const handleDeleteBanner = async (id) => {
+    try {
+      await deleteBanner(id);
+    
+      console.log("Banner deleted successfully");
+    } catch (error) {
+      console.error("Error deleting banner:", error);
+      
+    }
+  };
 
   return (
     <>
@@ -160,7 +172,9 @@ console.log("data",responseData)
                         <IconButton onClick={() => handleEditBanner(banner)}>
                           <EditIcon />
                         </IconButton>
-                        <IconButton>
+                        <IconButton
+                          onClick={() => handleDeleteBanner(banner.id)}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </Box>

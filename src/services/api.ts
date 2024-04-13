@@ -322,7 +322,18 @@ const updateBanner = async (id:string) => {
   try {
         var response = await httpWithMultipartFormData.put<IBanner>(
       `banner/updateBanner/${id}`,
-      updateMenu
+      
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+const deleteBanner = async (id: string) => {
+  try {
+    var response = await httpWithMultipartFormData.delete<IBanner>(
+      `banner/deleteBanner/${id}`,
+      
     );
     return response.data;
   } catch (error) {
@@ -423,5 +434,6 @@ export {
   deleteAllSpecial,
   createBanner,
   getAllBanners,
-  updateBanner
+  updateBanner,
+  deleteBanner,
 };
