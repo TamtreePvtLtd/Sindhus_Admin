@@ -57,26 +57,45 @@ console.log("data",responseData)
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "space-between",padding:"10px" }}>
-        <Typography variant="h4">Banner</Typography>
-        <Button variant="contained" onClick={handleOpenDrawer} sx={{ float: "right" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          padding: "20px",
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            fontSize: "1.3rem",
+            borderRadius: "50px",
+            fontWeight: 800,
+          }}
+        >
+          Banner
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={handleOpenDrawer}
+          sx={{ float: "right" }}
+        >
           <AddIcon /> Add Banner
         </Button>
       </Box>
 
-      <Box sx={{ py: 2, marginLeft: "40px", marginRight: "40px" }}>
+      <Box sx={{  marginLeft: "40px", marginRight: "40px" }}>
         <Box
           sx={{
             width: "100%",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 2,
+            // marginBottom: 2,
           }}
         ></Box>
       </Box>
 
-      <Box mt={2}>
+      <Box>
         <TableContainer>
           <Table stickyHeader aria-label="simple table">
             <TableHead>
@@ -163,7 +182,7 @@ console.log("data",responseData)
                 banners.map((banner) => (
                   <TableRow key={banner._id}>
                     <TableCell align="left" sx={{ textAlign: "left" }}>
-                      <img src={banner.image} height="100px" width="100px" />
+                      <img src={banner.image} height="90px" width="90px" />
                     </TableCell>
                     <TableCell align="left">{banner.pagetitle}</TableCell>
                     <TableCell align="left">{banner.title}</TableCell>

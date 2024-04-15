@@ -321,7 +321,7 @@ const updateMenu = async (updateMenu: FormData) => {
 const updateBanner = async (id: string, formData: FormData) => {
   try {
     var response = await httpWithMultipartFormData.put<IBanner>(
-     `banner/updateBanner/${id}`
+     `banner/updateBanner/${id}`,formData
     );
     console.log("response", response.data);
 

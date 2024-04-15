@@ -66,6 +66,9 @@ function Navbar() {
     setAnchorEl(null);
   };
 
+
+
+
   const handleLogoutClick = async () => {
     await logOut()
       .then((response) => {

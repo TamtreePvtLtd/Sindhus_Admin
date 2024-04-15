@@ -78,15 +78,16 @@ function App() {
                       </PrivateRoute>
                     }
                   />
+
+                  <Route
+                    path={paths.BANNER}
+                    element={
+                      <PrivateRoute>
+                        <Banner />
+                      </PrivateRoute>
+                    }
+                  />
                 </Route>
-                <Route
-                  path={paths.BANNER}
-                  element={
-                    <PrivateRoute>
-                      <Banner />
-                    </PrivateRoute>
-                  }
-                />
               </Routes>
             </BrowserRouter>
             <CustomSnackBar />
