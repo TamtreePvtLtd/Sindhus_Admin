@@ -148,7 +148,7 @@ export interface IDiningOutMenu {
 
 export interface IBanner {
   _id: string;
-  image: string;
+  image: string | File;
   pageTitle: string;
   title: string;
   description: string;

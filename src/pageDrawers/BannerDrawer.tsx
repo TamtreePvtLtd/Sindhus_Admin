@@ -83,7 +83,7 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
       formData.append("title", title);
       formData.append("description", description);
       if (image) {
-        formData.append("image", image.name);
+        formData.append("image", image);
       }
 
       const responseData = await createBanner(formData);
