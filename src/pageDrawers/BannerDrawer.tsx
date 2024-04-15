@@ -165,8 +165,12 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
         <Divider />
         {showAddSubMenu && (
           <Box p={2}>
-            <Typography variant="subtitle1">Upload Image</Typography>
-            <Button variant="outlined" onClick={handleUploadButtonClick}>
+            <Typography variant="subtitle1" p={1}>Upload Image</Typography>
+            <Button
+              variant="outlined"
+              onClick={handleUploadButtonClick}
+              sx={{ color: "#038265" }}
+            >
               <AddIcon />
               Upload Image
             </Button>
@@ -181,12 +185,12 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
               <img
                 src={selectedImage}
                 style={{
-                  width: "100px",
-                  height: "100px",
+                  width: "90px",
+                  height: "90px",
                 }}
               />
             )}
-            <Box>
+            <Box py={2}>
               <Typography>Title</Typography>
               <TextField
                 value={title}

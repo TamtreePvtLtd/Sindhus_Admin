@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Box,
   Button,
+  Container,
   IconButton,
   Table,
   TableBody,
@@ -14,11 +15,13 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BannerDrawer from "../../pageDrawers/BannerDrawer";
-import { useGetBanners } from "../../customRQHooks/Hooks";
-import { deleteBanner } from "../../services/api";
+import { useDeleteBanner, useGetBanners } from "../../customRQHooks/Hooks";
+import AddIcon from "@mui/icons-material/Add";
+
 
 function Banner() {
- const { data: responseData } = useGetBanners();
+  const { data: responseData } = useGetBanners();
+   const deleteBannerMutation = useDeleteBanner();
  const banners =
    responseData && responseData.length > 0 ? responseData[0].data : [];
 console.log("data",responseData)
@@ -45,21 +48,19 @@ console.log("data",responseData)
   
   const handleDeleteBanner = async (id) => {
     try {
-      await deleteBanner(id);
-    
+      await deleteBannerMutation.mutateAsync(id);
       console.log("Banner deleted successfully");
     } catch (error) {
       console.error("Error deleting banner:", error);
-      
     }
   };
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between",padding:"10px" }}>
         <Typography variant="h4">Banner</Typography>
-        <Button onClick={handleOpenDrawer} sx={{ float: "right" }}>
-          Add Banner image
+        <Button variant="contained" onClick={handleOpenDrawer} sx={{ float: "right" }}>
+          <AddIcon /> Add Banner
         </Button>
       </Box>
 
@@ -173,7 +174,7 @@ console.log("data",responseData)
                           <EditIcon />
                         </IconButton>
                         <IconButton
-                          onClick={() => handleDeleteBanner(banner.id)}
+                          onClick={() => handleDeleteBanner(banner._id)}
                         >
                           <DeleteIcon />
                         </IconButton>
