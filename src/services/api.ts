@@ -318,17 +318,19 @@ const updateMenu = async (updateMenu: FormData) => {
   }
 };
 
-const updateBanner = async (id:string) => {
+const updateBanner = async (id: string, formData: FormData) => {
   try {
-        var response = await httpWithMultipartFormData.put<IBanner>(
-      `banner/updateBanner/${id}`,
-      
+    var response = await httpWithMultipartFormData.put<IBanner>(
+     `banner/updateBanner/${id}`
     );
+    console.log("response", response.data);
+
     return response.data;
   } catch (error) {
     throw error;
   }
 };
+
 const deleteBanner = async (id: string) => {
   try {
     var response = await httpWithMultipartFormData.delete<IBanner>(

@@ -29,9 +29,10 @@ console.log("data",responseData)
   const [bannerDrawerOpen, setBannerDrawerOpen] = useState(false);
    const [selectedBanner, setSelectedBanner] = useState(null);
 
-  const handleOpenDrawer = () => {
-    setBannerDrawerOpen(true);
-  };
+ const handleOpenDrawer = () => {
+   setSelectedBanner(null);
+   setBannerDrawerOpen(true);
+ };
 
   const handleCloseDrawer = () => {
     setBannerDrawerOpen(false);
@@ -41,11 +42,10 @@ console.log("data",responseData)
     handleCloseDrawer();
   };
 
-    const handleEditBanner = (banner) => {
-      setSelectedBanner(banner); 
-      handleOpenDrawer();
-  };
-  
+ const handleEditBanner = (banner) => {
+   setSelectedBanner(banner); // Set selectedBanner when editing
+   setBannerDrawerOpen(true);
+ };
   const handleDeleteBanner = async (id) => {
     try {
       await deleteBannerMutation.mutateAsync(id);

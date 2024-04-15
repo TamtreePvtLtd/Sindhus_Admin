@@ -18,6 +18,7 @@ import {
   getAllProduct,
   getAllBanners,
   deleteBanner,
+  updateBanner,
  } from "../services/api";
 import { queryClient } from "../App";
 import { IBanner } from "../interface/types";
@@ -228,4 +229,18 @@ export const useGetBanners = () => {
     refetchOnWindowFocus: false,
   });
 };
+
+
+export const useUpdateBanner = () => {
+  return useMutation({
+    mutationFn: updateBanner,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+//hooks
 

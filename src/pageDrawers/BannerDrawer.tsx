@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -18,7 +18,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Controller, useForm } from "react-hook-form";
 import { IOptionTypes } from "../interface/types";
 import { MenudrawerWidth } from "../constants/Constants";
-import { createBanner } from "../services/api";
+import { createBanner, updateBanner } from "../services/api";
 import AddIcon from "@mui/icons-material/Add";
 
 const Bannertitle: IOptionTypes[] = [
@@ -29,12 +29,12 @@ const Bannertitle: IOptionTypes[] = [
 ];
 
 const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }) => {
-  const [showAddSubMenu, setShowAddSubMenu] = useState(false);
+
   const [image, setImage] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-   const [isEdit, setIsEdit] = useState(!!selectedBanner);
+   const [isEdit, setIsEdit] = useState(selectedBanner);
 
   const {
     control,
@@ -52,13 +52,43 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
     }
   };
 
-  const handleRadioChange = (e) => {
-    setShowAddSubMenu(true);
-     setSelectedImage(null);
-    setImage(null);
+useEffect(() => {
+  // Set initial values for edit mode
+  if (selectedBanner) {
+    setTitle(selectedBanner.title);
+    setDescription(selectedBanner.description);
+    setSelectedImage(selectedBanner.image);
+    setIsEdit(true); // Set isEdit to true
+  } else {
+    // Reset fields when not in edit mode
     setTitle("");
     setDescription("");
-  };
+    setSelectedImage(null);
+    setIsEdit(false);
+  }
+}, [selectedBanner]);
+useEffect(() => {
+  // Set initial radio button value if in edit mode and selectedBanner exists
+  if (selectedBanner && isEdit) {
+    // Find the corresponding banner title from the options array
+    const selectedOption = Bannertitle.find(
+      (option) => option.label === selectedBanner.pagetitle
+    );
+    //  if (selectedOption) {
+    //    // Set the radio button value to the corresponding option value
+    //    setValue("pagetitle", selectedOption.value);
+    //  }
+  }
+}, [selectedBanner, isEdit]);
+
+
+  // const handleRadioChange = (e) => {
+  //   setShowAddSubMenu(true);
+  //    setSelectedImage(null);
+  //   setImage(null);
+  //   setTitle("");
+  //   setDescription("");
+  // };
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -76,34 +106,69 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
     }
   };
 
-  const handleSubmitForm = async (data) => {
-    try {
-      const formData = new FormData();
-      formData.append("pagetitle", data.pagetitle);
-      formData.append("title", title);
-      formData.append("description", description);
-      if (image) {
-        formData.append("image", image);
-      }
+  // const handleSubmitForm = async (data) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("pagetitle", data.pagetitle);
+  //     formData.append("title", title);
+  //     formData.append("description", description);
+  //     if (image) {
+  //       formData.append("image", image.name);
+  //     }
 
-      const responseData = await createBanner(formData);
-      console.log("Banner created successfully:", responseData);
+  //     const responseData = await createBanner(formData);
+  //     console.log("Banner created successfully:", responseData);
       
-       reset({
-         pagetitle: "", // Reset the radio button selection
-       });
-       setTitle(""); // Reset the title state
-       setDescription(""); // Reset the description state
-       setImage(null); // Reset the image state
-       setSelectedImage(null); // Reset the selectedImage state
+  //      reset({
+  //        pagetitle: "", // Reset the radio button selection
+  //      });
+  //      setTitle(""); // Reset the title state
+  //      setDescription(""); // Reset the description state
+  //      setImage(null); // Reset the image state
+  //      setSelectedImage(null); // Reset the selectedImage state
 
-       // Close the drawer
-       handleClose();
-    } catch (error) {
-      // Handle errors, e.g., show error message
-      // console.error("Error creating banner:", error.message);
-    }
-  };
+  //      // Close the drawer
+  //      handleClose();
+  //   } catch (error) {
+  //     // Handle errors, e.g., show error message
+  //     // console.error("Error creating banner:", error.message);
+  //   }
+  // };
+
+ const handleSubmitForm = async (data) => {
+   try {
+     const formData = new FormData();
+     formData.append("pagetitle", data.pagetitle);
+     formData.append("title", title);
+     formData.append("description", description);
+     if (image) {
+       formData.append("image", image);
+     }
+
+     let responseData;
+     if (selectedBanner) {
+       responseData = await updateBanner(selectedBanner._id, formData);
+       console.log("Banner updated successfully:", responseData);
+     } else {
+       responseData = await createBanner(formData);
+       console.log("Banner created successfully:", responseData);
+     }
+
+     // Optionally, reset form fields after successful submission
+     // reset({
+     //   pagetitle: "",
+     // });
+     // setTitle("");
+     // setDescription("");
+     // setImage(null);
+     // setSelectedImage(null);
+
+     handleClose(); // Close the drawer after submission
+   } catch (error) {
+     // Handle errors
+     // console.error("Error:", error.message);
+   }
+ };
 
   const onSubmitHandler = (data) => {
     handleSubmitForm(data);
@@ -120,7 +185,7 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
         p={2}
       >
         <Typography variant="h6" fontWeight="700" component="div">
-          {isEdit ? "Edit Menu" : "Add Menu"}
+          {isEdit ? "Edit Banner" : "Add Banner"}
         </Typography>
         <CloseIcon sx={{ cursor: "pointer" }} onClick={handleClose} />
       </Box>
@@ -139,10 +204,10 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
                     <RadioGroup
                       {...field}
                       row
-                      onChange={(e) => {
+                       onChange={(e) => {
                         field.onChange(e);
-                        handleRadioChange(e);
-                      }}
+                        // handleRadioChange(e);
+                       }}
                     >
                       {Bannertitle.map((option) => (
                         <FormControlLabel
@@ -163,9 +228,11 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
           </Grid>
         </Grid>
         <Divider />
-        {showAddSubMenu && (
+       
           <Box p={2}>
-            <Typography variant="subtitle1" p={1}>Upload Image</Typography>
+            <Typography variant="subtitle1" p={1}>
+              Upload Image
+            </Typography>
             <Button
               variant="outlined"
               onClick={handleUploadButtonClick}
@@ -205,7 +272,7 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
               />
             </Box>
           </Box>
-        )}
+        
       </Container>
     </Box>
   );
