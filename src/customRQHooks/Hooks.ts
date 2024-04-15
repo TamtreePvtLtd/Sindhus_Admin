@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   createProduct,
   deleteProduct,
@@ -17,6 +17,7 @@ import {
   deleteAllSpecial,
   getAllProduct,
   getAllBanners,
+  deleteBanner,
  } from "../services/api";
 import { queryClient } from "../App";
 import { IBanner } from "../interface/types";
@@ -161,6 +162,19 @@ export const useDeleteMenu = () => {
     mutationFn: deleteMenu,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+export const useDeleteBanner = () => {
+  const queryClient = useQueryClient(); // Import useQueryClient from react-query
+
+  return useMutation({
+    mutationFn: deleteBanner,
+    onSuccess: () => {
+      queryClient.invalidateQueries("banners"); // Invalidate the "banners" query
     },
     onError: (error) => {
       console.log(error);
