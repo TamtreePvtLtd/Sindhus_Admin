@@ -20,6 +20,7 @@ import { IOptionTypes } from "../interface/types";
 import { MenudrawerWidth } from "../constants/Constants";
 import { createBanner, updateBanner } from "../services/api";
 import AddIcon from "@mui/icons-material/Add";
+import { useCreateBanner, useUpdateBannerMutation } from "../customRQHooks/Hooks";
 
 const Bannertitle: IOptionTypes[] = [
   { id: "1", label: "Home", value: "1" },
@@ -34,7 +35,9 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-   const [isEdit, setIsEdit] = useState(selectedBanner);
+  const [isEdit, setIsEdit] = useState(selectedBanner);
+  const createBannerMutation = useCreateBanner();
+  const updateBannerMutation = useUpdateBannerMutation();
 
   const {
     control,
@@ -69,9 +72,8 @@ useEffect(() => {
 }, [selectedBanner]);
   
 useEffect(() => {
-  // Set initial radio button value if in edit mode and selectedBanner exists
-  if (selectedBanner && isEdit) {
-    // Find the corresponding banner title from the options array
+  if (selectedBanner && isEdit && Bannertitle) {
+    // Make sure Bannertitle is defined before using the find method
     const selectedOption = Bannertitle.find(
       (option) => option.label === selectedBanner.pagetitle
     );
@@ -80,7 +82,8 @@ useEffect(() => {
     //    setValue("pagetitle", selectedOption.value);
     //  }
   }
-}, [selectedBanner, isEdit]);
+}, [selectedBanner, isEdit, Bannertitle]);
+
 
 
   // const handleRadioChange = (e) => {
@@ -148,21 +151,13 @@ useEffect(() => {
 
      let responseData;
      if (selectedBanner) {
+       // If selectedBanner exists, update it
+       // Call the mutate function without any additional parameters
        responseData = await updateBanner(selectedBanner._id, formData);
-       console.log("Banner updated successfully:", responseData);
      } else {
-       responseData = await createBanner(formData);
-       console.log("Banner created successfully:", responseData);
-     }
-
-     // Optionally, reset form fields after successful submission
-     // reset({
-     //   pagetitle: "",
-     // });
-     // setTitle("");
-     // setDescription("");
-     // setImage(null);
-     // setSelectedImage(null);
+      responseData = await createBannerMutation.mutate(formData);
+      console.log("Banner created successfully:", responseData);
+    }
 
      handleClose(); // Close the drawer after submission
    } catch (error) {

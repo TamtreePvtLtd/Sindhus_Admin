@@ -19,6 +19,7 @@ import {
   getAllBanners,
   deleteBanner,
   updateBanner,
+  createBanner,
  } from "../services/api";
 import { queryClient } from "../App";
 import { IBanner } from "../interface/types";
@@ -194,6 +195,32 @@ export const useUpdateProduct = () => {
     },
   });
 };
+
+export const useCreateBanner = () => {
+  return useMutation({
+    mutationFn: createBanner,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useUpdateBannerMutation = () => {
+   const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateBanner as any,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["banners"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
 export const useChangeisResponseStatus = () => {
  
   return useMutation({
@@ -231,16 +258,4 @@ export const useGetBanners = () => {
 };
 
 
-export const useUpdateBanner = () => {
-  return useMutation({
-    mutationFn: updateBanner,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["banners"] });
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-};
-//hooks
 
