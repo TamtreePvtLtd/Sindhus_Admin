@@ -20,7 +20,10 @@ import { IOptionTypes } from "../interface/types";
 import { MenudrawerWidth } from "../constants/Constants";
 import { createBanner, updateBanner } from "../services/api";
 import AddIcon from "@mui/icons-material/Add";
-import { useCreateBanner, useUpdateBannerMutation } from "../customRQHooks/Hooks";
+import {
+  useCreateBanner,
+  useUpdateBannerMutation,
+} from "../customRQHooks/Hooks";
 
 const Bannertitle: IOptionTypes[] = [
   { id: "1", label: "Home", value: "1" },
@@ -29,8 +32,12 @@ const Bannertitle: IOptionTypes[] = [
   { id: "4", label: "Snacks", value: "4" },
 ];
 
-const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }) => {
-
+const BannerDrawer = ({
+  bannerDrawerOpen,
+  onSubmit,
+  handleClose,
+  selectedBanner,
+}) => {
   const [image, setImage] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +48,7 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
 
   const {
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
     register,
@@ -55,36 +63,34 @@ const BannerDrawer = ({ bannerDrawerOpen, onSubmit, handleClose,selectedBanner }
     }
   };
 
-useEffect(() => {
-  // Set initial values for edit mode
-  if (selectedBanner) {
-    setTitle(selectedBanner.title);
-    setDescription(selectedBanner.description);
-    setSelectedImage(selectedBanner.image);
-    setIsEdit(true); // Set isEdit to true
-  } else {
-    // Reset fields when not in edit mode
-    setTitle("");
-    setDescription("");
-    setSelectedImage(null);
-    setIsEdit(false);
-  }
-}, [selectedBanner]);
-  
-useEffect(() => {
-  if (selectedBanner && isEdit && Bannertitle) {
-    // Make sure Bannertitle is defined before using the find method
-    const selectedOption = Bannertitle.find(
-      (option) => option.label === selectedBanner.pagetitle
-    );
-    //  if (selectedOption) {
-    //    // Set the radio button value to the corresponding option value
-    //    setValue("pagetitle", selectedOption.value);
-    //  }
-  }
-}, [selectedBanner, isEdit, Bannertitle]);
+  useEffect(() => {
+    // Set initial values for edit mode
+    if (selectedBanner) {
+      setTitle(selectedBanner.title);
+      setDescription(selectedBanner.description);
+      setSelectedImage(selectedBanner.image);
+      setIsEdit(true); // Set isEdit to true
+    } else {
+      // Reset fields when not in edit mode
+      setTitle("");
+      setDescription("");
+      setSelectedImage(null);
+      setIsEdit(false);
+    }
+  }, [selectedBanner]);
 
-
+  useEffect(() => {
+    if (selectedBanner && isEdit && Bannertitle) {
+      // Make sure Bannertitle is defined before using the find method
+      const selectedOption = Bannertitle.find(
+        (option) => option.label === selectedBanner.pagetitle
+      );
+      if (selectedOption) {
+        // Set the radio button value to the corresponding option value
+        setValue("pagetitle", selectedOption.value);
+      }
+    }
+  }, [selectedBanner, isEdit, Bannertitle, setValue]);
 
   // const handleRadioChange = (e) => {
   //   setShowAddSubMenu(true);
@@ -122,7 +128,7 @@ useEffect(() => {
 
   //     const responseData = await createBanner(formData);
   //     console.log("Banner created successfully:", responseData);
-      
+
   //      reset({
   //        pagetitle: "", // Reset the radio button selection
   //      });
@@ -139,32 +145,32 @@ useEffect(() => {
   //   }
   // };
 
- const handleSubmitForm = async (data) => {
-   try {
-     const formData = new FormData();
-     formData.append("pagetitle", data.pagetitle);
-     formData.append("title", title);
-     formData.append("description", description);
-     if (image) {
-       formData.append("image", image);
-     }
+  const handleSubmitForm = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("pagetitle", data.pagetitle);
+      formData.append("title", title);
+      formData.append("description", description);
+      if (image) {
+        formData.append("image", image);
+      }
 
-     let responseData;
-     if (selectedBanner) {
-       // If selectedBanner exists, update it
-       // Call the mutate function without any additional parameters
-       responseData = await updateBanner(selectedBanner._id, formData);
-     } else {
-      responseData = await createBannerMutation.mutate(formData);
-      console.log("Banner created successfully:", responseData);
+      let responseData;
+      if (selectedBanner) {
+        // If selectedBanner exists, update it
+        // Call the mutate function without any additional parameters
+        responseData = await updateBanner(selectedBanner._id, formData);
+      } else {
+        responseData = await createBannerMutation.mutate(formData);
+        console.log("Banner created successfully:", responseData);
+      }
+
+      handleClose(); // Close the drawer after submission
+    } catch (error) {
+      // Handle errors
+      // console.error("Error:", error.message);
     }
-
-     handleClose(); // Close the drawer after submission
-   } catch (error) {
-     // Handle errors
-     // console.error("Error:", error.message);
-   }
- };
+  };
 
   const onSubmitHandler = (data) => {
     handleSubmitForm(data);
@@ -200,10 +206,14 @@ useEffect(() => {
                     <RadioGroup
                       {...field}
                       row
-                       onChange={(e) => {
+                      value={
+                        field.value ||
+                        (selectedBanner ? selectedBanner.pagetitle : "")
+                      }
+                      onChange={(e) => {
                         field.onChange(e);
                         // handleRadioChange(e);
-                       }}
+                      }}
                     >
                       {Bannertitle.map((option) => (
                         <FormControlLabel
@@ -224,51 +234,50 @@ useEffect(() => {
           </Grid>
         </Grid>
         <Divider />
-       
-          <Box p={2}>
-            <Typography variant="subtitle1" p={1}>
-              Upload Image
-            </Typography>
-            <Button
-              variant="outlined"
-              onClick={handleUploadButtonClick}
-              sx={{ color: "#038265" }}
-            >
-              <AddIcon />
-              Upload Image
-            </Button>
-            <input
-              type="file"
-              style={{ display: "none" }}
-              ref={filePosterRef}
-              onChange={handleImageUpload}
-            />
 
-            {selectedImage != null && (
-              <img
-                src={selectedImage}
-                style={{
-                  width: "90px",
-                  height: "90px",
-                }}
-              />
-            )}
-            <Box py={2}>
-              <Typography>Title</Typography>
-              <TextField
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </Box>
-            <Box>
-              <Typography>Description</Typography>
-              <TextField
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </Box>
+        <Box p={2}>
+          <Typography variant="subtitle1" p={1}>
+            Upload Image
+          </Typography>
+          <Button
+            variant="outlined"
+            onClick={handleUploadButtonClick}
+            sx={{ color: "#038265" }}
+          >
+            <AddIcon />
+            Upload Image
+          </Button>
+          <input
+            type="file"
+            style={{ display: "none" }}
+            ref={filePosterRef}
+            onChange={handleImageUpload}
+          />
+
+          {selectedImage != null && (
+            <img
+              src={selectedImage}
+              style={{
+                width: "90px",
+                height: "90px",
+              }}
+            />
+          )}
+          <Box py={2}>
+            <Typography>Title</Typography>
+            <TextField
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </Box>
-        
+          <Box>
+            <Typography>Description</Typography>
+            <TextField
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Box>
+        </Box>
       </Container>
     </Box>
   );

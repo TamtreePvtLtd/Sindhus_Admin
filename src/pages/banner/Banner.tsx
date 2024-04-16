@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Box,
   Button,
-  Container,
   IconButton,
   Table,
   TableBody,
@@ -17,22 +16,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import BannerDrawer from "../../pageDrawers/BannerDrawer";
 import { useDeleteBanner, useGetBanners } from "../../customRQHooks/Hooks";
 import AddIcon from "@mui/icons-material/Add";
-
+import CommonDeleteDialog from "../../common/components/CommonDeleteDialog";
 
 function Banner() {
   const { data: responseData } = useGetBanners();
-   const deleteBannerMutation = useDeleteBanner();
- const banners =
-   responseData && responseData.length > 0 ? responseData[0].data : [];
-console.log("data",responseData)
+  const deleteBannerMutation = useDeleteBanner();
+  const banners =
+    responseData && responseData.length > 0 ? responseData[0].data : [];
+  console.log("data", responseData);
 
   const [bannerDrawerOpen, setBannerDrawerOpen] = useState(false);
-   const [selectedBanner, setSelectedBanner] = useState(null);
+  const [selectedBanner, setSelectedBanner] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteBannerId, setDeleteBannerId] = useState(null);
 
- const handleOpenDrawer = () => {
-   setSelectedBanner(null);
-   setBannerDrawerOpen(true);
- };
+  const handleOpenDrawer = () => {
+    setSelectedBanner(null);
+    setBannerDrawerOpen(true);
+  };
 
   const handleCloseDrawer = () => {
     setBannerDrawerOpen(false);
@@ -42,17 +43,26 @@ console.log("data",responseData)
     handleCloseDrawer();
   };
 
- const handleEditBanner = (banner) => {
-   setSelectedBanner(banner); // Set selectedBanner when editing
-   setBannerDrawerOpen(true);
- };
-  const handleDeleteBanner = async (id) => {
+  const handleEditBanner = (banner) => {
+    setSelectedBanner(banner); // Set selectedBanner when editing
+    setBannerDrawerOpen(true);
+  };
+  const handleDeleteBanner = async (_id) => {
     try {
-      await deleteBannerMutation.mutateAsync(id);
-      console.log("Banner deleted successfully");
-    } catch (error) {
-      console.error("Error deleting banner:", error);
-    }
+      console.log("id", _id);
+
+      await deleteBannerMutation.mutateAsync(_id);
+
+      setDeleteDialogOpen(false);
+    } catch (error) {}
+  };
+
+  //  const handleOpenDeleteDialog = () => {
+  //   setDeleteDialogOpen(true);
+  // };
+  const handleOpenDeleteDialog = (id) => {
+    setDeleteBannerId(id); // Set deleteBannerId to the id passed
+    setDeleteDialogOpen(true);
   };
 
   return (
@@ -83,7 +93,7 @@ console.log("data",responseData)
         </Button>
       </Box>
 
-      <Box sx={{  marginLeft: "40px", marginRight: "40px" }}>
+      <Box sx={{ marginLeft: "40px", marginRight: "40px" }}>
         <Box
           sx={{
             width: "100%",
@@ -193,7 +203,7 @@ console.log("data",responseData)
                           <EditIcon />
                         </IconButton>
                         <IconButton
-                          onClick={() => handleDeleteBanner(banner._id)}
+                          onClick={() => handleOpenDeleteDialog(banner._id)}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -210,6 +220,15 @@ console.log("data",responseData)
           </Table>
         </TableContainer>
       </Box>
+      {deleteDialogOpen && (
+        <CommonDeleteDialog
+          title="Delete Banner "
+          content="Are you sure you want to delete the Banner?"
+          dialogOpen={deleteDialogOpen}
+          onDialogclose={() => setDeleteDialogOpen(false)}
+          onDelete={() => handleDeleteBanner(deleteBannerId)}
+        />
+      )}
 
       <BannerDrawer
         bannerDrawerOpen={bannerDrawerOpen}
@@ -222,5 +241,3 @@ console.log("data",responseData)
 }
 
 export default Banner;
-
-
