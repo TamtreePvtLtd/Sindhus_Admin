@@ -24,6 +24,7 @@ import {
 import { queryClient } from "../App";
 import { IBanner } from "../interface/types";
 
+
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
   return useQuery({
     queryKey: ["enquiries"],
@@ -209,16 +210,17 @@ export const useCreateBanner = () => {
 };
 
 export const useUpdateBannerMutation = () => {
-   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: updateBanner as any,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["banners"] });
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
+  return useMutation<IBanner, unknown, { id: string; formData: FormData }>(
+    (variables) => updateBanner(variables.id, variables.formData),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["banners"] });
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    }
+  );
 };
 
 export const useChangeisResponseStatus = () => {
