@@ -103,18 +103,29 @@ function DiningOutMenu() {
     }
   };
 
-  const handleClearButtonClick = () => {
-    setSelectedProductIds([]);
-    setMenuwiseProductCounts({});
-    setSelectedMenuProductIds([]);
-    setClearDialogOpen(false);
+const handleClearButtonClick = () => {
+  setSelectedProductIds((prevSelectedProducts) =>
+    prevSelectedProducts.filter(
+      (productId) => !selectedMenuProductIds.includes(productId)
+    )
+  );
+  setMenuwiseProductCounts((prevProduct) => {
+    const updatedProducts = { ...prevProduct };
+    if (selectedMenu !== null) {
+      updatedProducts[selectedMenu] = [];
+    }
+    return updatedProducts;
+  });
+  setSelectedMenuProductIds([]);
+  setClearDialogOpen(false);
 
-    updateSnackBarState(
-      true,
-      "All DiningOut Products Cleared successfully",
-      SnackbarSeverityEnum.SUCCESS
-    );
-  };
+  updateSnackBarState(
+    true,
+    "Selected menu products cleared successfully",
+    SnackbarSeverityEnum.SUCCESS
+  );
+};
+
 
   const handleMenuSelect = (menuId: string) => {
     setSelectedMenu(menuId);
