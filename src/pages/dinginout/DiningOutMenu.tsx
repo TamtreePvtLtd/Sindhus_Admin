@@ -467,7 +467,7 @@ function DiningOutMenu() {
 
         <CommonClearDialog
           title="Clear Menus Products"
-          content="Are you sure want to clear the Selected Menus Products"
+          content="Are you sure want to clear the Selected Menus Products?"
           dialogOpen={isClearMenuProductsDialogOpen}
           onDialogclose={() => setIsClearMenuProductsDialogOpen(false)}
           onDelete={handleClearMenuProducts}
