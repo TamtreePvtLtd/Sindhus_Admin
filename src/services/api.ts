@@ -146,6 +146,18 @@ const deleteAllSpecial = async() => {
   }
 };
 
+const deleteDiningOutProduct = async (mainMenuId) => {
+  try {
+    const response = await httpWithCredentials.delete(
+      `/diningOut/deleteDiningOutProduct/${mainMenuId}`
+    );
+    return response;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+
 const getAllDiningOutMenuWithProducts = async () => {
   try {
     const response = await httpWithCredentials.get<IProductWithMenu[]>(
@@ -381,5 +393,6 @@ export {
   updateMenu,
   createSpecials,
   changeisResponseStatus,
-  deleteAllSpecial
+  deleteAllSpecial,
+  deleteDiningOutProduct
 };

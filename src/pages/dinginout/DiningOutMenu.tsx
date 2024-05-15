@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useGetAllDiningOutMenuWithProducts } from "../../customRQHooks/Hooks";
+import { useDeleteDiningoutMenu, useGetAllDiningOutMenuWithProducts } from "../../customRQHooks/Hooks";
 import {
   createDiningOutProduct,
   getAllDiningOutId,
@@ -50,7 +50,6 @@ function DiningOutMenu() {
     useState<MenuProductCount>({});
   const theme = useTheme();
 
-
   useEffect(() => {
     getMenuDatas();
   }, []);
@@ -61,6 +60,7 @@ function DiningOutMenu() {
       setOriginalMenuWiseProductCounts(menuWiseProductCounts);
     }
   }, [selectedMenu]);
+  const deleteDiningOutMenuMutation = useDeleteDiningoutMenu();
 
   const resetChanges = () => {
     setSelectedProductIds(originalSelectedProductIds);
@@ -103,17 +103,52 @@ function DiningOutMenu() {
     }
   };
 
-  const handleClearButtonClick = () => {
+//  const handleClearMenuProducts = async () => {
+//    try {
+//      if (selectedMenu) {
+//        const response = await deleteDiningOutProduct(selectedMenu); 
+//        if (response.status === 200) {
+//          console.log("Products removed successfully");
+//        }
+//      } 
+//    } catch (error) {
+//     console.log(" Error while clear the Products");
+//    }
+//  };
+
+  const handleClearMenuProducts = async () => {
+    if (selectedMenu) {
+      deleteDiningOutMenuMutation.mutate(selectedMenu);
+    }
+  };
+  const handleClearButtonClick = async () => {
     setSelectedProductIds([]);
     setMenuwiseProductCounts({});
     setSelectedMenuProductIds([]);
     setClearDialogOpen(false);
 
+    await updateSelectedMenuProducts([]);
     updateSnackBarState(
       true,
       "All DiningOut Products Cleared successfully",
       SnackbarSeverityEnum.SUCCESS
     );
+  };
+
+  const updateSelectedMenuProducts = async (productIds) => {
+    if (selectedMenu !== null && diningOutId) {
+      try {
+        const newSelectedMenu = {
+          menuId: selectedMenu,
+          productIds: productIds,
+        };
+        await updateDiningOutProduct(diningOutId, {
+          menu: [newSelectedMenu],
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
   };
 
   const handleMenuSelect = (menuId: string) => {
@@ -159,8 +194,8 @@ function DiningOutMenu() {
       if (selectedMenu !== null) {
         updatedproducts[selectedMenu] = isSelected
           ? (prevProduct[selectedMenu] || []).filter(
-            (item) => item !== productId
-          )
+              (item) => item !== productId
+            )
           : (prevProduct[selectedMenu] || []).concat(productId);
       }
 
@@ -181,6 +216,8 @@ function DiningOutMenu() {
       ? menuWiseProductCounts[menuId].length
       : 0;
   };
+
+
 
   const handleSaveButtonClick = async () => {
     try {
@@ -268,28 +305,27 @@ function DiningOutMenu() {
           </Typography>
         </Box> */}
 
-        <Grid container spacing={2} >
-          <Grid item xs={3} >
-
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
             <Box
               sx={{
                 // borderRadius: "10px",
                 // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 overflowY: "auto",
                 maxHeight: "500px",
-                maxWidth: '250px'
+                maxWidth: "250px",
               }}
             >
               {diningOutMenus &&
-                diningOutMenus.data &&
-                diningOutMenus.data.length > 0 ? (
+              diningOutMenus.data &&
+              diningOutMenus.data.length > 0 ? (
                 diningOutMenus.data.map((menuItem) => (
                   <Box key={menuItem._id} sx={{ padding: "1px" }}>
                     <Box
                       sx={{
                         padding: "10px",
                         display: "flex",
-                        justifyContent: 'start',
+                        justifyContent: "start",
                         gap: 2,
                         cursor: "pointer",
                         backgroundColor:
@@ -311,16 +347,20 @@ function DiningOutMenu() {
                   </Box>
                 ))
               ) : (
-                <Typography variant="body1">
-                  No menu items available
-                </Typography>
+                <Typography variant="body1">No menu items available</Typography>
               )}
             </Box>
-
           </Grid>
           <Grid item xs={9}>
             {selectedMenu !== null && (
-              <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto", marginRight: '15px' }}>
+              <Box
+                sx={{
+                  gap: 1,
+                  maxHeight: "70vh",
+                  overflowY: "auto",
+                  marginRight: "15px",
+                }}
+              >
                 <Grid item container>
                   {diningOutMenus &&
                     diningOutMenus.data &&
@@ -378,6 +418,9 @@ function DiningOutMenu() {
             gap: 3,
           }}
         >
+          <Button variant="contained" onClick={handleClearMenuProducts}>
+            Clear Menu Products
+          </Button>
           <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
             Clear Products
           </Button>

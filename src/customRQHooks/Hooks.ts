@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   createProduct,
   deleteProduct,
@@ -16,6 +16,7 @@ import {
   deleteSpecial,
   deleteAllSpecial,
   getAllProduct,
+  deleteDiningOutProduct,
  } from "../services/api";
 import { queryClient } from "../App";
 
@@ -103,6 +104,22 @@ export const useDeleteProduct = () => {
     },
     onError: (error) => {
       console.log(error);
+    },
+  });
+};
+
+//delete diningoutmenu
+export const useDeleteDiningoutMenu = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteDiningOutProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diningout"] });
+      console.log("Products removed successfully");
+    },
+    onError: (error) => {
+      console.log("Error while clearing the products", error);
     },
   });
 };
