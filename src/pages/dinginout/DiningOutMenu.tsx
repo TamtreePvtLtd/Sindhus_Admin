@@ -8,7 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDeleteDiningoutMenu, useGetAllDiningOutMenuWithProducts } from "../../customRQHooks/Hooks";
+import {
+  useDeleteDiningoutMenu,
+  useGetAllDiningOutMenuWithProducts,
+} from "../../customRQHooks/Hooks";
 import {
   createDiningOutProduct,
   getAllDiningOutId,
@@ -43,6 +46,9 @@ function DiningOutMenu() {
   const [diningOutId, setDiningOutId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [isClearMenuProductsDialogOpen, setIsClearMenuProductsDialogOpen] =
+    useState(false);
+
   const [originalSelectedProductIds, setOriginalSelectedProductIds] = useState<
     string[]
   >([]);
@@ -103,24 +109,58 @@ function DiningOutMenu() {
     }
   };
 
-//  const handleClearMenuProducts = async () => {
-//    try {
-//      if (selectedMenu) {
-//        const response = await deleteDiningOutProduct(selectedMenu); 
-//        if (response.status === 200) {
-//          console.log("Products removed successfully");
-//        }
-//      } 
-//    } catch (error) {
-//     console.log(" Error while clear the Products");
-//    }
-//  };
+  // const handleClearMenuProducts = async () => {
+  //   setIsClearMenuProductsDialogOpen(false);
+  //   if (selectedMenu) {
+  //     deleteDiningOutMenuMutation.mutate(selectedMenu, {
+  //       onSuccess: () => {
+  //         updateSnackBarState(
+  //           true,
+  //           "Selected Menus Products cleared successfully",
+  //           SnackbarSeverityEnum.SUCCESS
+  //         );
+  //       },
+  //       onError: (error) => {
+  //         console.error("Error:", error);
+  //         updateSnackBarState(
+  //           true,
+  //           "Error occurred while clearing products",
+  //           SnackbarSeverityEnum.ERROR
+  //         );
+  //       },
+  //     });
+  //   }
+  // };
 
   const handleClearMenuProducts = async () => {
+    setIsClearMenuProductsDialogOpen(false);
     if (selectedMenu) {
-      deleteDiningOutMenuMutation.mutate(selectedMenu);
+      deleteDiningOutMenuMutation.mutate(selectedMenu, {
+        onSuccess: () => {
+          setMenuwiseProductCounts((prev) => {
+            const newCounts = { ...prev };
+            newCounts[selectedMenu] = [];
+            return newCounts;
+          });
+          setSelectedMenuProductIds([]);
+          updateSnackBarState(
+            true,
+            "Selected Menus Products cleared successfully",
+            SnackbarSeverityEnum.SUCCESS
+          );
+        },
+        onError: (error) => {
+          console.error("Error:", error);
+          updateSnackBarState(
+            true,
+            "Error occurred while clearing products",
+            SnackbarSeverityEnum.ERROR
+          );
+        },
+      });
     }
   };
+
   const handleClearButtonClick = async () => {
     setSelectedProductIds([]);
     setMenuwiseProductCounts({});
@@ -136,14 +176,17 @@ function DiningOutMenu() {
   };
 
   const updateSelectedMenuProducts = async (productIds) => {
-    if (selectedMenu !== null && diningOutId) {
+    if (diningOutId) {
       try {
-        const newSelectedMenu = {
-          menuId: selectedMenu,
-          productIds: productIds,
-        };
+        const updatedMenus = Object.keys(menuWiseProductCounts).map(
+          (menuId) => ({
+            menuId,
+            productIds: [],
+          })
+        );
+
         await updateDiningOutProduct(diningOutId, {
-          menu: [newSelectedMenu],
+          menu: updatedMenus,
         });
       } catch (error) {
         console.error("Error:", error);
@@ -216,8 +259,6 @@ function DiningOutMenu() {
       ? menuWiseProductCounts[menuId].length
       : 0;
   };
-
-
 
   const handleSaveButtonClick = async () => {
     try {
@@ -418,7 +459,10 @@ function DiningOutMenu() {
             gap: 3,
           }}
         >
-          <Button variant="contained" onClick={handleClearMenuProducts}>
+          <Button
+            variant="contained"
+            onClick={() => setIsClearMenuProductsDialogOpen(true)}
+          >
             Clear Menu Products
           </Button>
           <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
@@ -451,6 +495,14 @@ function DiningOutMenu() {
             onDelete={handleClearButtonClick}
           />
         )}
+
+        <CommonClearDialog
+          title="Clear Menus Products"
+          content="Are you sure want to clear the Selected Menus Products"
+          dialogOpen={isClearMenuProductsDialogOpen}
+          onDialogclose={() => setIsClearMenuProductsDialogOpen(false)}
+          onDelete={handleClearMenuProducts}
+        />
       </Grid>
     </>
   );
