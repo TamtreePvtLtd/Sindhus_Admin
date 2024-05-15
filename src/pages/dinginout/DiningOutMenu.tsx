@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Checkbox, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
   useDeleteDiningoutMenu,
@@ -108,29 +100,6 @@ function DiningOutMenu() {
       console.error("Error:", error);
     }
   };
-
-  // const handleClearMenuProducts = async () => {
-  //   setIsClearMenuProductsDialogOpen(false);
-  //   if (selectedMenu) {
-  //     deleteDiningOutMenuMutation.mutate(selectedMenu, {
-  //       onSuccess: () => {
-  //         updateSnackBarState(
-  //           true,
-  //           "Selected Menus Products cleared successfully",
-  //           SnackbarSeverityEnum.SUCCESS
-  //         );
-  //       },
-  //       onError: (error) => {
-  //         console.error("Error:", error);
-  //         updateSnackBarState(
-  //           true,
-  //           "Error occurred while clearing products",
-  //           SnackbarSeverityEnum.ERROR
-  //         );
-  //       },
-  //     });
-  //   }
-  // };
 
   const handleClearMenuProducts = async () => {
     setIsClearMenuProductsDialogOpen(false);
