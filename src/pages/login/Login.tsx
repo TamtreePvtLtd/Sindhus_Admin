@@ -124,7 +124,7 @@ function Login() {
                       backgroundColor: "white",
                       paddingRight: "1.5px",
                     }}
-                    src="assets\images\sindhus-logo.png"
+                    src="assets\images\output-onlinepngtools (1).png"
                     alt=""
                   />
                 </Link>
