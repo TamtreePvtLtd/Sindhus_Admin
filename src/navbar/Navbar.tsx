@@ -98,7 +98,7 @@ function Navbar() {
               }}
             >
               <img
-                src="assets\images\sindhus-logo.png"
+                src="assets\images\output-onlinepngtools (1).png"
                 alt="Sindhus-Logo"
                 height="50px"
                 width="50px"
