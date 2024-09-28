@@ -267,6 +267,8 @@ const deleteEnquiry = async (enquiryId: string) => {
 };
 
 const createMenu = async (newMenu: FormData) => {
+  console.log('new menu',newMenu);
+
   try {
     var response = await httpWithMultipartFormData.post<IMenu>(
       "/menu/createMenu",
@@ -290,6 +292,47 @@ const updateMenu = async (updateMenu: FormData) => {
     throw error;
   }
 };
+
+const createCoupen = async (newCoupen: { [key: string]: any }) => { // Specify the type accordingly
+  try {
+    console.log('newCoupen',newCoupen);
+    
+    var response = await httpWithMultipartFormData.post<ICoupen>(
+      "/coupen/createCoupen",
+      newCoupen,
+      {
+        headers: {
+          'Content-Type': 'application/json', // Set the correct content type for JSON
+        },
+      }
+
+    );
+console.log('response',response);
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+const updateCoupen = async (updateCoupen: { [key: string]: any }) => {
+  try {
+    var id = updateCoupen.get("id");
+    var response = await httpWithMultipartFormData.put<ICoupen>(
+      `coupen/updateCoupen/${id}`,
+      updateCoupen,
+      {
+        headers: {
+          'Content-Type': 'application/json', // Set the correct content type for JSON
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 
 const createSpecials = async (formData) => {
   try {
@@ -414,5 +457,7 @@ export {
   changeisResponseStatus,
   deleteAllSpecial,
   getAllCoupens,
-  deleteCoupen
+  deleteCoupen,
+  updateCoupen,
+  createCoupen
 };

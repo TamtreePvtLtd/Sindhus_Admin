@@ -18,6 +18,8 @@ import {
   getAllProduct,
   getAllCoupens,
   deleteCoupen,
+  createCoupen,
+  updateCoupen,
  } from "../services/api";
 import { queryClient } from "../App";
 
@@ -67,6 +69,20 @@ export const useCreateMenu = () => {
     },
   });
 };
+export const useCreateCoupen = () => {
+  return useMutation({
+    mutationFn: createCoupen,
+    onSuccess: (data) => {
+      console.log("Coupon created successfully:", data); // Log the success response
+
+      queryClient.invalidateQueries({ queryKey: ["coupen"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
 
 export const useCreateSpecials = () => {
   return useMutation({
@@ -144,6 +160,18 @@ export const useUpdateMenu = () => {
     },
   });
 };
+export const useUpdateCoupen = () => {
+  return useMutation({
+    mutationFn: updateCoupen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["coupen"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
 
 export const useCreateProduct = () => {
   return useMutation({

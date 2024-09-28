@@ -26,6 +26,7 @@ function Coupons() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
   
   const { data: coupens, refetch } = useGetAllCoupens(page, rowsPerPage);
+  console.log("coupens",coupens)
 
   const deleteCoupenMutation = useDeleteCoupen();
     const { updateSnackBarState } = useSnackBar();
@@ -105,12 +106,12 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      CoupenName
+                      Coupon Name
                     </Typography>
                   </TableCell>
                   <TableCell
                     sx={{
-                      width: "20%",
+                      width: "15%",
                       // textAlign: "center",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
@@ -120,13 +121,13 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      CoupenType
+                      Coupon Type
                     </Typography>
                   </TableCell>
                   <TableCell
                     sx={{
-                      width: "20%",
-                      // textAlign: "left",
+                      width: "15%",
+                    //   textAlign: "left",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
@@ -135,12 +136,12 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      DiscountAmount
+                      Discount Amount
                     </Typography>
                   </TableCell>
                   <TableCell
                     sx={{
-                        width: "10%",
+                        width: "15%",
 
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
@@ -150,12 +151,12 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      MinAmount
+                      Min Amount
                     </Typography>
                   </TableCell>
                   <TableCell
                     sx={{
-                        width: "10%",
+                        width: "15%",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
@@ -164,12 +165,12 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      MaxAmount
+                      Max Amount
                     </Typography>
                   </TableCell>
                   <TableCell
                     sx={{
-                        width: "20%",
+                        width: "5%",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
@@ -183,8 +184,8 @@ function Coupons() {
                   </TableCell>
                   <TableCell
                     sx={{
-                      width: "20%",
-                      // textAlign: "center",
+                        width: "10%",
+                        textAlign: "center",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
@@ -219,9 +220,7 @@ function Coupons() {
                       <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
                         {coupen.availability}
                       </TableCell>
-
-
-                      <TableCell >
+                      <TableCell>
                         <IconButton>
                           <EditIcon onClick={() => handleEditCoupen(coupen)} />
                         </IconButton>
@@ -239,8 +238,9 @@ function Coupons() {
       </Box>
       {coupenDrawerOpen && (
         <CouponsDrawe
+        selectedCoupen={selectedCoupen}
           menuDrawerOpen={coupenDrawerOpen}
-          handleMenuDrawerclose={handleCoupenDrawerclose}
+          handleCoupenDrawerclose={handleCoupenDrawerclose}
         />
       )}
       {deleteDialogOpen && (
