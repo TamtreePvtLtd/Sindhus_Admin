@@ -54,7 +54,8 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
     register,
     reset,
     getValues,
-    setValue,  // Import setValue from useForm to set field values programmatically
+    setValue,  
+    watch,
   } = useForm<IFormInput>({
     defaultValues: {
       coupenName: "",
@@ -68,6 +69,9 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
 
   const createCoupenMutation = useCreateCoupen();
   const coupenUpdateMutation = useUpdateCoupen();
+
+  const coupenType = watch("coupenType");
+
 
   // Populate the form if editing
   useEffect(() => {
@@ -139,7 +143,7 @@ console.log("formData",formData);
         p={2}
       >
         <Typography variant="h6" fontWeight="700" component="div">
-          {isEdit ? "Edit Menu" : "Add Menu"}
+          {isEdit ? "Edit Coupon" : "Add Coupon"}
         </Typography>
         <CloseIcon
           sx={{ cursor: "pointer" }}
@@ -153,7 +157,7 @@ console.log("formData",formData);
       <Divider />
       <Box p={3} width={300} component="form" onSubmit={handleSubmit(onSubmit)}>
         <Box py={1}>
-          <Typography variant="subtitle1">Coupon Name *</Typography>
+          <Typography variant="subtitle1">Coupon Code *</Typography>
           <Controller
             name="coupenName"
             control={control}
@@ -177,7 +181,7 @@ console.log("formData",formData);
               render={({ field }) => (
                 <Select {...field} value={getValues("coupenType")}> {/* Ensure value is set */}
                   <MenuItem value="percentage">Percentage</MenuItem>
-                  <MenuItem value="dollar">Fixed Amount</MenuItem>
+                  <MenuItem value="fixedAmount">Fixed Amount</MenuItem>
                 </Select>              )}
             />
           </FormControl>
@@ -185,7 +189,7 @@ console.log("formData",formData);
 
         {/* Discount Amount */}
         <Box py={1}>
-          <Typography variant="subtitle1">Discount Amount *</Typography>
+          <Typography variant="subtitle1">Discount Value *</Typography>
           <Controller
             name="discountAmount"
             control={control}
@@ -195,7 +199,13 @@ console.log("formData",formData);
                 variant="outlined"
                 fullWidth
                 size="small"
-                {...register("discountAmount")}
+                {...register("discountAmount", {
+                  required: "Discount amount is required",
+                  validate: (value) =>
+                    coupenType === "percentage" && value > 100
+                      ? "Percentage discount cannot exceed 100"
+                      : true,
+                })}
                 error={!!errors.discountAmount}
                 helperText={errors.discountAmount?.message}
               />
@@ -205,7 +215,7 @@ console.log("formData",formData);
 
         {/* Minimum Amount */}
         <Box py={1}>
-          <Typography variant="subtitle1">Minimum Purchase Amount *</Typography>
+          <Typography variant="subtitle1">Minimum Purchase *</Typography>
           <Controller
             name="minAmount"
             control={control}
@@ -227,7 +237,7 @@ console.log("formData",formData);
 
         {/* Maximum Amount */}
         <Box py={1}>
-          <Typography variant="subtitle1">Maximum Purchase Amount *</Typography>
+          <Typography variant="subtitle1">Maximum Discount *</Typography>
           <Controller
             name="maxAmount"
             control={control}

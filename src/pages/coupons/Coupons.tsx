@@ -79,7 +79,7 @@ function Coupons() {
     <>
       <Box paddingX={"20px"} justifyContent="space-between" alignItems="center">
         <PaginatedHeader
-          pagetitle="Coupens"
+          pagetitle="Coupons"
           pageInfo={coupens?.pageInfo}
           onRowsPerPageChange={setRowsPerPage}
           onPageChange={setPage}
@@ -106,7 +106,7 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      Coupon Name
+                      Coupon Code
                     </Typography>
                   </TableCell>
                   <TableCell
@@ -136,7 +136,7 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      Discount Amount
+                      Discount Value
                     </Typography>
                   </TableCell>
                   <TableCell
@@ -151,7 +151,7 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      Min Amount
+                      Min Discount
                     </Typography>
                   </TableCell>
                   <TableCell
@@ -165,7 +165,7 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      Max Amount
+                      Max Discount
                     </Typography>
                   </TableCell>
                   <TableCell
