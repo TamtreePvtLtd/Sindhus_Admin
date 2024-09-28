@@ -4,7 +4,7 @@ import {
   ISignUp,
   IUser,
 } from "../interface/customer";
-import { IMenu } from "../interface/menus";
+import { ICoupen, IMenu } from "../interface/menus";
 import {
   ICateringEnquiries,
   IDiningOutMenuData,
@@ -356,6 +356,37 @@ const changeisResponseStatus = async (enquiryId: any) => {
   }
 };
 
+const getAllCoupens = async (page?: number, pageSize?: number) => {
+  try {
+    const response = await httpWithCredentials.get<IPaginationResult<ICoupen>>(
+      "/coupen/getAllCoupens",
+      {
+        params: {
+          page,
+          pageSize,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+
+const deleteCoupen = async (id: string) => {
+  try {
+    var response = await httpWithCredentials.delete(
+      `/coupen/deleteCoupen/${id}`
+    );
+    return response.data;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+
 export {
   getAllProduct,
   getSpecials,
@@ -381,5 +412,7 @@ export {
   updateMenu,
   createSpecials,
   changeisResponseStatus,
-  deleteAllSpecial
+  deleteAllSpecial,
+  getAllCoupens,
+  deleteCoupen
 };

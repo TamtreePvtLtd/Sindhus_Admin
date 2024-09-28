@@ -9,25 +9,25 @@ import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IMenu } from "../../interface/menus";
-import MenuDrawer from "../../pageDrawers/MenuDrawer";
+import { ICoupen } from "../../interface/menus";
 import CommonDeleteDialog from "../../common/components/CommonDeleteDialog";
-import { useDeleteMenu, useGetAllMenus } from "../../customRQHooks/Hooks";
+import { useDeleteCoupen, useGetAllCoupens } from "../../customRQHooks/Hooks";
 import PaginatedHeader from "../../common/components/PaginatedHeader";
 import { useSnackBar } from "../../context/SnackBarContext";
 import { useTheme } from "@mui/material/styles";
 import CouponsDrawe from "../../pageDrawers/CouponsDrawer";
 
 function Coupons() {
-    const [selectedMenu, setSelectedMenu] = useState<IMenu | null>(null);
-    const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
+  const [selectedCoupen, setSelectedCoupen] = useState<ICoupen | null>(null);
+  const [coupenDrawerOpen, setCoupenDrawerOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
   
-    const { data: menus, refetch } = useGetAllMenus(page, rowsPerPage);
-    const deleteMenuMutation = useDeleteMenu();
+  const { data: coupens, refetch } = useGetAllCoupens(page, rowsPerPage);
+
+  const deleteCoupenMutation = useDeleteCoupen();
     const { updateSnackBarState } = useSnackBar();
     const theme = useTheme();
   
@@ -35,28 +35,28 @@ function Coupons() {
       refetch();
     }, [page, rowsPerPage]);
   
-    const handleMenuDrawerclose = () => {
-      setMenuDrawerOpen(false);
+  const handleCoupenDrawerclose = () => {
+    setCoupenDrawerOpen(false);
     };
   
-    const handleEditMenu = (menu: IMenu) => {
-      setSelectedMenu({ ...menu });
-      setMenuDrawerOpen(true);
+  const handleEditCoupen = (coupen: ICoupen) => {
+    setSelectedCoupen({ ...coupen });
+    setCoupenDrawerOpen(true);
     };
-    const handleAddMenuClick = () => {
-      setSelectedMenu(null);
-      setMenuDrawerOpen(true);
+  const handleAddCoupenClick = () => {
+    setSelectedCoupen(null);
+    setCoupenDrawerOpen(true);
     };
   
-    const handleDelete = (menu: IMenu) => {
-      setSelectedMenu(menu);
+  const handleDelete = (coupen: ICoupen) => {
+    setSelectedCoupen(coupen);
       setDeleteDialogOpen(true);
     };
   
     const onDelete = async () => {
       try {
-        if (selectedMenu && selectedMenu._id) {
-          await deleteMenuMutation.mutateAsync(selectedMenu._id, {
+        if (selectedCoupen && selectedCoupen._id) {
+          await deleteCoupenMutation.mutateAsync(selectedCoupen._id, {
             onSuccess: () => {
               updateSnackBarState(true, "Menu removed successfully.", "success");
             },
@@ -66,10 +66,10 @@ function Coupons() {
           });
           setDeleteDialogOpen(false);
         } else {
-          console.error("Invalid selectedMenu or _id");
+          console.error("Invalid selectedCoupen or _id");
         }
       } catch (error) {
-        console.error("Error deleting menu:", error);
+        console.error("Error deleting Coupen:", error);
       }
     };
   
@@ -78,22 +78,16 @@ function Coupons() {
     <>
       <Box paddingX={"20px"} justifyContent="space-between" alignItems="center">
         <PaginatedHeader
-          pagetitle="Menus"
-          pageInfo={menus?.pageInfo}
+          pagetitle="Coupens"
+          pageInfo={coupens?.pageInfo}
           onRowsPerPageChange={setRowsPerPage}
           onPageChange={setPage}
-          onAddClick={handleAddMenuClick}
+          onAddClick={handleAddCoupenClick}
           addButtonText={" + Add Coupons"}
         />
-
-
         <Grid item xs={12}>
           <TableContainer
             elevation={0}
-            sx={{
-              // boxShadow: 3,
-              // width: "100%",
-            }}
             component={Paper}
           >
             <Table stickyHeader aria-label="menus-table" >
@@ -204,43 +198,49 @@ function Coupons() {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              {/* <TableBody>
-                {menus?.items &&
-                  menus?.items.length > 0 &&
-                  menus?.items.map((menu) => (
-                    <TableRow key={menu._id}>
-                      <TableCell sx={{ fontWeight: 600 }}>{menu.title}</TableCell>
+              <TableBody>
+                {coupens?.items &&
+                  coupens?.items.length > 0 &&
+                  coupens?.items.map((coupen) => (
+                    <TableRow key={coupen._id}>
+                      <TableCell sx={{ fontWeight: 600 }}>{coupen.coupenName}</TableCell>
                       <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
-                        {menu.menuType}
+                        {coupen.coupenType}
                       </TableCell>
-                      <TableCell >
-                        {menu.subMenus &&
-                          menu.subMenus.length > 0 &&
-                          menu.subMenus?.map((subMenu, index) => (
-                            <Box key={index} sx={{ fontWeight: 600 }}>{subMenu.title}</Box>
-                          ))}
+                      <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
+                        {coupen.discountAmount}
                       </TableCell>
+                      <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
+                        {coupen.minAmount}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
+                        {coupen.maxAmount}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
+                        {coupen.availability}
+                      </TableCell>
+
 
                       <TableCell >
                         <IconButton>
-                          <EditIcon onClick={() => handleEditMenu(menu)} />
+                          <EditIcon onClick={() => handleEditCoupen(coupen)} />
                         </IconButton>
                         <IconButton>
-                          <DeleteIcon onClick={() => handleDelete(menu)} />
+                          <DeleteIcon onClick={() => handleDelete(coupen)} />
                         </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
-              </TableBody> */}
+              </TableBody> 
             </Table>
           </TableContainer>
         </Grid>
 
       </Box>
-      {menuDrawerOpen && (
+      {coupenDrawerOpen && (
         <CouponsDrawe
-          menuDrawerOpen={menuDrawerOpen}
-          handleMenuDrawerclose={handleMenuDrawerclose}
+          menuDrawerOpen={coupenDrawerOpen}
+          handleMenuDrawerclose={handleCoupenDrawerclose}
         />
       )}
       {deleteDialogOpen && (

@@ -16,6 +16,8 @@ import {
   deleteSpecial,
   deleteAllSpecial,
   getAllProduct,
+  getAllCoupens,
+  deleteCoupen,
  } from "../services/api";
 import { queryClient } from "../App";
 
@@ -34,6 +36,7 @@ export const useGetAllMenus = (page: number, pageSize: number) => {
     refetchOnWindowFocus: false,
   });
 };
+
 export const useGetAllDiningOutMenuWithProducts = () => {
   return useQuery({
     queryKey: ["diningOut"],
@@ -195,5 +198,25 @@ export const useGetAllProduct = (page: number, pageSize: number) => {
     queryKey: ["products"],
     queryFn: () => getAllProduct(page, pageSize),
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetAllCoupens = (page: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ["coupens"],
+    queryFn: () => getAllCoupens(page, pageSize),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useDeleteCoupen = () => {
+  return useMutation({
+    mutationFn: deleteCoupen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["coupens"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
 };
