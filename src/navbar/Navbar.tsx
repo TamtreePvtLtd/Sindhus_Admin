@@ -43,6 +43,11 @@ const navMenus = [
     label: "Specials",
     link: paths.SPECIALS,
   },
+  {
+    label: "Coupons",
+    link: paths.COUPONS,
+  },
+
 ];
 
 function Navbar() {
@@ -127,7 +132,7 @@ function Navbar() {
                     key={menu.label}
                     sx={{
                       position: "relative",
-                      marginRight: index < navMenus.length - 1 ? "20px" : "0",
+                      // marginRight: index < navMenus.length - 1 ? "20px" : "0",
                     }}
                   >
                     <Link to={menu.link} style={{ textDecoration: "none" }}>
