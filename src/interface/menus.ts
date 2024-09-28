@@ -17,6 +17,16 @@ export interface IMenu {
   updatedAt: Date;
 }
 
+export interface ICoupen {
+  _id: string;
+  coupenName: string;
+  coupenType: string;
+  discountAmount: number;
+  minAmount: number;
+  maxAmount: number;
+  availability: string;
+}
+
 export interface ISubMenu {
   title: string;
   _id?: string;
