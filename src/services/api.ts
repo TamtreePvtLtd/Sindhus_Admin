@@ -5,6 +5,7 @@ import {
   IUser,
 } from "../interface/customer";
 import { IMenu } from "../interface/menus";
+import { cartItems, PaymentData } from "../interface/snacks";
 import {
   ICateringEnquiries,
   IDiningOutMenuData,
@@ -134,10 +135,22 @@ const deleteSpecial = async (specials: ISpecial) => {
     throw new Error(message);
   }
 };
-const deleteAllSpecial = async() => {
+const deleteAllSpecial = async () => {
   try {
     const response = await httpWithCredentials.delete(
       `/specials/deleteAllSpecials`
+    );
+    return response;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+
+const deleteDiningOutProduct = async (mainMenuId) => {
+  try {
+    const response = await httpWithCredentials.delete(
+      `/diningOut/deleteDiningOutProduct/${mainMenuId}`
     );
     return response;
   } catch (error) {
@@ -298,7 +311,7 @@ const createSpecials = async (formData) => {
       formData
     );
     console.log("response", response.data);
-      
+
     return response.data;
   } catch (error) {
     throw error;
@@ -356,7 +369,32 @@ const changeisResponseStatus = async (enquiryId: any) => {
   }
 };
 
+const getPayments = async () => {
+  try {
+    const response = await httpWithoutCredentials.get<PaymentData>(
+      "/payment/transaction"
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+const getCartItems = async () => {
+  try {
+    const response = await httpWithoutCredentials.get<cartItems>(
+      "/cart/cartItem"
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
+  getCartItems,
+  getPayments,
   getAllProduct,
   getSpecials,
   deleteSpecial,
@@ -381,5 +419,6 @@ export {
   updateMenu,
   createSpecials,
   changeisResponseStatus,
-  deleteAllSpecial
+  deleteAllSpecial,
+  deleteDiningOutProduct,
 };

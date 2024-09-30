@@ -43,6 +43,10 @@ const navMenus = [
     label: "Specials",
     link: paths.SPECIALS,
   },
+  {
+    label: "Snacks",
+    link: paths.SNACKS,
+  },
 ];
 
 function Navbar() {

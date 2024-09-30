@@ -5,6 +5,7 @@ export enum paths {
   MENUS = "/menus",
   DININGOUTMENU = "/diningoutmenu",
   SPECIALS = "/specials",
+  SNACKS = "/snacks",
   LOGIN = "/login",
   REGISTER = "/signup"
  }

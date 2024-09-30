@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   createProduct,
   deleteProduct,
@@ -16,7 +16,10 @@ import {
   deleteSpecial,
   deleteAllSpecial,
   getAllProduct,
- } from "../services/api";
+  deleteDiningOutProduct,
+  getPayments,
+  getCartItems,
+} from "../services/api";
 import { queryClient } from "../App";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
@@ -82,10 +85,8 @@ export const useGetSpecials = () => {
     queryKey: ["specials"],
     queryFn: () => getSpecials(),
     refetchOnWindowFocus: false,
-  
   });
 };
-
 
 export const useGetProducts = (menuId: string, subMenuIds: string[]) => {
   return useQuery({
@@ -103,6 +104,22 @@ export const useDeleteProduct = () => {
     },
     onError: (error) => {
       console.log(error);
+    },
+  });
+};
+
+//delete diningoutmenu
+export const useDeleteDiningoutMenu = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteDiningOutProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diningout"] });
+      console.log("Products removed successfully");
+    },
+    onError: (error) => {
+      console.log("Error while clearing the products", error);
     },
   });
 };
@@ -178,7 +195,6 @@ export const useUpdateProduct = () => {
   });
 };
 export const useChangeisResponseStatus = () => {
- 
   return useMutation({
     mutationFn: useChangeisResponseStatus,
     onSuccess: () => {
@@ -194,6 +210,21 @@ export const useGetAllProduct = (page: number, pageSize: number) => {
   return useQuery({
     queryKey: ["products"],
     queryFn: () => getAllProduct(page, pageSize),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetPayment = () => {
+  return useQuery({
+    queryKey: ["payments"],
+    queryFn: () => getPayments(),
+    refetchOnWindowFocus: false,
+  });
+};
+export const useGetCartItems = () => {
+  return useQuery({
+    queryKey: ["cartItems"],
+    queryFn: () => getCartItems(),
     refetchOnWindowFocus: false,
   });
 };

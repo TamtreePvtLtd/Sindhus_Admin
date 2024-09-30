@@ -1,14 +1,9 @@
-import {
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Checkbox, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useGetAllDiningOutMenuWithProducts } from "../../customRQHooks/Hooks";
+import {
+  useDeleteDiningoutMenu,
+  useGetAllDiningOutMenuWithProducts,
+} from "../../customRQHooks/Hooks";
 import {
   createDiningOutProduct,
   getAllDiningOutId,
@@ -43,13 +38,15 @@ function DiningOutMenu() {
   const [diningOutId, setDiningOutId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [isClearMenuProductsDialogOpen, setIsClearMenuProductsDialogOpen] =
+    useState(false);
+
   const [originalSelectedProductIds, setOriginalSelectedProductIds] = useState<
     string[]
   >([]);
   const [originalMenuWiseProductCounts, setOriginalMenuWiseProductCounts] =
     useState<MenuProductCount>({});
   const theme = useTheme();
-
 
   useEffect(() => {
     getMenuDatas();
@@ -61,6 +58,7 @@ function DiningOutMenu() {
       setOriginalMenuWiseProductCounts(menuWiseProductCounts);
     }
   }, [selectedMenu]);
+  const deleteDiningOutMenuMutation = useDeleteDiningoutMenu();
 
   const resetChanges = () => {
     setSelectedProductIds(originalSelectedProductIds);
@@ -103,17 +101,66 @@ function DiningOutMenu() {
     }
   };
 
-  const handleClearButtonClick = () => {
+  const handleClearMenuProducts = async () => {
+    setIsClearMenuProductsDialogOpen(false);
+    if (selectedMenu) {
+      deleteDiningOutMenuMutation.mutate(selectedMenu, {
+        onSuccess: () => {
+          setMenuwiseProductCounts((prev) => {
+            const newCounts = { ...prev };
+            newCounts[selectedMenu] = [];
+            return newCounts;
+          });
+          setSelectedMenuProductIds([]);
+          updateSnackBarState(
+            true,
+            "Selected Menus Products cleared successfully",
+            SnackbarSeverityEnum.SUCCESS
+          );
+        },
+        onError: (error) => {
+          console.error("Error:", error);
+          updateSnackBarState(
+            true,
+            "Error occurred while clearing products",
+            SnackbarSeverityEnum.ERROR
+          );
+        },
+      });
+    }
+  };
+
+  const handleClearButtonClick = async () => {
     setSelectedProductIds([]);
     setMenuwiseProductCounts({});
     setSelectedMenuProductIds([]);
     setClearDialogOpen(false);
 
+    await updateSelectedMenuProducts([]);
     updateSnackBarState(
       true,
       "All DiningOut Products Cleared successfully",
       SnackbarSeverityEnum.SUCCESS
     );
+  };
+
+  const updateSelectedMenuProducts = async (productIds) => {
+    if (diningOutId) {
+      try {
+        const updatedMenus = Object.keys(menuWiseProductCounts).map(
+          (menuId) => ({
+            menuId,
+            productIds: [],
+          })
+        );
+
+        await updateDiningOutProduct(diningOutId, {
+          menu: updatedMenus,
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
   };
 
   const handleMenuSelect = (menuId: string) => {
@@ -159,8 +206,8 @@ function DiningOutMenu() {
       if (selectedMenu !== null) {
         updatedproducts[selectedMenu] = isSelected
           ? (prevProduct[selectedMenu] || []).filter(
-            (item) => item !== productId
-          )
+              (item) => item !== productId
+            )
           : (prevProduct[selectedMenu] || []).concat(productId);
       }
 
@@ -268,28 +315,27 @@ function DiningOutMenu() {
           </Typography>
         </Box> */}
 
-        <Grid container spacing={2} >
-          <Grid item xs={3} >
-
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
             <Box
               sx={{
                 // borderRadius: "10px",
                 // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 overflowY: "auto",
                 maxHeight: "500px",
-                maxWidth: '250px'
+                maxWidth: "250px",
               }}
             >
               {diningOutMenus &&
-                diningOutMenus.data &&
-                diningOutMenus.data.length > 0 ? (
+              diningOutMenus.data &&
+              diningOutMenus.data.length > 0 ? (
                 diningOutMenus.data.map((menuItem) => (
                   <Box key={menuItem._id} sx={{ padding: "1px" }}>
                     <Box
                       sx={{
                         padding: "10px",
                         display: "flex",
-                        justifyContent: 'start',
+                        justifyContent: "start",
                         gap: 2,
                         cursor: "pointer",
                         backgroundColor:
@@ -311,16 +357,20 @@ function DiningOutMenu() {
                   </Box>
                 ))
               ) : (
-                <Typography variant="body1">
-                  No menu items available
-                </Typography>
+                <Typography variant="body1">No menu items available</Typography>
               )}
             </Box>
-
           </Grid>
           <Grid item xs={9}>
             {selectedMenu !== null && (
-              <Box sx={{ gap: 1, maxHeight: "70vh", overflowY: "auto", marginRight: '15px' }}>
+              <Box
+                sx={{
+                  gap: 1,
+                  maxHeight: "70vh",
+                  overflowY: "auto",
+                  marginRight: "15px",
+                }}
+              >
                 <Grid item container>
                   {diningOutMenus &&
                     diningOutMenus.data &&
@@ -378,6 +428,12 @@ function DiningOutMenu() {
             gap: 3,
           }}
         >
+          <Button
+            variant="contained"
+            onClick={() => setIsClearMenuProductsDialogOpen(true)}
+          >
+            Clear Menu Products
+          </Button>
           <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
             Clear Products
           </Button>
@@ -408,6 +464,14 @@ function DiningOutMenu() {
             onDelete={handleClearButtonClick}
           />
         )}
+
+        <CommonClearDialog
+          title="Clear Menus Products"
+          content="Are you sure want to clear the Selected Menus Products?"
+          dialogOpen={isClearMenuProductsDialogOpen}
+          onDialogclose={() => setIsClearMenuProductsDialogOpen(false)}
+          onDelete={handleClearMenuProducts}
+        />
       </Grid>
     </>
   );
