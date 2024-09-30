@@ -15,6 +15,8 @@ import { SaveAlt, Delete } from "@mui/icons-material"; // Icon for the download 
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx"; // Import the xlsx library
 import { cartItems, DownloadData, PaymentData } from "../../interface/snacks";
+import { useUpdateCartItem } from "../../customRQHooks/Hooks";
+import axios from "axios";
 
 // Define PaymentData and CartItemData interfaces
 
@@ -72,11 +74,48 @@ function Snacks() {
     }
   };
 
-  const handleSwitchChange = (orderNumber: string) => {
-    setDeliveredStatus((prev) => ({
-      ...prev,
-      [orderNumber]: true, // Set the delivery status to true and prevent switching back
-    }));
+  const updateCartItem = useUpdateCartItem();
+
+  // Function to handle switch change
+
+  const handleSwitchChange = async (orderNumber, cartItem) => {
+    const formData = new FormData();
+
+    // Append the order number and cart item data
+    formData.append("orderNumber", orderNumber);
+    formData.append("cartItems", JSON.stringify([cartItem])); // Ensure cartItems is an array
+
+    // Toggle the deliveredStatus
+    const updatedDeliveredStatus =
+      cartItem.deliveredStatus === "true" ? "false" : "true";
+    formData.append("deliveredStatus", updatedDeliveredStatus);
+
+    try {
+      // Call the API directly using Axios
+
+      const response = await axios.put(
+        `http://localhost:3000/cart/cartItem/:${orderNumber}`, // Ensure this matches your backend route
+        formData,
+        {
+          params: {
+            orderNumber,
+          },
+          headers: {
+            "Content-Type": "multipart/form-data", // Ensure to set the content type
+          },
+        }
+      );
+
+      // Log the response for debugging
+      console.log("API Response:", response.data);
+
+      // Handle success (optional - you can also add UI updates here)
+      alert("Cart item updated successfully!");
+    } catch (error) {
+      // Handle error (optional - you can also add error handling UI here)
+      console.error("Error updating cart item:");
+      alert("Failed to update cart item.");
+    }
   };
 
   const handleDelete = (orderNumber: string, itemTitle: string) => {
@@ -299,14 +338,22 @@ function Snacks() {
             >
               Quantity
             </TableCell>
-            {/* <TableCell
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
+              Fulfilled
+            </TableCell>
+            <TableCell
               sx={{
                 backgroundColor: theme.palette.primary.main,
                 color: "white",
               }}
             >
               Actions
-            </TableCell> */}
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -315,7 +362,6 @@ function Snacks() {
               (cart) => cart.orderNumber === payment.orderNumber
             );
 
-            // Apply filter to cart items based on the title
             const filteredCartItems = matchingCart?.cartItems.filter((item) =>
               item.title.toLowerCase().includes(titleFilter.toLowerCase())
             );
@@ -324,7 +370,6 @@ function Snacks() {
               <React.Fragment key={paymentIndex}>
                 {filteredCartItems?.map((item, index) => (
                   <TableRow key={index}>
-                    {/* Display payment details only once, using rowSpan */}
                     {index === 0 && (
                       <>
                         <TableCell rowSpan={filteredCartItems.length}>
@@ -334,7 +379,10 @@ function Snacks() {
                           {payment.firstName + " " + payment.lastName}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.address + ", " + payment.postalCode}
+                          {payment.address +
+                            ", " +
+                            "Pincode:" +
+                            payment.postalCode}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
                           {payment.phoneNumber}
@@ -347,37 +395,37 @@ function Snacks() {
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
                           {new Date(payment.createdAt).toLocaleDateString()}
-                          {/* For DD/MM/YYYY format */}
                         </TableCell>
-
                         <TableCell rowSpan={filteredCartItems.length}>
                           {new Date(payment.deliveryDate).toLocaleDateString()}
                         </TableCell>
                       </>
                     )}
-                    {/* Cart Item Details */}
                     <TableCell>{item.title}</TableCell>
                     <TableCell>{item.size}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
-                    {/* <TableCell>
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        startIcon={<Delete />}
-                        onClick={() =>
-                          handleDelete(payment.orderNumber, item.title)
-                        }
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={deliveredStatus[payment.orderNumber] || false}
-                        onChange={() => handleSwitchChange(payment.orderNumber)}
-                        disabled={deliveredStatus[payment.orderNumber]} // Disable switch if already marked as delivered
-                      />
-                    </TableCell> */}
+                    {index === 0 && (
+                      <>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          <Switch
+                            checked={item.deliveredStatus === "true"}
+                            onChange={() =>
+                              handleSwitchChange(payment.orderNumber, item)
+                            }
+                            disabled={item.deliveredStatus === "true"}
+                          />
+                        </TableCell>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          <Button
+                            sx={{ color: theme.palette.primary.main }}
+                            startIcon={<Delete />}
+                            onClick={() =>
+                              handleDelete(payment.orderNumber, item.title)
+                            }
+                          ></Button>
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
                 ))}
               </React.Fragment>

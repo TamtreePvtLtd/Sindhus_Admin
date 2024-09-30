@@ -392,7 +392,26 @@ const getCartItems = async () => {
   }
 };
 
+const updateCartItems = async (formData) => {
+  try {
+    // Retrieve the orderNumber from the formData
+    const orderNumber = formData.get("orderNumber");
+    console.log('Order Number:', orderNumber);  // Log the orderNumber for debugging
+
+    // Send the API request to update the cart item
+    const response = await httpWithMultipartFormData.put(
+      `/cart/cartItem/${orderNumber}`,  // Use the orderNumber in the route
+      formData
+    );
+    return response;
+  } catch (error) {
+    const message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+
 export {
+  updateCartItems,
   getCartItems,
   getPayments,
   getAllProduct,

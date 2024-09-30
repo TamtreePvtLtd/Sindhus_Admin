@@ -19,6 +19,7 @@ import {
   deleteDiningOutProduct,
   getPayments,
   getCartItems,
+  updateCartItems,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -226,5 +227,17 @@ export const useGetCartItems = () => {
     queryKey: ["cartItems"],
     queryFn: () => getCartItems(),
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateCartItem = () => {
+  return useMutation({
+    mutationFn: updateCartItems,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
 };

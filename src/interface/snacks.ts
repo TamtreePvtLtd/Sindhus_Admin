@@ -18,6 +18,8 @@ export interface PaymentData {
 }
 
 export interface CartItemData {
+  deliveredStatus: string;
+  deliveredStatus: string;
   orderNumber: string;
   _id: string;
   id: string;
