@@ -14,7 +14,7 @@ import {
 import Divider from "@mui/material/Divider";
 import CloseIcon from "@mui/icons-material/Close";
 import { ICoupen } from "../interface/menus";
-import { useCreateCoupen, useUpdateCoupen } from "../customRQHooks/Hooks";
+import { useCreateCoupen, useGetAllCoupens, useUpdateCoupen } from "../customRQHooks/Hooks";
 
 interface IProps {
   selectedCoupen: ICoupen | null;
@@ -28,7 +28,7 @@ interface IFormInput {
   discountAmount: number;
   minAmount: number;
   maxAmount: number;
-  availability: string;
+  availability: boolean;
 }
 
 const defaultValues = {
@@ -37,7 +37,7 @@ const defaultValues = {
   discountAmount: 0,
   minAmount: 0,
   maxAmount: 0,
-  availability: "true",
+  availability: true,
 } as ICoupen;
 
 
@@ -46,7 +46,8 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
 
   const [isEdit, setIsEdit] = useState(!!selectedCoupen);
 
-  // Initialize form with useForm hook
+  const { data: coupens,refetch } = useGetAllCoupens();
+
   const {
     control,
     formState: { errors },
@@ -56,6 +57,7 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
     getValues,
     setValue,  
     watch,
+    setError,
   } = useForm<IFormInput>({
     defaultValues: {
       coupenName: "",
@@ -63,7 +65,7 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       discountAmount: 0,
       minAmount: 0,
       maxAmount: 0,
-      availability: "true",
+      availability: true,
     },
   });
 
@@ -71,7 +73,6 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
   const coupenUpdateMutation = useUpdateCoupen();
 
   const coupenType = watch("coupenType");
-
 
   // Populate the form if editing
   useEffect(() => {
@@ -82,13 +83,27 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       setValue("discountAmount", selectedCoupen.discountAmount);
       setValue("minAmount", selectedCoupen.minAmount);
       setValue("maxAmount", selectedCoupen.maxAmount);
-      setValue("availability", selectedCoupen.availability);
+      setValue("availability", selectedCoupen.availability); 
     }
   }, [selectedCoupen, setValue]);
 
   // Handle form submission
   const onSubmit = async (data: IFormInput) => {
     try {
+      // Check for duplicate coupon name
+      const duplicateCoupon = coupens?.items.find(
+        (coupon: ICoupen) =>
+          coupon.coupenName.toLowerCase() === data.coupenName.toLowerCase()
+      );
+
+      if (duplicateCoupon && (!isEdit || duplicateCoupon._id !== selectedCoupen?._id)) {
+        setError("coupenName", {
+          type: "manual",
+          message: `"${data.coupenName}" already exists!`,
+        });
+        return; 
+      }
+
       const formData = new FormData();
       formData.append("coupenName", data.coupenName);
       formData.append("coupenType", data.coupenType);
@@ -97,12 +112,11 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       formData.append("maxAmount", data.maxAmount.toString());
       formData.append("availability", data.availability.toString());
 
-console.log("formData",formData);
       if (!isEdit) {
-
         await createCoupenMutation.mutateAsync(formData, {
           onSuccess: () => {
             handleCoupenDrawerclose();
+            refetch();  
             console.log("Coupon added successfully");
           },
           onError: (error: any) => {
@@ -114,6 +128,7 @@ console.log("formData",formData);
         await coupenUpdateMutation.mutateAsync(formData, {
           onSuccess: () => {
             handleCoupenDrawerclose();
+            refetch();  
             console.log("Coupon updated successfully");
           },
           onError: (error: any) => {
@@ -121,12 +136,14 @@ console.log("formData",formData);
           },
         });
       }
-      reset({ ...defaultValues });
 
+      reset({ ...defaultValues });
     } catch (error) {
       console.error("Error in form submission:", error);
     }
   };
+
+
 
   return (
     <Drawer
@@ -134,7 +151,7 @@ console.log("formData",formData);
       open={menuDrawerOpen}
       onClose={handleCoupenDrawerclose}
     >
-            <Box
+      <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -162,10 +179,16 @@ console.log("formData",formData);
             name="coupenName"
             control={control}
             render={({ field }) => (
-              <TextField variant="outlined" fullWidth size="small" 
-              {...register("coupenName")}
-              error={!!errors.coupenName}
-              helperText={errors.coupenName?.message}
+              <TextField
+                variant="outlined"
+                fullWidth
+                size="small"
+                {...field}
+                {...register("coupenName", {
+                  required: "Coupon code is required",
+                })}
+                error={!!errors.coupenName}
+                helperText={errors.coupenName?.message}
               />
             )}
           />
@@ -179,9 +202,9 @@ console.log("formData",formData);
               name="coupenType"
               control={control}
               render={({ field }) => (
-                <Select {...field} value={getValues("coupenType")}> {/* Ensure value is set */}
+                <Select {...field} value={getValues("coupenType")}> 
                   <MenuItem value="percentage">Percentage</MenuItem>
-                  <MenuItem value="fixedAmount">Fixed Amount</MenuItem>
+                  <MenuItem value="fixedAmount">Amount</MenuItem>
                 </Select>              )}
             />
           </FormControl>

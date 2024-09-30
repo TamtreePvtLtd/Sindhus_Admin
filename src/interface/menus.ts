@@ -24,7 +24,7 @@ export interface ICoupen {
   discountAmount: number;
   minAmount: number;
   maxAmount: number;
-  availability: string;
+  availability: boolean;
 }
 
 export interface ISubMenu {

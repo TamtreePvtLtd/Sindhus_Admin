@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Grid, IconButton } from "@mui/material";
+import { Box, Typography, Grid, IconButton, Switch } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,7 +15,7 @@ import { useDeleteCoupen, useGetAllCoupens } from "../../customRQHooks/Hooks";
 import PaginatedHeader from "../../common/components/PaginatedHeader";
 import { useSnackBar } from "../../context/SnackBarContext";
 import { useTheme } from "@mui/material/styles";
-import CouponsDrawe from "../../pageDrawers/CouponsDrawer";
+import CouponsDrawer from "../../pageDrawers/CouponsDrawer";
 
 function Coupons() {
   const [selectedCoupen, setSelectedCoupen] = useState<ICoupen | null>(null);
@@ -26,7 +26,6 @@ function Coupons() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
   
   const { data: coupens, refetch } = useGetAllCoupens(page, rowsPerPage);
-  console.log("coupens",coupens)
 
   const deleteCoupenMutation = useDeleteCoupen();
     const { updateSnackBarState } = useSnackBar();
@@ -86,6 +85,10 @@ function Coupons() {
           onAddClick={handleAddCoupenClick}
           addButtonText={" + Add Coupons"}
         />
+        {/* <Typography variant="h6" fontWeight="bold" sx={{padding:"10px"}}>
+          Coupons
+        </Typography> */}
+
         <Grid item xs={12}>
           <TableContainer
             elevation={0}
@@ -151,7 +154,7 @@ function Coupons() {
                       variant="subtitle1"
                       fontWeight="bold"
                     >
-                      Min Discount
+                      Min Purchase
                     </Typography>
                   </TableCell>
                   <TableCell
@@ -218,8 +221,13 @@ function Coupons() {
                         {coupen.maxAmount}
                       </TableCell>
                       <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
-                        {coupen.availability}
+                        <Switch
+                          color="primary"
+                          checked={coupen.availability} 
+                          disabled 
+                        />
                       </TableCell>
+
                       <TableCell>
                         <IconButton>
                           <EditIcon onClick={() => handleEditCoupen(coupen)} />
@@ -237,7 +245,7 @@ function Coupons() {
 
       </Box>
       {coupenDrawerOpen && (
-        <CouponsDrawe
+        <CouponsDrawer
         selectedCoupen={selectedCoupen}
           menuDrawerOpen={coupenDrawerOpen}
           handleCoupenDrawerclose={handleCoupenDrawerclose}
@@ -245,8 +253,8 @@ function Coupons() {
       )}
       {deleteDialogOpen && (
         <CommonDeleteDialog
-          title="Delete Menu"
-          content="Are you sure you want to delete the Menu?"
+          title="Delete Coupon"
+          content="Are you sure you want to delete the Coupon?"
           dialogOpen={deleteDialogOpen}
           onDialogclose={() => setDeleteDialogOpen(false)}
           onDelete={onDelete}

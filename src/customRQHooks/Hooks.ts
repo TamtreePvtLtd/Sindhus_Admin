@@ -229,7 +229,7 @@ export const useGetAllProduct = (page: number, pageSize: number) => {
   });
 };
 
-export const useGetAllCoupens = (page: number, pageSize: number) => {
+export const useGetAllCoupens = (page?: number, pageSize?: number) => {
   return useQuery({
     queryKey: ["coupens"],
     queryFn: () => getAllCoupens(page, pageSize),
