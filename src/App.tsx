@@ -15,6 +15,7 @@ import PrivateRoute from "./common/components/PrivateRoute";
 import AuthProvider from "./context/AuthContext";
 import Specials from "./pages/specials/Specials";
 import Signup from "./pages/login/Signup";
+import Snacks from "./pages/snacks/Snacks";
 
 export const queryClient = new QueryClient();
 
@@ -74,6 +75,14 @@ function App() {
                     element={
                       <PrivateRoute>
                         <Specials />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path={paths.SNACKS}
+                    element={
+                      <PrivateRoute>
+                        <Snacks />
                       </PrivateRoute>
                     }
                   />

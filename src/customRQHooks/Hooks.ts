@@ -17,7 +17,9 @@ import {
   deleteAllSpecial,
   getAllProduct,
   deleteDiningOutProduct,
- } from "../services/api";
+  getPayments,
+  getCartItems,
+} from "../services/api";
 import { queryClient } from "../App";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
@@ -83,10 +85,8 @@ export const useGetSpecials = () => {
     queryKey: ["specials"],
     queryFn: () => getSpecials(),
     refetchOnWindowFocus: false,
-  
   });
 };
-
 
 export const useGetProducts = (menuId: string, subMenuIds: string[]) => {
   return useQuery({
@@ -195,7 +195,6 @@ export const useUpdateProduct = () => {
   });
 };
 export const useChangeisResponseStatus = () => {
- 
   return useMutation({
     mutationFn: useChangeisResponseStatus,
     onSuccess: () => {
@@ -211,6 +210,21 @@ export const useGetAllProduct = (page: number, pageSize: number) => {
   return useQuery({
     queryKey: ["products"],
     queryFn: () => getAllProduct(page, pageSize),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetPayment = () => {
+  return useQuery({
+    queryKey: ["payments"],
+    queryFn: () => getPayments(),
+    refetchOnWindowFocus: false,
+  });
+};
+export const useGetCartItems = () => {
+  return useQuery({
+    queryKey: ["cartItems"],
+    queryFn: () => getCartItems(),
     refetchOnWindowFocus: false,
   });
 };
