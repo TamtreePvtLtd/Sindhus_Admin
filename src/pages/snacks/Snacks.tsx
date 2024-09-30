@@ -22,6 +22,7 @@ function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [cartItemData, setCartItemData] = useState<cartItems[]>([]);
   const [orderNumberFilter, setOrderNumberFilter] = useState(""); // For order number filter
+  const [nameFilter, setNameFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState(""); // For item title filter
   const [deliveredStatus, setDeliveredStatus] = useState<{
     [key: string]: boolean;
@@ -143,10 +144,14 @@ function Snacks() {
   }, []);
 
   // Filter logic
-  const filteredPayments = paymentData.filter((payment) =>
-    payment.orderNumber.toLowerCase().includes(orderNumberFilter.toLowerCase())
+  const filteredPayments = paymentData.filter(
+    (payment) =>
+      payment.orderNumber
+        .toLowerCase()
+        .includes(orderNumberFilter.toLowerCase()) &&
+      (payment.firstName.toLowerCase().includes(nameFilter.toLowerCase()) ||
+        payment.lastName.toLowerCase().includes(nameFilter.toLowerCase()))
   );
-
   return (
     <div>
       <Box
@@ -166,6 +171,17 @@ function Snacks() {
               variant="outlined"
               value={orderNumberFilter}
               onChange={(e) => setOrderNumberFilter(e.target.value.trim())}
+            />
+          </div>
+          <div>
+            <Typography variant="subtitle1" gutterBottom>
+              Filter by Name (First or Last)
+            </Typography>
+            <TextField
+              label="Name"
+              variant="outlined"
+              value={nameFilter}
+              onChange={(e) => setNameFilter(e.target.value.trim())}
             />
           </div>
           <div>
@@ -209,7 +225,7 @@ function Snacks() {
                 color: "white",
               }}
             >
-              Name/ Order Number
+              Name
             </TableCell>
             <TableCell
               sx={{
@@ -273,6 +289,14 @@ function Snacks() {
                 color: "white",
               }}
             >
+              Size
+            </TableCell>
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
               Quantity
             </TableCell>
             {/* <TableCell
@@ -307,7 +331,7 @@ function Snacks() {
                           {payment.orderNumber}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.firstName + " " + payment.lastName}/{" "}
+                          {payment.firstName + " " + payment.lastName}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
                           {payment.address + ", " + payment.postalCode}
@@ -333,6 +357,7 @@ function Snacks() {
                     )}
                     {/* Cart Item Details */}
                     <TableCell>{item.title}</TableCell>
+                    <TableCell>{item.size}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
                     {/* <TableCell>
                       <Button
