@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  MenuItem,
+  Select,
   Switch,
   Table,
   TableBody,
@@ -15,8 +17,11 @@ import { SaveAlt, Delete } from "@mui/icons-material"; // Icon for the download 
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx"; // Import the xlsx library
 import { cartItems, DownloadData, PaymentData } from "../../interface/snacks";
-import { useUpdateCartItem } from "../../customRQHooks/Hooks";
-import axios from "axios";
+import {
+  useDeleteDeliveredPayment,
+  useDeleteOrder,
+  useUpdateDeliveryStatus,
+} from "../../customRQHooks/Hooks";
 
 // Define PaymentData and CartItemData interfaces
 
@@ -26,11 +31,12 @@ function Snacks() {
   const [orderNumberFilter, setOrderNumberFilter] = useState(""); // For order number filter
   const [nameFilter, setNameFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState(""); // For item title filter
-  const [deliveredStatus, setDeliveredStatus] = useState<{
-    [key: string]: boolean;
-  }>({}); // State to manage delivery status
+  const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all"); // "all", "delivered", "pending"
 
   const theme = useTheme();
+  const updatemutation = useUpdateDeliveryStatus();
+  const deleteOrderMutation = useDeleteOrder();
+  const deletePaymentMutation = useDeleteDeliveredPayment();
 
   const getCartItem = async () => {
     try {
@@ -45,7 +51,7 @@ function Snacks() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const cartItem = await response.json();
-      setCartItemData(cartItem || "#1000");
+      setCartItemData(cartItem);
     } catch (error) {
       console.error("Error fetching last order number:", error);
     }
@@ -74,55 +80,36 @@ function Snacks() {
     }
   };
 
-  const updateCartItem = useUpdateCartItem();
-
   // Function to handle switch change
 
   const handleSwitchChange = async (orderNumber, cartItem) => {
-    const formData = new FormData();
+    console.log("deliveredStatus", cartItem.deliveredStatus);
 
-    // Append the order number and cart item data
-    formData.append("orderNumber", orderNumber);
-    formData.append("cartItems", JSON.stringify([cartItem])); // Ensure cartItems is an array
-
-    // Toggle the deliveredStatus
     const updatedDeliveredStatus =
-      cartItem.deliveredStatus === "true" ? "false" : "true";
-    formData.append("deliveredStatus", updatedDeliveredStatus);
+      cartItem.deliveredStatus == "true" ? "false" : "true";
 
     try {
-      // Call the API directly using Axios
-
-      const response = await axios.put(
-        `http://localhost:3000/cart/cartItem/:${orderNumber}`, // Ensure this matches your backend route
-        formData,
-        {
-          params: {
-            orderNumber,
-          },
-          headers: {
-            "Content-Type": "multipart/form-data", // Ensure to set the content type
-          },
-        }
-      );
-
-      // Log the response for debugging
-      console.log("API Response:", response.data);
-
-      // Handle success (optional - you can also add UI updates here)
-      alert("Cart item updated successfully!");
+      const response = await updatemutation.mutateAsync({
+        orderNumber,
+        deliveredStatus: updatedDeliveredStatus,
+      });
+      console.log("API Response:", response);
+      alert("Delivery status updated successfully!");
     } catch (error) {
-      // Handle error (optional - you can also add error handling UI here)
-      console.error("Error updating cart item:");
-      alert("Failed to update cart item.");
+      alert("Failed to update delivery status.");
     }
   };
 
-  const handleDelete = (orderNumber: string, itemTitle: string) => {
-    // Handle delete logic here (e.g., send a DELETE request to your API)
-    console.log(
-      `Delete item with title ${itemTitle} from order ${orderNumber}`
-    );
+  const handleDelete = async (orderNumber) => {
+    console.log("orderNumber", orderNumber);
+
+    try {
+      await deleteOrderMutation.mutateAsync(orderNumber);
+      await deletePaymentMutation.mutateAsync(orderNumber);
+      alert("Order deleted successfully!");
+    } catch (error) {
+      alert("Failed to delete order.");
+    }
   };
   // Handle Excel Download
   // Handle Excel Download
@@ -183,14 +170,28 @@ function Snacks() {
   }, []);
 
   // Filter logic
-  const filteredPayments = paymentData.filter(
-    (payment) =>
+  const filteredPayments = paymentData.filter((payment) => {
+    const matchingCart = cartItemData.find(
+      (cart) => cart.orderNumber === payment.orderNumber
+    );
+
+    const matchesDeliveryStatus =
+      deliveryStatusFilter === "all" ||
+      (deliveryStatusFilter === "delivered" &&
+        matchingCart?.deliveredStatus === "true") ||
+      (deliveryStatusFilter === "pending" &&
+        matchingCart?.deliveredStatus === "false");
+
+    return (
       payment.orderNumber
         .toLowerCase()
         .includes(orderNumberFilter.toLowerCase()) &&
       (payment.firstName.toLowerCase().includes(nameFilter.toLowerCase()) ||
-        payment.lastName.toLowerCase().includes(nameFilter.toLowerCase()))
-  );
+        payment.lastName.toLowerCase().includes(nameFilter.toLowerCase())) &&
+      matchesDeliveryStatus
+    );
+  });
+
   return (
     <div>
       <Box
@@ -233,6 +234,20 @@ function Snacks() {
               value={titleFilter}
               onChange={(e) => setTitleFilter(e.target.value.trim())}
             />
+          </div>
+          <div>
+            <Typography variant="subtitle1" gutterBottom>
+              Filter by Delivery Status
+            </Typography>
+            <Select
+              value={deliveryStatusFilter}
+              onChange={(e) => setDeliveryStatusFilter(e.target.value)}
+              variant="outlined"
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="delivered">Delivered</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+            </Select>
           </div>
         </Box>
 
@@ -365,6 +380,7 @@ function Snacks() {
             const filteredCartItems = matchingCart?.cartItems.filter((item) =>
               item.title.toLowerCase().includes(titleFilter.toLowerCase())
             );
+            console.log("matchingCart", matchingCart);
 
             return (
               <React.Fragment key={paymentIndex}>
@@ -408,20 +424,21 @@ function Snacks() {
                       <>
                         <TableCell rowSpan={filteredCartItems.length}>
                           <Switch
-                            checked={item.deliveredStatus === "true"}
+                            checked={matchingCart?.deliveredStatus === "true"}
                             onChange={() =>
-                              handleSwitchChange(payment.orderNumber, item)
+                              handleSwitchChange(
+                                payment.orderNumber,
+                                matchingCart
+                              )
                             }
-                            disabled={item.deliveredStatus === "true"}
+                            disabled={matchingCart?.deliveredStatus === "true"}
                           />
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
                           <Button
                             sx={{ color: theme.palette.primary.main }}
                             startIcon={<Delete />}
-                            onClick={() =>
-                              handleDelete(payment.orderNumber, item.title)
-                            }
+                            onClick={() => handleDelete(payment.orderNumber)}
                           ></Button>
                         </TableCell>
                       </>

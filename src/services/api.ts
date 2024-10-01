@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   ILoginFormInputs,
   ILoginResponse,
@@ -392,26 +393,51 @@ const getCartItems = async () => {
   }
 };
 
-const updateCartItems = async (formData) => {
-  try {
-    // Retrieve the orderNumber from the formData
-    const orderNumber = formData.get("orderNumber");
-    console.log('Order Number:', orderNumber);  // Log the orderNumber for debugging
+const updateDeliveryStatus = async ({ orderNumber, deliveredStatus }) => {
+  console.log("api order number update", orderNumber);
 
-    // Send the API request to update the cart item
-    const response = await httpWithMultipartFormData.put(
-      `/cart/cartItem/${orderNumber}`,  // Use the orderNumber in the route
-      formData
+  try {
+    const response = await httpWithoutCredentials.put(
+      `/cart/cartItem/${orderNumber}`,
+      { deliveredStatus },
+      { headers: { "Content-Type": "application/json" } }
     );
-    return response;
+    return response.data;
   } catch (error) {
-    const message = (error as Error).message;
-    throw new Error(message);
+    console.log("Error updating delivery status:", error);
+    throw error; // Re-throwing the error helps in debugging
+  }
+};
+const deleteOrder = async (orderNumber) => {
+  console.log("api order number delete", orderNumber);
+
+  try {
+    const response = await httpWithoutCredentials.delete(
+      `/cart/cartItem/${orderNumber}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteDeliveredPayment = async (orderNumber) => {
+  console.log("api order number delete", orderNumber);
+
+  try {
+    const response = await httpWithoutCredentials.delete(
+      `/payment/transaction/${orderNumber}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 };
 
 export {
-  updateCartItems,
+  deleteDeliveredPayment,
+  deleteOrder,
+  updateDeliveryStatus,
   getCartItems,
   getPayments,
   getAllProduct,

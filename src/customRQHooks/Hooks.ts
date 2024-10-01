@@ -19,7 +19,9 @@ import {
   deleteDiningOutProduct,
   getPayments,
   getCartItems,
-  updateCartItems,
+  updateDeliveryStatus,
+  deleteOrder,
+  deleteDeliveredPayment,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -230,11 +232,34 @@ export const useGetCartItems = () => {
   });
 };
 
-export const useUpdateCartItem = () => {
-  return useMutation({
-    mutationFn: updateCartItems,
+export const useUpdateDeliveryStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation(updateDeliveryStatus, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteOrder, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+export const useDeleteDeliveredPayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteDeliveredPayment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
     },
     onError: (error) => {
       console.log(error);
