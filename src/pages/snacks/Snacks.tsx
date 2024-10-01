@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  MenuItem,
+  Select,
   Switch,
   Table,
   TableBody,
@@ -15,6 +17,11 @@ import { SaveAlt, Delete } from "@mui/icons-material"; // Icon for the download 
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx"; // Import the xlsx library
 import { cartItems, DownloadData, PaymentData } from "../../interface/snacks";
+import {
+  useDeleteDeliveredPayment,
+  useDeleteOrder,
+  useUpdateDeliveryStatus,
+} from "../../customRQHooks/Hooks";
 
 // Define PaymentData and CartItemData interfaces
 
@@ -24,11 +31,12 @@ function Snacks() {
   const [orderNumberFilter, setOrderNumberFilter] = useState(""); // For order number filter
   const [nameFilter, setNameFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState(""); // For item title filter
-  const [deliveredStatus, setDeliveredStatus] = useState<{
-    [key: string]: boolean;
-  }>({}); // State to manage delivery status
+  const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all"); // "all", "delivered", "pending"
 
   const theme = useTheme();
+  const updatemutation = useUpdateDeliveryStatus();
+  const deleteOrderMutation = useDeleteOrder();
+  const deletePaymentMutation = useDeleteDeliveredPayment();
 
   const getCartItem = async () => {
     try {
@@ -43,7 +51,7 @@ function Snacks() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const cartItem = await response.json();
-      setCartItemData(cartItem || "#1000");
+      setCartItemData(cartItem);
     } catch (error) {
       console.error("Error fetching last order number:", error);
     }
@@ -72,18 +80,36 @@ function Snacks() {
     }
   };
 
-  const handleSwitchChange = (orderNumber: string) => {
-    setDeliveredStatus((prev) => ({
-      ...prev,
-      [orderNumber]: true, // Set the delivery status to true and prevent switching back
-    }));
+  // Function to handle switch change
+
+  const handleSwitchChange = async (orderNumber, cartItem) => {
+    console.log("deliveredStatus", cartItem.deliveredStatus);
+
+    const updatedDeliveredStatus =
+      cartItem.deliveredStatus == "true" ? "false" : "true";
+
+    try {
+      const response = await updatemutation.mutateAsync({
+        orderNumber,
+        deliveredStatus: updatedDeliveredStatus,
+      });
+      console.log("API Response:", response);
+      alert("Delivery status updated successfully!");
+    } catch (error) {
+      alert("Failed to update delivery status.");
+    }
   };
 
-  const handleDelete = (orderNumber: string, itemTitle: string) => {
-    // Handle delete logic here (e.g., send a DELETE request to your API)
-    console.log(
-      `Delete item with title ${itemTitle} from order ${orderNumber}`
-    );
+  const handleDelete = async (orderNumber) => {
+    console.log("orderNumber", orderNumber);
+
+    try {
+      await deleteOrderMutation.mutateAsync(orderNumber);
+      await deletePaymentMutation.mutateAsync(orderNumber);
+      alert("Order deleted successfully!");
+    } catch (error) {
+      alert("Failed to delete order.");
+    }
   };
   // Handle Excel Download
   // Handle Excel Download
@@ -100,6 +126,14 @@ function Snacks() {
         item.title.toLowerCase().includes(titleFilter.toLowerCase())
       );
 
+    const deliveryStatusMatches =
+      deliveryStatusFilter === "all" ||
+      (deliveryStatusFilter === "delivered" &&
+        matchingCart?.deliveredStatus === "true") ||
+      (deliveryStatusFilter === "pending" &&
+        matchingCart?.deliveredStatus === "false");
+
+    if (!deliveryStatusMatches) return;
       // Track whether it's the first item for the order
       let firstItemForOrder = true;
 
@@ -115,7 +149,7 @@ function Snacks() {
           "Phone Number": firstItemForOrder ? payment.phoneNumber : "",
           "Delivery Option": firstItemForOrder ? payment.deliveryOption : "",
           Email: firstItemForOrder ? payment.email : "",
-          "Created Date": firstItemForOrder
+          "Ordered Date": firstItemForOrder
             ? new Date(payment.createdAt).toLocaleDateString()
             : "",
           "Delivery Date": firstItemForOrder
@@ -123,6 +157,12 @@ function Snacks() {
             : "",
           "Item Title": item.title,
           Quantity: item.quantity,
+          Size: item.size,
+          "Delivered Status": firstItemForOrder
+            ? matchingCart?.deliveredStatus === "true"
+              ? "Delivered"
+              : "Pending"
+            : "",
         });
         // Set the flag to false after processing the first item for the order
         firstItemForOrder = false;
@@ -144,14 +184,28 @@ function Snacks() {
   }, []);
 
   // Filter logic
-  const filteredPayments = paymentData.filter(
-    (payment) =>
+  const filteredPayments = paymentData.filter((payment) => {
+    const matchingCart = cartItemData.find(
+      (cart) => cart.orderNumber === payment.orderNumber
+    );
+
+    const matchesDeliveryStatus =
+      deliveryStatusFilter === "all" ||
+      (deliveryStatusFilter === "delivered" &&
+        matchingCart?.deliveredStatus === "true") ||
+      (deliveryStatusFilter === "pending" &&
+        matchingCart?.deliveredStatus === "false");
+
+    return (
       payment.orderNumber
         .toLowerCase()
         .includes(orderNumberFilter.toLowerCase()) &&
       (payment.firstName.toLowerCase().includes(nameFilter.toLowerCase()) ||
-        payment.lastName.toLowerCase().includes(nameFilter.toLowerCase()))
-  );
+        payment.lastName.toLowerCase().includes(nameFilter.toLowerCase())) &&
+      matchesDeliveryStatus
+    );
+  });
+
   return (
     <div>
       <Box
@@ -194,6 +248,20 @@ function Snacks() {
               value={titleFilter}
               onChange={(e) => setTitleFilter(e.target.value.trim())}
             />
+          </div>
+          <div>
+            <Typography variant="subtitle1" gutterBottom>
+              Filter by Delivery Status
+            </Typography>
+            <Select
+              value={deliveryStatusFilter}
+              onChange={(e) => setDeliveryStatusFilter(e.target.value)}
+              variant="outlined"
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="delivered">Delivered</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+            </Select>
           </div>
         </Box>
 
@@ -299,14 +367,22 @@ function Snacks() {
             >
               Quantity
             </TableCell>
-            {/* <TableCell
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
+              Fulfilled
+            </TableCell>
+            <TableCell
               sx={{
                 backgroundColor: theme.palette.primary.main,
                 color: "white",
               }}
             >
               Actions
-            </TableCell> */}
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -315,16 +391,15 @@ function Snacks() {
               (cart) => cart.orderNumber === payment.orderNumber
             );
 
-            // Apply filter to cart items based on the title
             const filteredCartItems = matchingCart?.cartItems.filter((item) =>
               item.title.toLowerCase().includes(titleFilter.toLowerCase())
             );
+            console.log("matchingCart", matchingCart);
 
             return (
               <React.Fragment key={paymentIndex}>
                 {filteredCartItems?.map((item, index) => (
                   <TableRow key={index}>
-                    {/* Display payment details only once, using rowSpan */}
                     {index === 0 && (
                       <>
                         <TableCell rowSpan={filteredCartItems.length}>
@@ -334,7 +409,10 @@ function Snacks() {
                           {payment.firstName + " " + payment.lastName}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.address + ", " + payment.postalCode}
+                          {payment.address +
+                            ", " +
+                            "Pincode:" +
+                            payment.postalCode}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
                           {payment.phoneNumber}
@@ -347,37 +425,38 @@ function Snacks() {
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
                           {new Date(payment.createdAt).toLocaleDateString()}
-                          {/* For DD/MM/YYYY format */}
                         </TableCell>
-
                         <TableCell rowSpan={filteredCartItems.length}>
                           {new Date(payment.deliveryDate).toLocaleDateString()}
                         </TableCell>
                       </>
                     )}
-                    {/* Cart Item Details */}
                     <TableCell>{item.title}</TableCell>
                     <TableCell>{item.size}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
-                    {/* <TableCell>
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        startIcon={<Delete />}
-                        onClick={() =>
-                          handleDelete(payment.orderNumber, item.title)
-                        }
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={deliveredStatus[payment.orderNumber] || false}
-                        onChange={() => handleSwitchChange(payment.orderNumber)}
-                        disabled={deliveredStatus[payment.orderNumber]} // Disable switch if already marked as delivered
-                      />
-                    </TableCell> */}
+                    {index === 0 && (
+                      <>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          <Switch
+                            checked={matchingCart?.deliveredStatus === "true"}
+                            onChange={() =>
+                              handleSwitchChange(
+                                payment.orderNumber,
+                                matchingCart
+                              )
+                            }
+                            disabled={matchingCart?.deliveredStatus === "true"}
+                          />
+                        </TableCell>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          <Button
+                            sx={{ color: theme.palette.primary.main }}
+                            startIcon={<Delete />}
+                            onClick={() => handleDelete(payment.orderNumber)}
+                          ></Button>
+                        </TableCell>
+                      </>
+                    )}
                   </TableRow>
                 ))}
               </React.Fragment>

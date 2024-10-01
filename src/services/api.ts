@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   ILoginFormInputs,
   ILoginResponse,
@@ -466,7 +467,51 @@ const deleteCoupen = async (id: string) => {
   }
 };
 
+const updateDeliveryStatus = async ({ orderNumber, deliveredStatus }) => {
+  console.log("api order number update", orderNumber);
+
+  try {
+    const response = await httpWithoutCredentials.put(
+      `/cart/cartItem/${orderNumber}`,
+      { deliveredStatus },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error updating delivery status:", error);
+    throw error; // Re-throwing the error helps in debugging
+  }
+};
+const deleteOrder = async (orderNumber) => {
+  console.log("api order number delete", orderNumber);
+
+  try {
+    const response = await httpWithoutCredentials.delete(
+      `/cart/cartItem/${orderNumber}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteDeliveredPayment = async (orderNumber) => {
+  console.log("api order number delete", orderNumber);
+
+  try {
+    const response = await httpWithoutCredentials.delete(
+      `/payment/transaction/${orderNumber}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
+  deleteDeliveredPayment,
+  deleteOrder,
+  updateDeliveryStatus,
   getCartItems,
   getPayments,
   getAllProduct,

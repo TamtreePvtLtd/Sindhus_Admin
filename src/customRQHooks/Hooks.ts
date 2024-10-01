@@ -23,7 +23,10 @@ import {
   deleteDiningOutProduct,
   getPayments,
   getCartItems,
- } from "../services/api";
+  updateDeliveryStatus,
+  deleteOrder,
+  deleteDeliveredPayment,
+} from "../services/api";
 import { queryClient } from "../App";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
@@ -86,7 +89,6 @@ export const useCreateCoupen = () => {
   });
 };
 
-
 export const useCreateSpecials = () => {
   return useMutation({
     mutationFn: createSpecials,
@@ -104,10 +106,8 @@ export const useGetSpecials = () => {
     queryKey: ["specials"],
     queryFn: () => getSpecials(),
     refetchOnWindowFocus: false,
-  
   });
 };
-
 
 export const useGetProducts = (menuId: string, subMenuIds: string[]) => {
   return useQuery({
@@ -175,7 +175,6 @@ export const useUpdateCoupen = () => {
   });
 };
 
-
 export const useCreateProduct = () => {
   return useMutation({
     mutationFn: createProduct,
@@ -212,7 +211,6 @@ export const useUpdateProduct = () => {
   });
 };
 export const useChangeisResponseStatus = () => {
- 
   return useMutation({
     mutationFn: useChangeisResponseStatus,
     onSuccess: () => {
@@ -279,4 +277,39 @@ export const useGetCartItems = () => {
     queryFn: () => getCartItems(),
     refetchOnWindowFocus: false,
   });
-}
+};
+
+export const useUpdateDeliveryStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation(updateDeliveryStatus, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteOrder, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+export const useDeleteDeliveredPayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteDeliveredPayment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
