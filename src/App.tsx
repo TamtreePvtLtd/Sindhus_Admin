@@ -16,6 +16,7 @@ import AuthProvider from "./context/AuthContext";
 import Specials from "./pages/specials/Specials";
 import Signup from "./pages/login/Signup";
 import Snacks from "./pages/snacks/Snacks";
+import Coupons from "./pages/coupons/Coupons";
 
 export const queryClient = new QueryClient();
 
@@ -70,6 +71,15 @@ function App() {
                       </PrivateRoute>
                     }
                   />
+                                    <Route
+                    path={paths.COUPONS}
+                    element={
+                      <PrivateRoute>
+                        <Coupons />
+                      </PrivateRoute>
+                    }
+                  />
+
                   <Route
                     path={paths.SPECIALS}
                     element={
