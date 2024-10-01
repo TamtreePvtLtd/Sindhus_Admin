@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   createProduct,
   deleteProduct,
@@ -20,6 +20,9 @@ import {
   deleteCoupen,
   createCoupen,
   updateCoupen,
+  deleteDiningOutProduct,
+  getPayments,
+  getCartItems,
  } from "../services/api";
 import { queryClient } from "../App";
 
@@ -248,3 +251,32 @@ export const useDeleteCoupen = () => {
     },
   });
 };
+
+export const useDeleteDiningoutMenu = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteDiningOutProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diningout"] });
+      console.log("Products removed successfully");
+    },
+    onError: (error) => {
+      console.log("Error while clearing the products", error);
+    },
+  });
+};
+export const useGetPayment = () => {
+  return useQuery({
+    queryKey: ["payments"],
+    queryFn: () => getPayments(),
+    refetchOnWindowFocus: false,
+  });
+};
+export const useGetCartItems = () => {
+  return useQuery({
+    queryKey: ["cartItems"],
+    queryFn: () => getCartItems(),
+    refetchOnWindowFocus: false,
+  });
+}
