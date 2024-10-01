@@ -1,3 +1,5 @@
+import { string } from "yup";
+
 export interface PaymentData {
   quantity: string;
   _id: string;
@@ -43,8 +45,10 @@ export interface DownloadData {
   "Phone Number": string;
   "Delivery Option": string;
   Email: string;
-  "Created Date": string;
+  "Ordered Date": string;
   "Delivery Date": string;
   "Item Title": string;
   Quantity: number;
+  Size: string;
+  "Delivered Status": string;
 }

@@ -126,6 +126,14 @@ function Snacks() {
         item.title.toLowerCase().includes(titleFilter.toLowerCase())
       );
 
+    const deliveryStatusMatches =
+      deliveryStatusFilter === "all" ||
+      (deliveryStatusFilter === "delivered" &&
+        matchingCart?.deliveredStatus === "true") ||
+      (deliveryStatusFilter === "pending" &&
+        matchingCart?.deliveredStatus === "false");
+
+    if (!deliveryStatusMatches) return;
       // Track whether it's the first item for the order
       let firstItemForOrder = true;
 
@@ -141,7 +149,7 @@ function Snacks() {
           "Phone Number": firstItemForOrder ? payment.phoneNumber : "",
           "Delivery Option": firstItemForOrder ? payment.deliveryOption : "",
           Email: firstItemForOrder ? payment.email : "",
-          "Created Date": firstItemForOrder
+          "Ordered Date": firstItemForOrder
             ? new Date(payment.createdAt).toLocaleDateString()
             : "",
           "Delivery Date": firstItemForOrder
@@ -149,6 +157,12 @@ function Snacks() {
             : "",
           "Item Title": item.title,
           Quantity: item.quantity,
+          Size: item.size,
+          "Delivered Status": firstItemForOrder
+            ? matchingCart?.deliveredStatus === "true"
+              ? "Delivered"
+              : "Pending"
+            : "",
         });
         // Set the flag to false after processing the first item for the order
         firstItemForOrder = false;
