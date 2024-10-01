@@ -23,14 +23,10 @@ import {
   deleteDiningOutProduct,
   getPayments,
   getCartItems,
-<<<<<<< HEAD
   updateDeliveryStatus,
   deleteOrder,
   deleteDeliveredPayment,
 } from "../services/api";
-=======
- } from "../services/api";
->>>>>>> 518b8f706db8c9ebc4fd06855352db8ff6665e0a
 import { queryClient } from "../App";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
@@ -93,7 +89,6 @@ export const useCreateCoupen = () => {
   });
 };
 
-
 export const useCreateSpecials = () => {
   return useMutation({
     mutationFn: createSpecials,
@@ -111,10 +106,8 @@ export const useGetSpecials = () => {
     queryKey: ["specials"],
     queryFn: () => getSpecials(),
     refetchOnWindowFocus: false,
-  
   });
 };
-
 
 export const useGetProducts = (menuId: string, subMenuIds: string[]) => {
   return useQuery({
@@ -182,7 +175,6 @@ export const useUpdateCoupen = () => {
   });
 };
 
-
 export const useCreateProduct = () => {
   return useMutation({
     mutationFn: createProduct,
@@ -219,7 +211,6 @@ export const useUpdateProduct = () => {
   });
 };
 export const useChangeisResponseStatus = () => {
- 
   return useMutation({
     mutationFn: useChangeisResponseStatus,
     onSuccess: () => {
@@ -322,4 +313,3 @@ export const useDeleteDeliveredPayment = () => {
     },
   });
 };
-
