@@ -51,7 +51,10 @@ const navMenus = [
     label: "Coupons",
     link: paths.COUPONS,
   },
-
+  {
+    label: "Distance",
+    link: paths.DISTANCE,
+  },
 ];
 
 function Navbar() {

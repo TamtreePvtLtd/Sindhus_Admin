@@ -17,6 +17,7 @@ import Specials from "./pages/specials/Specials";
 import Signup from "./pages/login/Signup";
 import Snacks from "./pages/snacks/Snacks";
 import Coupons from "./pages/coupons/Coupons";
+import Distance from "./pages/distance/Distance";
 
 export const queryClient = new QueryClient();
 
@@ -71,7 +72,7 @@ function App() {
                       </PrivateRoute>
                     }
                   />
-                                    <Route
+                  <Route
                     path={paths.COUPONS}
                     element={
                       <PrivateRoute>
@@ -93,6 +94,14 @@ function App() {
                     element={
                       <PrivateRoute>
                         <Snacks />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path={paths.DISTANCE}
+                    element={
+                      <PrivateRoute>
+                        <Distance />
                       </PrivateRoute>
                     }
                   />
