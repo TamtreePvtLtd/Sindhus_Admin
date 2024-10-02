@@ -159,7 +159,7 @@ function Coupons() {
                     }}
                   >
                     <Typography variant="subtitle1" fontWeight="bold">
-                      startDate With Time
+                      Start Date With Time
                     </Typography>
                   </TableCell>
                   <TableCell
