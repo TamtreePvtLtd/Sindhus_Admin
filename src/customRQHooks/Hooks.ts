@@ -26,6 +26,10 @@ import {
   updateDeliveryStatus,
   deleteOrder,
   deleteDeliveredPayment,
+  getDistanceBasedDeliveryCharge,
+  createDistanceBasedCharge,
+  updateDistanceBasedCharge,
+  deleteDistanceBasedCharge,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -307,6 +311,52 @@ export const useDeleteDeliveredPayment = () => {
   return useMutation(deleteDeliveredPayment, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["payments"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useGetDistanceBasedDeliveryCharge = () => {
+  return useQuery({
+    queryKey: ["distance"],
+    queryFn: () => getDistanceBasedDeliveryCharge(),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useCreateDistanceBasedCharge = () => {
+  return useMutation({
+    mutationFn: createDistanceBasedCharge,
+    onSuccess: (data) => {
+      console.log("Coupon created successfully:", data); // Log the success response
+
+      queryClient.invalidateQueries({ queryKey: ["distance"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useUpdateDistanceBasedCharge = () => {
+  return useMutation({
+    mutationFn: updateDistanceBasedCharge,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["distance"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteDistanceBasedCharge = () => {
+  return useMutation({
+    mutationFn: deleteDistanceBasedCharge,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["distance"] });
     },
     onError: (error) => {
       console.log(error);

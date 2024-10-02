@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Box, Typography, Grid, IconButton, Switch } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, Typography, Grid, IconButton } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -14,24 +14,31 @@ import PaginatedHeader from "../../common/components/PaginatedHeader";
 import { useSnackBar } from "../../context/SnackBarContext";
 import { useTheme } from "@mui/material/styles";
 import DistanceDrawer from "../../pageDrawers/DistanceDrawer";
+import {
+  useDeleteDistanceBasedCharge,
+  useGetDistanceBasedDeliveryCharge,
+} from "../../customRQHooks/Hooks";
+import { DistanceBasedDeliveryCharge } from "../../interface/snacks";
 
 function Distance() {
   const [selectedDistance, setSelectedDistance] = useState<any | null>(null);
   const [distanceDrawerOpen, setDistanceDrawerOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
+  const [distanceBasedCharge, setDistanceBasedCharge] =
+    useState<DistanceBasedDeliveryCharge[]>();
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const theme = useTheme();
   const { updateSnackBarState } = useSnackBar();
+  const { data: distance, refetch } = useGetDistanceBasedDeliveryCharge();
+  const deleteDistanceMutation = useDeleteDistanceBasedCharge();
 
-  // Seed data for up to miles and amount
-  const seedData = [
-    { _id: "1", uptoMiles: "5 Miles", amount: "$10" },
-    { _id: "2", uptoMiles: "10 Miles", amount: "$20" },
-    { _id: "3", uptoMiles: "15 Miles", amount: "$30" },
-  ];
+  useEffect(() => {
+    if (distance) {
+      setDistanceBasedCharge(distance);
+    }
+  }, [distance]);
 
   const handleDistanceDrawerclose = () => {
     setDistanceDrawerOpen(false);
@@ -55,13 +62,19 @@ function Distance() {
   const onDelete = async () => {
     try {
       if (selectedDistance && selectedDistance._id) {
-        // Filter out the deleted coupen
-        const updatedCoupens = seedData.filter(
-          (item) => item._id !== selectedDistance._id
-        );
-        updateSnackBarState(true, "Menu removed successfully.", "success");
+        await deleteDistanceMutation.mutateAsync(selectedDistance._id, {
+          onSuccess: () => {
+            updateSnackBarState(
+              true,
+              "Distance removed successfully.",
+              "success"
+            );
+          },
+          onError: () => {
+            updateSnackBarState(true, "Error while remove category.", "error");
+          },
+        });
         setDeleteDialogOpen(false);
-        console.log("Updated coupens: ", updatedCoupens);
       } else {
         console.error("Invalid selectedCoupen or _id");
       }
@@ -77,8 +90,10 @@ function Distance() {
           pagetitle="Distance"
           pageInfo={{
             totalPages: 1,
-            totalItems: seedData.length,
+            totalItems:
+              (distanceBasedCharge && distanceBasedCharge?.length) || 0,
             page,
+            pageSize: 10,
           }}
           onRowsPerPageChange={setRowsPerPage}
           onPageChange={setPage}
@@ -96,20 +111,21 @@ function Distance() {
                 <TableRow className="table-header-row">
                   <TableCell
                     sx={{
-                      width: "20%",
+                      // width: "20%",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                     }}
                   >
                     <Typography variant="subtitle1" fontWeight="bold">
-                      UptoMiles
+                      Upto Miles
                     </Typography>
                   </TableCell>
                   <TableCell
                     sx={{
-                      width: "15%",
+                      // width: "15%",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
+                      textAlign: "center",
                     }}
                   >
                     <Typography variant="subtitle1" fontWeight="bold">
@@ -118,7 +134,7 @@ function Distance() {
                   </TableCell>
                   <TableCell
                     sx={{
-                      width: "10%",
+                      // width: "10%",
                       textAlign: "center",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
@@ -131,21 +147,24 @@ function Distance() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {seedData.length > 0 &&
-                  seedData.map((coupen) => (
-                    <TableRow key={coupen._id}>
+                {distance &&
+                  distance.length > 0 &&
+                  distance.map((distance) => (
+                    <TableRow key={distance._id}>
                       <TableCell sx={{ fontWeight: 600 }}>
-                        {coupen.uptoMiles}
+                        {distance.uptoDistance}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
-                        {coupen.amount}
+                      <TableCell sx={{ textAlign: "center", fontWeight: 600 }}>
+                        {distance.amount}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ textAlign: "center", fontWeight: 600 }}>
                         <IconButton>
-                          <EditIcon onClick={() => handleEditCoupen(coupen)} />
+                          <EditIcon
+                            onClick={() => handleEditCoupen(distance)}
+                          />
                         </IconButton>
                         <IconButton>
-                          <DeleteIcon onClick={() => handleDelete(coupen)} />
+                          <DeleteIcon onClick={() => handleDelete(distance)} />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -160,6 +179,7 @@ function Distance() {
           selectedDistance={selectedDistance}
           drawerOpen={distanceDrawerOpen}
           handleDrawerClose={handleDistanceDrawerclose}
+          refetch={refetch}
         />
       )}
       {deleteDialogOpen && (

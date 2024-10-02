@@ -52,3 +52,9 @@ export interface DownloadData {
   Size: string;
   "Delivered Status": string;
 }
+
+export interface DistanceBasedDeliveryCharge {
+  _id?: string
+  amount: string;
+  uptoDistance: string;
+}

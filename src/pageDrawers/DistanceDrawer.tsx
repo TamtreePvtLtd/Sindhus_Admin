@@ -3,27 +3,31 @@ import Drawer from "@mui/material/Drawer";
 import { useForm, Controller } from "react-hook-form";
 import { Typography, Box, TextField, Button, Divider } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import {
+  useCreateDistanceBasedCharge,
+  useUpdateDistanceBasedCharge,
+} from "../customRQHooks/Hooks";
+import { DistanceBasedDeliveryCharge } from "../interface/snacks";
 
 interface IProps {
-  selectedDistance: { uptoMiles: number; amount: number } | null;
+  selectedDistance: DistanceBasedDeliveryCharge | null;
   drawerOpen: boolean;
   handleDrawerClose: () => void;
+  refetch: () => void;
 }
 
-interface IFormInput {
-  uptoMiles: number;
-  amount: number;
-}
-
-const defaultValues = {
-  uptoMiles: 0,
-  amount: 0,
+const defaultValues: DistanceBasedDeliveryCharge = {
+  uptoDistance: "0",
+  amount: "0",
 };
 
 const DistanceDrawer: React.FC<IProps> = (props) => {
-  const { selectedDistance, handleDrawerClose, drawerOpen } = props;
+  const { selectedDistance, handleDrawerClose, drawerOpen, refetch } = props;
 
   const [isEdit, setIsEdit] = useState(!!selectedDistance);
+
+  const createDistanceBasedCharge = useCreateDistanceBasedCharge();
+  const distanceUpdateMutation = useUpdateDistanceBasedCharge();
 
   const {
     control,
@@ -31,27 +35,59 @@ const DistanceDrawer: React.FC<IProps> = (props) => {
     handleSubmit,
     setValue,
     reset,
-  } = useForm<IFormInput>({
+  } = useForm<DistanceBasedDeliveryCharge>({
     defaultValues,
   });
 
   // Populate form fields if editing
   useEffect(() => {
     if (selectedDistance) {
-      setIsEdit(true);
-      setValue("uptoMiles", selectedDistance.uptoMiles);
+      setIsEdit(!!selectedDistance._id);
+      setValue("uptoDistance", selectedDistance.uptoDistance);
       setValue("amount", selectedDistance.amount);
     }
   }, [selectedDistance, setValue]);
 
   // Handle form submission
-  const onSubmit = async (data: IFormInput) => {
+  const onSubmit = async (data: DistanceBasedDeliveryCharge) => {
     console.log(isEdit ? "Editing Distance" : "Adding Distance", data);
+    const formData = new FormData();
+    formData.append("amount", data.amount);
+    formData.append("uptoDistance", data.uptoDistance); // Ensure you're using uptoDistance
 
-    // Logic to save the data goes here (API call or local state update)
+    if (!isEdit) {
+      console.log("formData", formData);
 
-    handleDrawerClose();
-    reset(defaultValues); // Reset form after submission
+      await createDistanceBasedCharge.mutateAsync(formData, {
+        onSuccess: () => {
+          handleDrawerClose();
+          console.log("Distance charge added successfully");
+        },
+        onError: (error: any) => {
+          console.error(
+            "Error creating distance charge:",
+            error.response.data.message
+          );
+        },
+      });
+      refetch();
+    } else {
+      formData.append("id", selectedDistance?._id!);
+      await distanceUpdateMutation.mutateAsync(formData, {
+        onSuccess: () => {
+          handleDrawerClose();
+          console.log("Distance Based charge updated successfully");
+        },
+        onError: (error: any) => {
+          console.error(
+            "Error updating distance charge:",
+            error.response.data.message
+          );
+        },
+      });
+    }
+
+    reset({ ...defaultValues }); // Reset form after submission
   };
 
   return (
@@ -78,21 +114,19 @@ const DistanceDrawer: React.FC<IProps> = (props) => {
 
       <Divider />
       <Box p={3} width={300} component="form" onSubmit={handleSubmit(onSubmit)}>
-        {/* UptoMiles Field */}
         <Box py={1}>
-          <Typography variant="subtitle1">Upto Miles *</Typography>
+          <Typography variant="subtitle1">Upto Distance *</Typography>
           <Controller
-            name="uptoMiles"
+            name="uptoDistance"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                type="number"
                 variant="outlined"
                 fullWidth
                 size="small"
-                error={!!errors.uptoMiles}
-                helperText={errors.uptoMiles ? "This field is required" : ""}
+                error={!!errors.uptoDistance}
+                helperText={errors.uptoDistance ? "This field is required" : ""}
               />
             )}
             rules={{ required: true }}
@@ -108,7 +142,6 @@ const DistanceDrawer: React.FC<IProps> = (props) => {
             render={({ field }) => (
               <TextField
                 {...field}
-                type="number"
                 variant="outlined"
                 fullWidth
                 size="small"

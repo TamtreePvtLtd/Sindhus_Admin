@@ -6,7 +6,7 @@ import {
   IUser,
 } from "../interface/customer";
 import { IMenu } from "../interface/menus";
-import { cartItems, PaymentData } from "../interface/snacks";
+import { cartItems, DistanceBasedDeliveryCharge, PaymentData } from "../interface/snacks";
 import { ICoupen } from "../interface/menus";
 import {
   ICateringEnquiries,
@@ -282,7 +282,7 @@ const deleteEnquiry = async (enquiryId: string) => {
 };
 
 const createMenu = async (newMenu: FormData) => {
-  console.log('new menu',newMenu);
+  console.log('new menu', newMenu);
 
   try {
     var response = await httpWithMultipartFormData.post<IMenu>(
@@ -310,8 +310,8 @@ const updateMenu = async (updateMenu: FormData) => {
 
 const createCoupen = async (newCoupen: { [key: string]: any }) => { // Specify the type accordingly
   try {
-    console.log('newCoupen',newCoupen);
-    
+    console.log('newCoupen', newCoupen);
+
     var response = await httpWithMultipartFormData.post<ICoupen>(
       "/coupen/createCoupen",
       newCoupen,
@@ -322,7 +322,7 @@ const createCoupen = async (newCoupen: { [key: string]: any }) => { // Specify t
       }
 
     );
-console.log('response',response);
+    console.log('response', response);
 
     return response.data;
   } catch (error) {
@@ -346,8 +346,6 @@ const updateCoupen = async (updateCoupen: { [key: string]: any }) => {
     throw error;
   }
 };
-
-
 
 const createSpecials = async (formData) => {
   try {
@@ -508,7 +506,74 @@ const deleteDeliveredPayment = async (orderNumber) => {
   }
 };
 
+const getDistanceBasedDeliveryCharge = async () => {
+  try {
+    const response = await httpWithoutCredentials.get<DistanceBasedDeliveryCharge[]>(
+      "/distance/getAllDistances")
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const createDistanceBasedCharge = async (newDistance: { [key: string]: any }) => { // Specify the type accordingly
+  try {
+    console.log('newCoupen', newDistance);
+
+    var response = await httpWithMultipartFormData.post<DistanceBasedDeliveryCharge>(
+      "/distance/createDistance",
+      newDistance,
+      {
+        headers: {
+          'Content-Type': 'application/json', // Set the correct content type for JSON
+        },
+      }
+
+    );
+    console.log('response', response);
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateDistanceBasedCharge = async (updateDistance: { [key: string]: any }) => {
+  try {
+
+    var id = updateDistance.get("id");
+    var response = await httpWithMultipartFormData.put<DistanceBasedDeliveryCharge>(
+      `distance/updateDistance/${id}`,
+      updateDistance,
+      {
+        headers: {
+          'Content-Type': 'application/json', // Set the correct content type for JSON
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteDistanceBasedCharge = async (id: string) => {
+  try {
+    var response = await httpWithCredentials.delete(
+      `/distance/deleteDistance/${id}`
+    );
+    return response.data;
+  } catch (error) {
+    var message = (error as Error).message;
+    throw new Error(message);
+  }
+};
+
 export {
+  deleteDistanceBasedCharge,
+  updateDistanceBasedCharge,
+  createDistanceBasedCharge,
+  getDistanceBasedDeliveryCharge,
   deleteDeliveredPayment,
   deleteOrder,
   updateDeliveryStatus,
