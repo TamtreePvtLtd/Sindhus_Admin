@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";  // Import useEffect
+import React, { useState, useEffect } from "react"; // Import useEffect
 import Drawer from "@mui/material/Drawer";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -14,7 +14,11 @@ import {
 import Divider from "@mui/material/Divider";
 import CloseIcon from "@mui/icons-material/Close";
 import { ICoupen } from "../interface/menus";
-import { useCreateCoupen, useGetAllCoupens, useUpdateCoupen } from "../customRQHooks/Hooks";
+import {
+  useCreateCoupen,
+  useGetAllCoupens,
+  useUpdateCoupen,
+} from "../customRQHooks/Hooks";
 
 interface IProps {
   selectedCoupen: ICoupen | null;
@@ -29,6 +33,8 @@ interface IFormInput {
   minAmount: number;
   maxAmount: number;
   availability: boolean;
+  startDateWithTime: string; // Change type as needed
+  endDateWithTime: string;
 }
 
 const defaultValues = {
@@ -40,13 +46,13 @@ const defaultValues = {
   availability: true,
 } as ICoupen;
 
-
 const CouponsDrawer: React.FC<IProps> = (props) => {
   const { selectedCoupen, handleCoupenDrawerclose, menuDrawerOpen } = props;
+  console.log("selectedCoupen", selectedCoupen);
 
   const [isEdit, setIsEdit] = useState(!!selectedCoupen);
 
-  const { data: coupens,refetch } = useGetAllCoupens();
+  const { data: coupens, refetch } = useGetAllCoupens();
 
   const {
     control,
@@ -55,7 +61,7 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
     register,
     reset,
     getValues,
-    setValue,  
+    setValue,
     watch,
     setError,
   } = useForm<IFormInput>({
@@ -66,6 +72,8 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       minAmount: 0,
       maxAmount: 0,
       availability: true,
+      startDateWithTime: selectedCoupen?.startDateWithTime || "", // Use the value from selectedCoupon
+      endDateWithTime: selectedCoupen?.endDateWithTime || "",
     },
   });
 
@@ -83,7 +91,9 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       setValue("discountAmount", selectedCoupen.discountAmount);
       setValue("minAmount", selectedCoupen.minAmount);
       setValue("maxAmount", selectedCoupen.maxAmount);
-      setValue("availability", selectedCoupen.availability); 
+      setValue("availability", selectedCoupen.availability);
+      setValue("startDateWithTime", selectedCoupen.startDateWithTime);
+      setValue("endDateWithTime", selectedCoupen.endDateWithTime);
     }
   }, [selectedCoupen, setValue]);
 
@@ -96,12 +106,15 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
           coupon.coupenName.toLowerCase() === data.coupenName.toLowerCase()
       );
 
-      if (duplicateCoupon && (!isEdit || duplicateCoupon._id !== selectedCoupen?._id)) {
+      if (
+        duplicateCoupon &&
+        (!isEdit || duplicateCoupon._id !== selectedCoupen?._id)
+      ) {
         setError("coupenName", {
           type: "manual",
           message: `"${data.coupenName}" already exists!`,
         });
-        return; 
+        return;
       }
 
       const formData = new FormData();
@@ -111,16 +124,21 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       formData.append("minAmount", data.minAmount.toString());
       formData.append("maxAmount", data.maxAmount.toString());
       formData.append("availability", data.availability.toString());
+      formData.append("startDateWithTime", data.startDateWithTime.toString());
+      formData.append("endDateWithTime", data.endDateWithTime.toString());
 
       if (!isEdit) {
         await createCoupenMutation.mutateAsync(formData, {
           onSuccess: () => {
             handleCoupenDrawerclose();
-            refetch();  
+            refetch();
             console.log("Coupon added successfully");
           },
           onError: (error: any) => {
-            console.error("Error creating coupon:", error.response.data.message);
+            console.error(
+              "Error creating coupon:",
+              error.response.data.message
+            );
           },
         });
       } else {
@@ -128,11 +146,14 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
         await coupenUpdateMutation.mutateAsync(formData, {
           onSuccess: () => {
             handleCoupenDrawerclose();
-            refetch();  
+            refetch();
             console.log("Coupon updated successfully");
           },
           onError: (error: any) => {
-            console.error("Error updating coupon:", error.response.data.message);
+            console.error(
+              "Error updating coupon:",
+              error.response.data.message
+            );
           },
         });
       }
@@ -142,8 +163,6 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       console.error("Error in form submission:", error);
     }
   };
-
-
 
   return (
     <Drawer
@@ -202,10 +221,11 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
               name="coupenType"
               control={control}
               render={({ field }) => (
-                <Select {...field} value={getValues("coupenType")}> 
+                <Select {...field} value={getValues("coupenType")}>
                   <MenuItem value="percentage">Percentage</MenuItem>
                   <MenuItem value="fixedAmount">Amount</MenuItem>
-                </Select>              )}
+                </Select>
+              )}
             />
           </FormControl>
         </Box>
@@ -252,7 +272,6 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
                 {...register("minAmount")}
                 error={!!errors.minAmount}
                 helperText={errors.minAmount?.message}
-
               />
             )}
           />
@@ -274,7 +293,6 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
                 {...register("maxAmount")}
                 error={!!errors.maxAmount}
                 helperText={errors.maxAmount?.message}
-
               />
             )}
           />
@@ -289,8 +307,64 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
             name="availability"
             control={control}
             render={({ field }) => (
-              <Switch {...field} color="primary" checked={!!getValues("availability")}
+              <Switch
+                {...field}
+                color="primary"
+                checked={!!getValues("availability")}
               /> // Set checked prop based on availability
+            )}
+          />
+        </Box>
+        {/* Start Date with Time */}
+        <Box py={1}>
+          <Typography variant="subtitle1">Start Date & Time *</Typography>
+          <Controller
+            name="startDateWithTime"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="datetime-local"
+                variant="outlined"
+                value={field.value || ""} // Use field.value
+                fullWidth
+                size="small"
+                error={!!errors.startDateWithTime}
+                helperText={errors.startDateWithTime?.message}
+                inputProps={{
+                  step: 300, // 5 minutes
+                }}
+                {...register("startDateWithTime", {
+                  required: "Start date and time are required",
+                })}
+              />
+            )}
+          />
+        </Box>
+
+        {/* End Date with Time */}
+        <Box py={1}>
+          <Typography variant="subtitle1">End Date & Time *</Typography>
+          <Controller
+            name="endDateWithTime"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="datetime-local"
+                value={field.value || ""}
+                variant="outlined"
+                fullWidth
+                size="small"
+                error={!!errors.endDateWithTime}
+                helperText={errors.endDateWithTime?.message}
+                inputProps={{
+                  step: 300, // 5 minutes
+                }}
+                {...register("endDateWithTime", {
+                  required: "End date and time are required",
+                })}
+              />
             )}
           />
         </Box>

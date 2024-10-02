@@ -6,7 +6,7 @@ export interface IMenuFormResolver {
 
 export interface ISubMenuFormResolver {
   title: string;
-  }
+}
 
 export interface IMenu {
   _id: string;
@@ -25,6 +25,8 @@ export interface ICoupen {
   minAmount: number;
   maxAmount: number;
   availability: boolean;
+  startDateWithTime
+  : string; endDateWithTime: string
 }
 
 export interface ISubMenu {
