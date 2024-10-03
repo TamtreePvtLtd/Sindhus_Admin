@@ -14,6 +14,7 @@ interface IProps {
   drawerOpen: boolean;
   handleDrawerClose: () => void;
   refetch: () => void;
+  distance: DistanceBasedDeliveryCharge[];
 }
 
 const defaultValues: DistanceBasedDeliveryCharge = {
@@ -22,18 +23,21 @@ const defaultValues: DistanceBasedDeliveryCharge = {
 };
 
 const DistanceDrawer: React.FC<IProps> = (props) => {
-  const { selectedDistance, handleDrawerClose, drawerOpen, refetch } = props;
+  const { selectedDistance, handleDrawerClose, drawerOpen, refetch } =
+    props;
+console.log("Available distances:", props.distance);
 
   const [isEdit, setIsEdit] = useState(!!selectedDistance);
 
   const createDistanceBasedCharge = useCreateDistanceBasedCharge();
   const distanceUpdateMutation = useUpdateDistanceBasedCharge();
-
+// const { data: distance } = useGetDistanceBasedDeliveryCharge();
   const {
     control,
     formState: { errors },
     handleSubmit,
     setValue,
+    setError,
     reset,
   } = useForm<DistanceBasedDeliveryCharge>({
     defaultValues,
@@ -48,19 +52,40 @@ const DistanceDrawer: React.FC<IProps> = (props) => {
     }
   }, [selectedDistance, setValue]);
 
-  // Handle form submission
-  const onSubmit = async (data: DistanceBasedDeliveryCharge) => {
-    console.log(isEdit ? "Editing Distance" : "Adding Distance", data);
+const onSubmit = async (data: DistanceBasedDeliveryCharge) => {
+  const duplicateDistance = props.distance?.find(
+    (distance: DistanceBasedDeliveryCharge) =>
+      distance.uptoDistance.toString() === data.uptoDistance
+  );
+
+console.log("Checking for duplicates: ", {
+  incomingDistance: data.uptoDistance,
+  foundDuplicate: duplicateDistance,
+  isEdit,
+  selectedDistanceId: selectedDistance?._id,
+});
+  if (
+    duplicateDistance &&
+    (!isEdit || duplicateDistance._id !== selectedDistance?._id)
+  ) {
+    setError("uptoDistance", {
+      type: "manual",
+      message: `"${data.uptoDistance}" distance already exists!`,
+    });
+    return; 
+  }
+
+  try {
     const formData = new FormData();
     formData.append("amount", data.amount);
-    formData.append("uptoDistance", data.uptoDistance); // Ensure you're using uptoDistance
+    formData.append("uptoDistance", data.uptoDistance);
 
     if (!isEdit) {
-      console.log("formData", formData);
-
       await createDistanceBasedCharge.mutateAsync(formData, {
         onSuccess: () => {
           handleDrawerClose();
+          refetch();
+          reset({ ...defaultValues });
           console.log("Distance charge added successfully");
         },
         onError: (error: any) => {
@@ -70,12 +95,13 @@ const DistanceDrawer: React.FC<IProps> = (props) => {
           );
         },
       });
-      refetch();
     } else {
       formData.append("id", selectedDistance?._id!);
       await distanceUpdateMutation.mutateAsync(formData, {
         onSuccess: () => {
           handleDrawerClose();
+          refetch();
+          reset({ ...defaultValues });
           console.log("Distance Based charge updated successfully");
         },
         onError: (error: any) => {
@@ -86,9 +112,12 @@ const DistanceDrawer: React.FC<IProps> = (props) => {
         },
       });
     }
+  } catch (error) {
+    console.error("Error in form submission:", error);
+  }
+};
 
-    reset({ ...defaultValues }); // Reset form after submission
-  };
+
 
   return (
     <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
@@ -126,7 +155,7 @@ const DistanceDrawer: React.FC<IProps> = (props) => {
                 fullWidth
                 size="small"
                 error={!!errors.uptoDistance}
-                helperText={errors.uptoDistance ? "This field is required" : ""}
+                helperText={errors.uptoDistance ? "Distance already exist!" : ""}
               />
             )}
             rules={{ required: true }}

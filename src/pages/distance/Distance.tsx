@@ -180,6 +180,7 @@ function Distance() {
           drawerOpen={distanceDrawerOpen}
           handleDrawerClose={handleDistanceDrawerclose}
           refetch={refetch}
+          distance={distanceBasedCharge || []}
         />
       )}
       {deleteDialogOpen && (
