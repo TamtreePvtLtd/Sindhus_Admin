@@ -17,6 +17,10 @@ export interface PaymentData {
   deliveryDate: string;
   createdAt: string;
   orderNumber: string;
+  totalWithCoupon: string;
+  couponName: string;
+  totalWithoutCoupon: string;
+  addressURL: string;
   __v: number;
 }
 
@@ -52,10 +56,14 @@ export interface DownloadData {
   Quantity: number;
   Size: string;
   "Delivered Status": string;
+  "Location URL": string;
+  "Coupon Name": string;
+  "Total Amount without Coupon": string;
+  "Total Amount with Coupon": string;
 }
 
 export interface DistanceBasedDeliveryCharge {
-  _id?: string
+  _id?: string;
   amount: string;
   uptoDistance: string;
 }
