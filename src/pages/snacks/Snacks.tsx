@@ -138,6 +138,14 @@ function Snacks() {
           "Item Title": item.title,
           Quantity: item.quantity,
           Size: item.size,
+          "Location URL": firstItemForOrder ? `${payment.addressURL} ` : "",
+          "Coupon Name": firstItemForOrder ? `${payment.couponName} ` : "",
+          "Total Amount without Coupon": firstItemForOrder
+            ? `${payment.totalWithoutCoupon} `
+            : "",
+          "Total Amount with Coupon": firstItemForOrder
+            ? `${payment.totalWithCoupon} `
+            : "",
           "Delivered Status": firstItemForOrder
             ? matchingCart?.deliveredStatus === "true"
               ? "Delivered"
@@ -324,7 +332,7 @@ function Snacks() {
                 color: "white",
               }}
             >
-              URL
+              Location URL
             </TableCell>
             <TableCell
               sx={{
@@ -356,7 +364,23 @@ function Snacks() {
                 color: "white",
               }}
             >
-              Total Amount
+              Total Amount before Coupon
+            </TableCell>
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
+              Coupon Name
+            </TableCell>
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
+              Total Amount after Coupon
             </TableCell>
             <TableCell
               sx={{
@@ -400,10 +424,12 @@ function Snacks() {
                           {payment.firstName + " " + payment.lastName}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.address +
-                            ", " +
-                            "Pincode:" +
-                            payment.postalCode}
+                          {payment.deliveryOption != "Pickup"
+                            ? payment.address +
+                              ", " +
+                              "Pincode:" +
+                              payment.postalCode
+                            : ""}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
                           {payment.phoneNumber}
@@ -421,7 +447,13 @@ function Snacks() {
                           {new Date(payment.deliveryDate).toLocaleDateString()}
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.url}
+                          <a
+                            href={payment.addressURL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {payment.addressURL}
+                          </a>
                         </TableCell>
                       </>
                     )}
@@ -430,7 +462,15 @@ function Snacks() {
                     <TableCell>{item.quantity}</TableCell>
                     {index === 0 && (
                       <>
-                        <TableCell>{item.totalPrice}</TableCell>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          {Number(payment.totalWithoutCoupon).toFixed(2)}
+                        </TableCell>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          {payment.couponName}
+                        </TableCell>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          {Number(payment.totalWithCoupon).toFixed(2)}
+                        </TableCell>
 
                         <TableCell rowSpan={filteredCartItems.length}>
                           <Switch
