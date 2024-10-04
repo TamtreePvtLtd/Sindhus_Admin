@@ -1,6 +1,7 @@
 import { string } from "yup";
 
 export interface PaymentData {
+  url: string;
   quantity: string;
   _id: string;
   firstName: string;

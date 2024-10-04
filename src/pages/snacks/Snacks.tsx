@@ -126,14 +126,14 @@ function Snacks() {
         item.title.toLowerCase().includes(titleFilter.toLowerCase())
       );
 
-    const deliveryStatusMatches =
-      deliveryStatusFilter === "all" ||
-      (deliveryStatusFilter === "delivered" &&
-        matchingCart?.deliveredStatus === "true") ||
-      (deliveryStatusFilter === "pending" &&
-        matchingCart?.deliveredStatus === "false");
+      const deliveryStatusMatches =
+        deliveryStatusFilter === "all" ||
+        (deliveryStatusFilter === "delivered" &&
+          matchingCart?.deliveredStatus === "true") ||
+        (deliveryStatusFilter === "pending" &&
+          matchingCart?.deliveredStatus === "false");
 
-    if (!deliveryStatusMatches) return;
+      if (!deliveryStatusMatches) return;
       // Track whether it's the first item for the order
       let firstItemForOrder = true;
 
@@ -333,7 +333,7 @@ function Snacks() {
                 color: "white",
               }}
             >
-              Created Date
+              Ordered Date
             </TableCell>
             <TableCell
               sx={{
@@ -342,6 +342,14 @@ function Snacks() {
               }}
             >
               Delivery Date
+            </TableCell>
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
+              URL
             </TableCell>
             <TableCell
               sx={{
@@ -366,6 +374,14 @@ function Snacks() {
               }}
             >
               Quantity
+            </TableCell>
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
+              Total Amount
             </TableCell>
             <TableCell
               sx={{
@@ -429,6 +445,9 @@ function Snacks() {
                         <TableCell rowSpan={filteredCartItems.length}>
                           {new Date(payment.deliveryDate).toLocaleDateString()}
                         </TableCell>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          {payment.url}
+                        </TableCell>
                       </>
                     )}
                     <TableCell>{item.title}</TableCell>
@@ -436,6 +455,8 @@ function Snacks() {
                     <TableCell>{item.quantity}</TableCell>
                     {index === 0 && (
                       <>
+                        <TableCell>{item.totalPrice}</TableCell>
+
                         <TableCell rowSpan={filteredCartItems.length}>
                           <Switch
                             checked={matchingCart?.deliveredStatus === "true"}
