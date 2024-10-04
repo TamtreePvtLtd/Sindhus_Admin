@@ -388,6 +388,7 @@ const getAllProduct = async (page: number, pageSize: number) => {
     throw error;
   }
 };
+
 const deleteMenu = async (menuId: string) => {
   try {
     var response = await httpWithCredentials.delete(
@@ -414,7 +415,7 @@ const changeisResponseStatus = async (enquiryId: any) => {
 
 const getPayments = async () => {
   try {
-    const response = await httpWithoutCredentials.get<PaymentData>(
+    const response = await httpWithoutCredentials.get<PaymentData[]>(
       "/payment/transaction")
     return response.data;
   } catch (error) {
@@ -439,9 +440,10 @@ const getAllCoupens = async (page?: number, pageSize?: number) => {
     throw error;
   }
 };
+
 const getCartItems = async () => {
   try {
-    const response = await httpWithoutCredentials.get<cartItems>(
+    const response = await httpWithoutCredentials.get<cartItems[]>(
       "/cart/cartItem"
     );
 
@@ -480,6 +482,7 @@ const updateDeliveryStatus = async ({ orderNumber, deliveredStatus }) => {
     throw error; // Re-throwing the error helps in debugging
   }
 };
+
 const deleteOrder = async (orderNumber) => {
   console.log("api order number delete", orderNumber);
 

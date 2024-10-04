@@ -13,75 +13,49 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { SaveAlt, Delete } from "@mui/icons-material"; // Icon for the download button
+import { SaveAlt, Delete } from "@mui/icons-material";
+import { useSnackBar } from "../../context/SnackBarContext";
 import React, { useEffect, useState } from "react";
-import * as XLSX from "xlsx"; // Import the xlsx library
+import * as XLSX from "xlsx";
 import { cartItems, DownloadData, PaymentData } from "../../interface/snacks";
 import {
   useDeleteDeliveredPayment,
   useDeleteOrder,
+  useGetCartItems,
+  useGetPayment,
   useUpdateDeliveryStatus,
 } from "../../customRQHooks/Hooks";
-
-// Define PaymentData and CartItemData interfaces
 
 function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [cartItemData, setCartItemData] = useState<cartItems[]>([]);
-  const [orderNumberFilter, setOrderNumberFilter] = useState(""); // For order number filter
+  const [orderNumberFilter, setOrderNumberFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [titleFilter, setTitleFilter] = useState(""); // For item title filter
-  const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all"); // "all", "delivered", "pending"
+  const [titleFilter, setTitleFilter] = useState("");
+  const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all");
+  const { updateSnackBarState } = useSnackBar();
 
   const theme = useTheme();
   const updatemutation = useUpdateDeliveryStatus();
   const deleteOrderMutation = useDeleteOrder();
   const deletePaymentMutation = useDeleteDeliveredPayment();
 
-  const getCartItem = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/cart/cartItem", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  const { data: cartItem, refetch: cartItemrefetch } = useGetCartItems();
+  const { data: paymentItem, refetch: paymentRefetch } = useGetPayment();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const cartItem = await response.json();
+  useEffect(() => {
+    if (cartItem) {
       setCartItemData(cartItem);
-    } catch (error) {
-      console.error("Error fetching last order number:", error);
     }
-  };
+  }, [cartItem]);
 
-  const getPaymentItem = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:3000/payment/transaction",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const paymentData = await response.json();
-      setPaymentData(paymentData);
-    } catch (error) {
-      console.error("Error fetching last order number:", error);
+  useEffect(() => {
+    if (paymentItem) {
+      setPaymentData(paymentItem);
     }
-  };
+  }, [paymentItem]);
 
   // Function to handle switch change
-
   const handleSwitchChange = async (orderNumber, cartItem) => {
     console.log("deliveredStatus", cartItem.deliveredStatus);
 
@@ -89,29 +63,35 @@ function Snacks() {
       cartItem.deliveredStatus == "true" ? "false" : "true";
 
     try {
-      const response = await updatemutation.mutateAsync({
+      await updatemutation.mutateAsync({
         orderNumber,
         deliveredStatus: updatedDeliveredStatus,
       });
-      console.log("API Response:", response);
-      alert("Delivery status updated successfully!");
+
+      updateSnackBarState(true, "Order Item updated successfully.", "success");
+      cartItemrefetch();
     } catch (error) {
-      alert("Failed to update delivery status.");
+      updateSnackBarState(true, "Failed to update delivery status.", "error");
     }
   };
 
   const handleDelete = async (orderNumber) => {
-    console.log("orderNumber", orderNumber);
-
-    try {
-      await deleteOrderMutation.mutateAsync(orderNumber);
-      await deletePaymentMutation.mutateAsync(orderNumber);
-      alert("Order deleted successfully!");
-    } catch (error) {
-      alert("Failed to delete order.");
-    }
+    await deleteOrderMutation.mutateAsync(orderNumber, {
+      onSuccess: () => {
+        updateSnackBarState(
+          true,
+          "Order Item removed successfully.",
+          "success"
+        );
+      },
+      onError: () => {
+        updateSnackBarState(true, "Error while remove Order Item .", "error");
+      },
+    });
+    await deletePaymentMutation.mutateAsync(orderNumber);
+    cartItemrefetch();
+    paymentRefetch();
   };
-  // Handle Excel Download
   // Handle Excel Download
   const handleExcelDownload = () => {
     // Prepare data for Excel
@@ -177,11 +157,6 @@ function Snacks() {
     // Generate Excel file and trigger download
     XLSX.writeFile(workbook, "filtered_orders.xlsx");
   };
-
-  useEffect(() => {
-    getCartItem();
-    getPaymentItem();
-  }, []);
 
   // Filter logic
   const filteredPayments = paymentData.filter((payment) => {
