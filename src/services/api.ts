@@ -450,8 +450,7 @@ const getCartItems = async () => {
     return response.data;
   } catch (error) {
     throw error;
-    var message = (error as Error).message;
-    throw new Error(message);
+
   }
 };
 
@@ -572,7 +571,41 @@ const deleteDistanceBasedCharge = async (id: string) => {
   }
 };
 
+const updatePaymentData = async ({ orderNumber, data }) => {
+  console.log("api order number update", data);
+
+  try {
+    const response = await httpWithoutCredentials.put(
+      `/payment/transaction/${orderNumber}`,
+      data,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error updating delivery status:", error);
+    throw error;
+  }
+};
+
+const getResendMailItems = async (cartItems, paymentData) => {
+  try {
+    const response = await httpWithoutCredentials.get(
+      `/cart/resendMail`,
+      {
+        params: { cartItems, paymentData } // Send data as query parameters
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 export {
+  getResendMailItems,
+  updatePaymentData,
   deleteDistanceBasedCharge,
   updateDistanceBasedCharge,
   createDistanceBasedCharge,

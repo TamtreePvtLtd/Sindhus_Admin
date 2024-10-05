@@ -30,6 +30,8 @@ import {
   createDistanceBasedCharge,
   updateDistanceBasedCharge,
   deleteDistanceBasedCharge,
+  updatePaymentData,
+  getResendMailItems,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -363,3 +365,24 @@ export const useDeleteDistanceBasedCharge = () => {
     },
   });
 };
+
+export const useUpdatePaymentData = () => {
+  const queryClient = useQueryClient();
+  return useMutation(updatePaymentData, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["paymentData"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+// export const useGetResendMailItem = (cartItem, paymentData) => {
+//   return useQuery({
+//     queryKey: ["mailItems", cartItem, paymentData],
+//     queryFn: () => getResendMailItems(cartItem, paymentData),
+//     refetchOnWindowFocus: false,
+//   });
+// };
+

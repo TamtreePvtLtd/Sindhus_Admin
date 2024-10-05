@@ -2,11 +2,13 @@ import {
   Box,
   Button,
   MenuItem,
+  Paper,
   Select,
   Switch,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
@@ -18,6 +20,7 @@ import { useSnackBar } from "../../context/SnackBarContext";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { cartItems, DownloadData, PaymentData } from "../../interface/snacks";
+import { Edit, MailOutline } from "@mui/icons-material";
 import {
   useDeleteDeliveredPayment,
   useDeleteOrder,
@@ -25,6 +28,9 @@ import {
   useGetPayment,
   useUpdateDeliveryStatus,
 } from "../../customRQHooks/Hooks";
+import SnacksDrawer from "../../pageDrawers/Snacks";
+import { getResendMailItems } from "../../services/api";
+import logo from "../../../public/assets/images/output-onlinepngtools (1).png";
 
 function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
@@ -34,7 +40,10 @@ function Snacks() {
   const [titleFilter, setTitleFilter] = useState("");
   const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all");
   const { updateSnackBarState } = useSnackBar();
-
+  const [selectedPayment, setSelectedPayment] = useState<PaymentData | null>(
+    null
+  );
+  const [DrawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const updatemutation = useUpdateDeliveryStatus();
   const deleteOrderMutation = useDeleteOrder();
@@ -55,6 +64,15 @@ function Snacks() {
     }
   }, [paymentItem]);
 
+  const handleDrawerclose = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleEditClick = (payment: PaymentData) => {
+    setSelectedPayment({ ...payment });
+    setDrawerOpen(true);
+  };
+
   // Function to handle switch change
   const handleSwitchChange = async (orderNumber, cartItem) => {
     console.log("deliveredStatus", cartItem.deliveredStatus);
@@ -68,7 +86,11 @@ function Snacks() {
         deliveredStatus: updatedDeliveredStatus,
       });
 
-      updateSnackBarState(true, "Order Item updated successfully.", "success");
+      updateSnackBarState(
+        true,
+        "Delivery status updated successfully.",
+        "success"
+      );
       cartItemrefetch();
     } catch (error) {
       updateSnackBarState(true, "Failed to update delivery status.", "error");
@@ -80,7 +102,7 @@ function Snacks() {
       onSuccess: () => {
         updateSnackBarState(
           true,
-          "Order Item removed successfully.",
+          "Order Item and payment removed successfully.",
           "success"
         );
       },
@@ -189,6 +211,15 @@ function Snacks() {
     );
   });
 
+  const handleResendMail = async (payment, item) => {
+    const response = await getResendMailItems(item, payment);
+    if (response) {
+      updateSnackBarState(true, "Mail Resent successfully", "success");
+    } else {
+      updateSnackBarState(true, "Mail Resent failed", "error");
+    }
+  };
+
   return (
     <div>
       <Box
@@ -258,248 +289,284 @@ function Snacks() {
           Download Excel
         </Button>
       </Box>
+      <TableContainer elevation={0} component={Paper}>
+        <Table stickyHeader aria-label="menus-table">
+          <TableHead className="table-header">
+            <TableRow className="table-header-row">
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Order Number
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Name
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Address
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Phone Number
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Delivery Option
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Email
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Ordered Date
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Delivery Date
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Location URL
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Item Title
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Size
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Quantity
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Total Amount Before Coupon
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Coupon Name
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Total Amount After Coupon
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Fulfilled
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Actions
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Resend Mail
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredPayments.map((payment, paymentIndex) => {
+              const matchingCart = cartItemData.find(
+                (cart) => cart.orderNumber === payment.orderNumber
+              );
 
-      <Table stickyHeader aria-label="menus-table">
-        <TableHead className="table-header">
-          <TableRow className="table-header-row">
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Order Number
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Name
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Address
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Phone Number
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Delivery Option
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Email
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Ordered Date
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Delivery Date
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Location URL
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Item Title
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Size
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Quantity
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Total Amount before Coupon
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Coupon Name
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Total Amount after Coupon
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Fulfilled
-            </TableCell>
-            <TableCell
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                color: "white",
-              }}
-            >
-              Actions
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredPayments.map((payment, paymentIndex) => {
-            const matchingCart = cartItemData.find(
-              (cart) => cart.orderNumber === payment.orderNumber
-            );
+              const filteredCartItems = matchingCart?.cartItems.filter((item) =>
+                item.title.toLowerCase().includes(titleFilter.toLowerCase())
+              );
+              console.log("matchingCart", matchingCart);
 
-            const filteredCartItems = matchingCart?.cartItems.filter((item) =>
-              item.title.toLowerCase().includes(titleFilter.toLowerCase())
-            );
-            console.log("matchingCart", matchingCart);
+              return (
+                <React.Fragment key={paymentIndex}>
+                  {filteredCartItems?.map((item, index) => (
+                    <TableRow key={index}>
+                      {index === 0 && (
+                        <>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.orderNumber}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.firstName + " " + payment.lastName}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.deliveryOption != "Pickup"
+                              ? payment.address +
+                                ", " +
+                                "Pincode:" +
+                                payment.postalCode
+                              : ""}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.phoneNumber}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.deliveryOption}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.email}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {new Date(payment.createdAt).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {new Date(
+                              payment.deliveryDate
+                            ).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            <a
+                              href={payment.addressURL}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {payment.addressURL}
+                            </a>
+                          </TableCell>
+                        </>
+                      )}
+                      <TableCell>{item.title}</TableCell>
+                      <TableCell>{item.size}</TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+                      {index === 0 && (
+                        <>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {Number(payment.totalWithoutCoupon).toFixed(2)}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.couponName}
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {Number(payment.totalWithCoupon).toFixed(2)}
+                          </TableCell>
 
-            return (
-              <React.Fragment key={paymentIndex}>
-                {filteredCartItems?.map((item, index) => (
-                  <TableRow key={index}>
-                    {index === 0 && (
-                      <>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.orderNumber}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.firstName + " " + payment.lastName}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.deliveryOption != "Pickup"
-                            ? payment.address +
-                              ", " +
-                              "Pincode:" +
-                              payment.postalCode
-                            : ""}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.phoneNumber}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.deliveryOption}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.email}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {new Date(payment.createdAt).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {new Date(payment.deliveryDate).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          <a
-                            href={payment.addressURL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {payment.addressURL}
-                          </a>
-                        </TableCell>
-                      </>
-                    )}
-                    <TableCell>{item.title}</TableCell>
-                    <TableCell>{item.size}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
-                    {index === 0 && (
-                      <>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {Number(payment.totalWithoutCoupon).toFixed(2)}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {payment.couponName}
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          {Number(payment.totalWithCoupon).toFixed(2)}
-                        </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            <Switch
+                              checked={matchingCart?.deliveredStatus === "true"}
+                              onChange={() =>
+                                handleSwitchChange(
+                                  payment.orderNumber,
+                                  matchingCart
+                                )
+                              }
+                              // disabled={matchingCart?.deliveredStatus === "true"}
+                            />
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            <Button
+                              sx={{ color: theme.palette.primary.main }}
+                              startIcon={<Delete />}
+                              onClick={() => handleDelete(payment.orderNumber)}
+                            ></Button>
+                            <Button
+                              sx={{ color: theme.palette.primary.main }}
+                              startIcon={<Edit />}
+                              onClick={() => handleEditClick(payment)}
+                            ></Button>
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            <Button
+                              sx={{ color: theme.palette.primary.main }}
+                              startIcon={<MailOutline />} // Use the MailOutline icon
+                              onClick={() =>
+                                handleResendMail(payment, filteredCartItems)
+                              } // Add your resend mail handler here
+                            >
+                              Resend Mail
+                            </Button>
+                          </TableCell>
+                        </>
+                      )}
+                    </TableRow>
+                  ))}
+                </React.Fragment>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          <Switch
-                            checked={matchingCart?.deliveredStatus === "true"}
-                            onChange={() =>
-                              handleSwitchChange(
-                                payment.orderNumber,
-                                matchingCart
-                              )
-                            }
-                            disabled={matchingCart?.deliveredStatus === "true"}
-                          />
-                        </TableCell>
-                        <TableCell rowSpan={filteredCartItems.length}>
-                          <Button
-                            sx={{ color: theme.palette.primary.main }}
-                            startIcon={<Delete />}
-                            onClick={() => handleDelete(payment.orderNumber)}
-                          ></Button>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </React.Fragment>
-            );
-          })}
-        </TableBody>
-      </Table>
+      {DrawerOpen && (
+        <SnacksDrawer
+          selectedPaymentData={selectedPayment}
+          menuDrawerOpen={DrawerOpen}
+          handleDrawerclose={handleDrawerclose}
+          refetch={paymentRefetch}
+        />
+      )}
     </div>
   );
 }

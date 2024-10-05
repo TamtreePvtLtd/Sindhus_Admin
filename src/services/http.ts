@@ -120,9 +120,7 @@ const httpWithCredentials = {
 
 const httpWithoutCredentials = {
   get: <T>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<T>> =>
+url: string, config?: AxiosRequestConfig, paymentData?: any  ): Promise<AxiosResponse<T>> =>
     axiosInstanceWithOutCredential.get<T>(url, config),
   post: <T>(
     url: string,
