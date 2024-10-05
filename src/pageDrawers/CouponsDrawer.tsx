@@ -222,8 +222,8 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
               control={control}
               render={({ field }) => (
                 <Select {...field} value={getValues("coupenType")}>
-                  <MenuItem value="percentage">Percentage</MenuItem>
-                  <MenuItem value="fixedAmount">Amount</MenuItem>
+                  <MenuItem value="Percentage">Percentage</MenuItem>
+                  <MenuItem value="Amount">Amount</MenuItem>
                 </Select>
               )}
             />
@@ -238,7 +238,7 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
             control={control}
             render={({ field }) => (
               <TextField
-                type="number"
+                // type="number"
                 variant="outlined"
                 fullWidth
                 size="small"
@@ -265,7 +265,7 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
             render={({ field }) => (
               <TextField
                 {...field}
-                type="number"
+                // type="number"
                 variant="outlined"
                 fullWidth
                 size="small"
@@ -286,7 +286,7 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
             render={({ field }) => (
               <TextField
                 {...field}
-                type="number"
+                // type="number"
                 variant="outlined"
                 fullWidth
                 size="small"

@@ -18,6 +18,7 @@ import { useSnackBar } from "../../context/SnackBarContext";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { cartItems, DownloadData, PaymentData } from "../../interface/snacks";
+import { Edit, MailOutline } from "@mui/icons-material";
 import {
   useDeleteDeliveredPayment,
   useDeleteOrder,
@@ -25,6 +26,9 @@ import {
   useGetPayment,
   useUpdateDeliveryStatus,
 } from "../../customRQHooks/Hooks";
+import SnacksDrawer from "../../pageDrawers/Snacks";
+import { getResendMailItems } from "../../services/api";
+import logo from "../../../public/assets/images/output-onlinepngtools (1).png";
 
 function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
@@ -34,7 +38,10 @@ function Snacks() {
   const [titleFilter, setTitleFilter] = useState("");
   const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all");
   const { updateSnackBarState } = useSnackBar();
-
+  const [selectedPayment, setSelectedPayment] = useState<PaymentData | null>(
+    null
+  );
+  const [DrawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const updatemutation = useUpdateDeliveryStatus();
   const deleteOrderMutation = useDeleteOrder();
@@ -54,6 +61,15 @@ function Snacks() {
       setPaymentData(paymentItem);
     }
   }, [paymentItem]);
+
+  const handleDrawerclose = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleEditClick = (payment: PaymentData) => {
+    setSelectedPayment({ ...payment });
+    setDrawerOpen(true);
+  };
 
   // Function to handle switch change
   const handleSwitchChange = async (orderNumber, cartItem) => {
@@ -188,6 +204,10 @@ function Snacks() {
       matchesDeliveryStatus
     );
   });
+
+  const handleResendMail = async (payment, item) => {
+    await getResendMailItems(item, payment);
+  };
 
   return (
     <div>
@@ -364,7 +384,7 @@ function Snacks() {
                 color: "white",
               }}
             >
-              Total Amount before Coupon
+              Total Amount Before Coupon
             </TableCell>
             <TableCell
               sx={{
@@ -380,7 +400,7 @@ function Snacks() {
                 color: "white",
               }}
             >
-              Total Amount after Coupon
+              Total Amount After Coupon
             </TableCell>
             <TableCell
               sx={{
@@ -397,6 +417,14 @@ function Snacks() {
               }}
             >
               Actions
+            </TableCell>
+            <TableCell
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: "white",
+              }}
+            >
+              Resend Mail
             </TableCell>
           </TableRow>
         </TableHead>
@@ -481,7 +509,7 @@ function Snacks() {
                                 matchingCart
                               )
                             }
-                            disabled={matchingCart?.deliveredStatus === "true"}
+                            // disabled={matchingCart?.deliveredStatus === "true"}
                           />
                         </TableCell>
                         <TableCell rowSpan={filteredCartItems.length}>
@@ -490,6 +518,22 @@ function Snacks() {
                             startIcon={<Delete />}
                             onClick={() => handleDelete(payment.orderNumber)}
                           ></Button>
+                          <Button
+                            sx={{ color: theme.palette.primary.main }}
+                            startIcon={<Edit />}
+                            onClick={() => handleEditClick(payment)}
+                          ></Button>
+                        </TableCell>
+                        <TableCell rowSpan={filteredCartItems.length}>
+                          <Button
+                            sx={{ color: theme.palette.primary.main }}
+                            startIcon={<MailOutline />} // Use the MailOutline icon
+                            onClick={() =>
+                              handleResendMail(payment, filteredCartItems)
+                            } // Add your resend mail handler here
+                          >
+                            Resend Mail
+                          </Button>
                         </TableCell>
                       </>
                     )}
@@ -500,6 +544,14 @@ function Snacks() {
           })}
         </TableBody>
       </Table>
+      {DrawerOpen && (
+        <SnacksDrawer
+          selectedPaymentData={selectedPayment}
+          menuDrawerOpen={DrawerOpen}
+          handleDrawerclose={handleDrawerclose}
+          refetch={paymentRefetch}
+        />
+      )}
     </div>
   );
 }
