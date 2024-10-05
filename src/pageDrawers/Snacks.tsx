@@ -12,6 +12,8 @@ import { useEffect } from "react"; // Import useEffect for handling side effects
 import { PaymentData } from "../interface/snacks";
 import { useUpdatePaymentData } from "../customRQHooks/Hooks";
 import { useSnackBar } from "../context/SnackBarContext";
+import { yupResolver } from "@hookform/resolvers/yup"; // Import yupResolver
+import * as yup from "yup"; // Import Yup
 
 interface IProps {
   selectedPaymentData?: PaymentData | null;
@@ -19,6 +21,20 @@ interface IProps {
   handleDrawerclose: () => void;
   refetch: () => void;
 }
+
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Please enter a valid email address")
+    .required("Email is required"),
+  phoneNumber: yup
+    .string()
+    .required("Phone number is required")
+    .matches(
+      /^(\+1\s?)?(\(?\d{3}\)?[\s.-]?)?\d{3}[\s.-]?\d{4}$/,
+      "Phone number must be a valid US number"
+    ),
+});
 
 const SnacksDrawer = (props: IProps) => {
   const { handleDrawerclose, menuDrawerOpen, selectedPaymentData, refetch } =
@@ -28,11 +44,11 @@ const SnacksDrawer = (props: IProps) => {
 
   const {
     control,
-    register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm<PaymentData>({
+    resolver: yupResolver(schema), // Add Yup resolver
     defaultValues: {
       email: selectedPaymentData?.email,
       phoneNumber: selectedPaymentData?.phoneNumber,
@@ -48,8 +64,6 @@ const SnacksDrawer = (props: IProps) => {
   }, [selectedPaymentData, setValue]);
 
   const onSubmit = async (data: PaymentData) => {
-    console.log("data", data);
-
     try {
       await updatePaymentMutation.mutateAsync({
         orderNumber: selectedPaymentData?.orderNumber,
@@ -60,7 +74,11 @@ const SnacksDrawer = (props: IProps) => {
         },
       });
       handleDrawerclose();
-      updateSnackBarState(true, "Order Item updated successfully.", "success");
+      updateSnackBarState(
+        true,
+        "Mail and PhoneNumber updated successfully.",
+        "success"
+      );
       refetch();
     } catch (error) {
       updateSnackBarState(true, "Failed to update delivery status.", "error");
@@ -101,9 +119,6 @@ const SnacksDrawer = (props: IProps) => {
                 fullWidth
                 size="small"
                 {...field}
-                {...register("email", {
-                  required: "email is required",
-                })}
                 error={!!errors.email}
                 helperText={errors.email?.message}
               />
@@ -123,9 +138,7 @@ const SnacksDrawer = (props: IProps) => {
                 variant="outlined"
                 fullWidth
                 size="small"
-                {...register("phoneNumber", {
-                  required: "phoneNumber is required",
-                })}
+                {...field}
                 error={!!errors.phoneNumber}
                 helperText={errors.phoneNumber?.message}
               />
