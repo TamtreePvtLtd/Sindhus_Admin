@@ -50,7 +50,7 @@ function CommonClearDialog(props: IProps) {
             size="small"
             sx={{ "&:hover": { backgroundColor: "#038265" } }}
           >
-            DeSelect
+            Deselect
           </Button>
         </DialogActions>
       </Dialog>

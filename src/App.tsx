@@ -15,6 +15,9 @@ import PrivateRoute from "./common/components/PrivateRoute";
 import AuthProvider from "./context/AuthContext";
 import Specials from "./pages/specials/Specials";
 import Signup from "./pages/login/Signup";
+import Snacks from "./pages/snacks/Snacks";
+import Coupons from "./pages/coupons/Coupons";
+import Distance from "./pages/distance/Distance";
 
 export const queryClient = new QueryClient();
 
@@ -70,10 +73,35 @@ function App() {
                     }
                   />
                   <Route
+                    path={paths.COUPONS}
+                    element={
+                      <PrivateRoute>
+                        <Coupons />
+                      </PrivateRoute>
+                    }
+                  />
+
+                  <Route
                     path={paths.SPECIALS}
                     element={
                       <PrivateRoute>
                         <Specials />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path={paths.SNACKS}
+                    element={
+                      <PrivateRoute>
+                        <Snacks />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path={paths.DISTANCE}
+                    element={
+                      <PrivateRoute>
+                        <Distance />
                       </PrivateRoute>
                     }
                   />

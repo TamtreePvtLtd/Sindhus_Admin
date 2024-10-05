@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   createProduct,
   deleteProduct,
@@ -16,7 +16,21 @@ import {
   deleteSpecial,
   deleteAllSpecial,
   getAllProduct,
- } from "../services/api";
+  getAllCoupens,
+  deleteCoupen,
+  createCoupen,
+  updateCoupen,
+  deleteDiningOutProduct,
+  getPayments,
+  getCartItems,
+  updateDeliveryStatus,
+  deleteOrder,
+  deleteDeliveredPayment,
+  getDistanceBasedDeliveryCharge,
+  createDistanceBasedCharge,
+  updateDistanceBasedCharge,
+  deleteDistanceBasedCharge,
+} from "../services/api";
 import { queryClient } from "../App";
 
 export const useGetAllEnquiry = (page: number, pageSize: number) => {
@@ -34,6 +48,7 @@ export const useGetAllMenus = (page: number, pageSize: number) => {
     refetchOnWindowFocus: false,
   });
 };
+
 export const useGetAllDiningOutMenuWithProducts = () => {
   return useQuery({
     queryKey: ["diningOut"],
@@ -64,6 +79,19 @@ export const useCreateMenu = () => {
     },
   });
 };
+export const useCreateCoupen = () => {
+  return useMutation({
+    mutationFn: createCoupen,
+    onSuccess: (data) => {
+      console.log("Coupon created successfully:", data); // Log the success response
+
+      queryClient.invalidateQueries({ queryKey: ["coupen"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
 
 export const useCreateSpecials = () => {
   return useMutation({
@@ -82,10 +110,8 @@ export const useGetSpecials = () => {
     queryKey: ["specials"],
     queryFn: () => getSpecials(),
     refetchOnWindowFocus: false,
-  
   });
 };
-
 
 export const useGetProducts = (menuId: string, subMenuIds: string[]) => {
   return useQuery({
@@ -141,6 +167,17 @@ export const useUpdateMenu = () => {
     },
   });
 };
+export const useUpdateCoupen = () => {
+  return useMutation({
+    mutationFn: updateCoupen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["coupen"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
 
 export const useCreateProduct = () => {
   return useMutation({
@@ -178,7 +215,6 @@ export const useUpdateProduct = () => {
   });
 };
 export const useChangeisResponseStatus = () => {
- 
   return useMutation({
     mutationFn: useChangeisResponseStatus,
     onSuccess: () => {
@@ -195,5 +231,135 @@ export const useGetAllProduct = (page: number, pageSize: number) => {
     queryKey: ["products"],
     queryFn: () => getAllProduct(page, pageSize),
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetAllCoupens = (page?: number, pageSize?: number) => {
+  return useQuery({
+    queryKey: ["coupens"],
+    queryFn: () => getAllCoupens(page, pageSize),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useDeleteCoupen = () => {
+  return useMutation({
+    mutationFn: deleteCoupen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["coupens"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteDiningoutMenu = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteDiningOutProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diningout"] });
+      console.log("Products removed successfully");
+    },
+    onError: (error) => {
+      console.log("Error while clearing the products", error);
+    },
+  });
+};
+export const useGetPayment = () => {
+  return useQuery({
+    queryKey: ["payments"],
+    queryFn: () => getPayments(),
+    refetchOnWindowFocus: false,
+  });
+};
+export const useGetCartItems = () => {
+  return useQuery({
+    queryKey: ["cartItems"],
+    queryFn: () => getCartItems(),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateDeliveryStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation(updateDeliveryStatus, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteOrder, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+export const useDeleteDeliveredPayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteDeliveredPayment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useGetDistanceBasedDeliveryCharge = () => {
+  return useQuery({
+    queryKey: ["distance"],
+    queryFn: () => getDistanceBasedDeliveryCharge(),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useCreateDistanceBasedCharge = () => {
+  return useMutation({
+    mutationFn: createDistanceBasedCharge,
+    onSuccess: (data) => {
+      console.log("Coupon created successfully:", data); // Log the success response
+
+      queryClient.invalidateQueries({ queryKey: ["distance"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useUpdateDistanceBasedCharge = () => {
+  return useMutation({
+    mutationFn: updateDistanceBasedCharge,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["distance"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+export const useDeleteDistanceBasedCharge = () => {
+  return useMutation({
+    mutationFn: deleteDistanceBasedCharge,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["distance"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
 };
