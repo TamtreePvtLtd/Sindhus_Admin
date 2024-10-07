@@ -89,28 +89,6 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
 
   const coupenType = watch("coupenType");
 
-  // Populate the form if editing
-  useEffect(() => {
-    if (selectedCoupen && selectedCoupen._id) {
-      setIsEdit(!!selectedCoupen._id);
-      setValue("coupenName", selectedCoupen.coupenName);
-      setValue("coupenType", selectedCoupen.coupenType);
-      setValue("discountAmount", selectedCoupen.discountAmount);
-      setValue("minAmount", selectedCoupen.minAmount);
-      setValue("maxAmount", selectedCoupen.maxAmount);
-      setValue("availability", selectedCoupen.availability);
-
-      // Correct date parsing
-      if (selectedCoupen.startDateWithTime) {
-        setValue("startDateWithTime", new Date(selectedCoupen.startDateWithTime));
-      }
-      if (selectedCoupen.endDateWithTime) {
-        setValue("endDateWithTime", new Date(selectedCoupen.endDateWithTime));
-      }
-    }
-  }, [selectedCoupen, setValue]);
-
-
   // Handle form submission
   const onSubmit = async (data: IFormInput) => {
     try {
@@ -183,6 +161,30 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       console.error("Error in form submission:", error);
     }
   };
+
+  // Populate the form if editing
+  useEffect(() => {
+    if (selectedCoupen && selectedCoupen._id) {
+      setIsEdit(!!selectedCoupen._id);
+      setValue("coupenName", selectedCoupen.coupenName);
+      setValue("coupenType", selectedCoupen.coupenType);
+      setValue("discountAmount", selectedCoupen.discountAmount);
+      setValue("minAmount", selectedCoupen.minAmount);
+      setValue("maxAmount", selectedCoupen.maxAmount);
+      setValue("availability", selectedCoupen.availability);
+
+      // Correct date parsing
+      if (selectedCoupen.startDateWithTime) {
+        setValue(
+          "startDateWithTime",
+          new Date(selectedCoupen.startDateWithTime)
+        );
+      }
+      if (selectedCoupen.endDateWithTime) {
+        setValue("endDateWithTime", new Date(selectedCoupen.endDateWithTime));
+      }
+    }
+  }, [selectedCoupen, setValue]);
 
   return (
     <Drawer
