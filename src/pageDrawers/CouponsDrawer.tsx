@@ -38,8 +38,8 @@ interface IFormInput {
   minAmount: number;
   maxAmount: number;
   availability: boolean;
-  startDateWithTime: string;
-  endDateWithTime: string;
+  startDateWithTime: Date;
+  endDateWithTime: Date;
 }
 
 const defaultValues = {
