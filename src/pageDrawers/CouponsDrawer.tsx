@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react"; // Import useEffect
 import Drawer from "@mui/material/Drawer";
 import { useForm, Controller } from "react-hook-form";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { format } from "date-fns";
+import { parseISO } from "date-fns";
 import {
   Typography,
   Box,
@@ -33,7 +38,7 @@ interface IFormInput {
   minAmount: number;
   maxAmount: number;
   availability: boolean;
-  startDateWithTime: string; // Change type as needed
+  startDateWithTime: string;
   endDateWithTime: string;
 }
 
@@ -72,9 +77,11 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       minAmount: 0,
       maxAmount: 0,
       availability: true,
-      startDateWithTime: selectedCoupen?.startDateWithTime || "", // Use the value from selectedCoupon
+      startDateWithTime: selectedCoupen?.startDateWithTime || "",
       endDateWithTime: selectedCoupen?.endDateWithTime || "",
     },
+    mode: "onSubmit", // Validate only on submit
+    reValidateMode: "onChange",
   });
 
   const createCoupenMutation = useCreateCoupen();
@@ -92,8 +99,15 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       setValue("minAmount", selectedCoupen.minAmount);
       setValue("maxAmount", selectedCoupen.maxAmount);
       setValue("availability", selectedCoupen.availability);
-      setValue("startDateWithTime", selectedCoupen.startDateWithTime);
-      setValue("endDateWithTime", selectedCoupen.endDateWithTime);
+      if (selectedCoupen.startDateWithTime) {
+        setValue(
+          "startDateWithTime",
+          parseISO(selectedCoupen.startDateWithTime)
+        );
+      }
+      if (selectedCoupen.endDateWithTime) {
+        setValue("endDateWithTime", parseISO(selectedCoupen.endDateWithTime));
+      }
     }
   }, [selectedCoupen, setValue]);
 
@@ -124,8 +138,14 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       formData.append("minAmount", data.minAmount.toString());
       formData.append("maxAmount", data.maxAmount.toString());
       formData.append("availability", data.availability.toString());
-      formData.append("startDateWithTime", data.startDateWithTime.toString());
-      formData.append("endDateWithTime", data.endDateWithTime.toString());
+      formData.append(
+        "startDateWithTime",
+        format(new Date(data.startDateWithTime), "MM/dd/yyyy HH:mm:ss")
+      );
+      formData.append(
+        "endDateWithTime",
+        format(new Date(data.endDateWithTime), "MM/dd/yyyy HH:mm:ss")
+      );
 
       if (!isEdit) {
         await createCoupenMutation.mutateAsync(formData, {
@@ -298,6 +318,86 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
           />
         </Box>
 
+        {/* <Box py={1}>
+        
+          <Controller
+            name="startDateWithTime"
+            control={control}
+            rules={{ required: "Start Date & Time is required" }}
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                  {...field}
+                  label="Start Date & Time"
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      fullWidth
+                      size="small"
+                      error={!!errors.startDateWithTime}
+                      helperText={errors.startDateWithTime?.message}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            )}
+          />
+        </Box> */}
+        <Box py={1}>
+          <Controller
+            name="startDateWithTime"
+            control={control}
+            rules={{ required: "Start Date & Time is required" }}
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                  {...field}
+                  label="Start Date & Time"
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      fullWidth: true,
+                      size: "small",
+                      error: !!errors.startDateWithTime,
+                      helperText: errors.startDateWithTime
+                        ? errors.startDateWithTime.message
+                        : "",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            )}
+          />
+        </Box>
+
+        {/* End Date and Time Picker */}
+        <Box py={1}>
+          <Controller
+            name="endDateWithTime"
+            control={control}
+            rules={{ required: "End Date & Time is required" }}
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                  {...field}
+                  label="End Date & Time"
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      fullWidth: true,
+                      size: "small",
+                      error: !!errors.endDateWithTime,
+                      helperText: errors.endDateWithTime
+                        ? errors.endDateWithTime.message
+                        : "",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            )}
+          />
+        </Box>
         {/* Availability (Switch) */}
         <Box py={1} display="flex" alignItems="center">
           <Typography variant="subtitle1" sx={{ flexGrow: 1 }}>
@@ -315,60 +415,6 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
             )}
           />
         </Box>
-        {/* Start Date with Time */}
-        <Box py={1}>
-          <Typography variant="subtitle1">Start Date & Time *</Typography>
-          <Controller
-            name="startDateWithTime"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                type="datetime-local"
-                variant="outlined"
-                value={field.value || ""} // Use field.value
-                fullWidth
-                size="small"
-                error={!!errors.startDateWithTime}
-                helperText={errors.startDateWithTime?.message}
-                inputProps={{
-                  step: 300, // 5 minutes
-                }}
-                {...register("startDateWithTime", {
-                  required: "Start date and time are required",
-                })}
-              />
-            )}
-          />
-        </Box>
-
-        {/* End Date with Time */}
-        <Box py={1}>
-          <Typography variant="subtitle1">End Date & Time *</Typography>
-          <Controller
-            name="endDateWithTime"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                type="datetime-local"
-                value={field.value || ""}
-                variant="outlined"
-                fullWidth
-                size="small"
-                error={!!errors.endDateWithTime}
-                helperText={errors.endDateWithTime?.message}
-                inputProps={{
-                  step: 300, // 5 minutes
-                }}
-                {...register("endDateWithTime", {
-                  required: "End date and time are required",
-                })}
-              />
-            )}
-          />
-        </Box>
-
         <Box py={2}>
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Save Coupon

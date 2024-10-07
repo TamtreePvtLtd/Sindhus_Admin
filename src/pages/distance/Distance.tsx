@@ -98,7 +98,7 @@ function Distance() {
           onRowsPerPageChange={setRowsPerPage}
           onPageChange={setPage}
           onAddClick={handleAddDistanceClick}
-          addButtonText={" + Add Discount"}
+          addButtonText={" + Add Distance"}
         />
         <Grid item xs={12}>
           <TableContainer elevation={0} component={Paper}>
