@@ -25,8 +25,8 @@ export interface ICoupen {
   minAmount: number;
   maxAmount: number;
   availability: boolean;
-  startDateWithTime
-  : string; endDateWithTime: string
+  startDateWithTime: Date;
+  endDateWithTime: Date;
 }
 
 export interface ISubMenu {
