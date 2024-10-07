@@ -220,10 +220,30 @@ function Coupons() {
                         {coupen.maxAmount}
                       </TableCell>
                       <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
-                        {new Date(coupen.startDateWithTime).toLocaleString()}
+                        {new Date(coupen.startDateWithTime).toLocaleString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          }
+                        )}
                       </TableCell>
                       <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>
-                        {new Date(coupen.endDateWithTime).toLocaleString()}
+                        {new Date(coupen.endDateWithTime).toLocaleString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          }
+                        )}
                       </TableCell>
 
                       <TableCell sx={{ textAlign: "left", fontWeight: 600 }}>

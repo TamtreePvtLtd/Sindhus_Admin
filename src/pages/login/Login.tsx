@@ -211,7 +211,7 @@ function Login() {
                     ),
                   }}
                 />
-                <span
+                {/* <span
                   style={{
                     float: "right",
                     color: theme.palette.primary.main,
@@ -220,7 +220,7 @@ function Login() {
                   onClick={handleOpenForgotPasswordDialog}
                 >
                   Forgot Password?
-                </span>
+                </span> */}
                 {/* <Link
                   to={paths.REGISTER}
                   style={{
