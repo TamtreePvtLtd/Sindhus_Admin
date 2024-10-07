@@ -99,17 +99,17 @@ const CouponsDrawer: React.FC<IProps> = (props) => {
       setValue("minAmount", selectedCoupen.minAmount);
       setValue("maxAmount", selectedCoupen.maxAmount);
       setValue("availability", selectedCoupen.availability);
+
+      // Correct date parsing
       if (selectedCoupen.startDateWithTime) {
-        setValue(
-          "startDateWithTime",
-          parseISO(selectedCoupen.startDateWithTime)
-        );
+        setValue("startDateWithTime", new Date(selectedCoupen.startDateWithTime));
       }
       if (selectedCoupen.endDateWithTime) {
-        setValue("endDateWithTime", parseISO(selectedCoupen.endDateWithTime));
+        setValue("endDateWithTime", new Date(selectedCoupen.endDateWithTime));
       }
     }
   }, [selectedCoupen, setValue]);
+
 
   // Handle form submission
   const onSubmit = async (data: IFormInput) => {
