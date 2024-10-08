@@ -21,6 +21,7 @@ export interface PaymentData {
   couponName: string;
   totalWithoutCoupon: string;
   addressURL: string;
+  notes: string;
   __v: number;
 }
 
