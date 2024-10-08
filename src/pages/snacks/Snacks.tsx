@@ -371,6 +371,14 @@ function Snacks() {
                   color: "white",
                 }}
               >
+                Notes
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
                 Item Title
               </TableCell>
               <TableCell
@@ -495,6 +503,9 @@ function Snacks() {
                             >
                               {payment.addressURL}
                             </a>
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            {payment.notes}
                           </TableCell>
                         </>
                       )}
