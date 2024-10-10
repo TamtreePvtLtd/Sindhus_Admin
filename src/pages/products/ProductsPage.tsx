@@ -7,6 +7,7 @@ import {
   FormControlLabel,
   IconButton,
   Paper,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -26,6 +27,7 @@ import {
   useDeleteProduct,
   useGetAllProduct,
   useGetProducts,
+  useUpdateAvailability,
 } from "../../customRQHooks/Hooks";
 import { useSnackBar } from "../../context/SnackBarContext";
 import { IProduct, IProductPageMenuDropDown } from "../../interface/types";
@@ -53,6 +55,7 @@ function ProductsPage() {
     selectedSubmenuValues
   );
   const { data: allProduct, refetch } = useGetAllProduct(page, rowsPerPage);
+  const updatemutation = useUpdateAvailability();
 
   useEffect(() => {
     if (selectedMenuValue === null) {
@@ -139,6 +142,35 @@ function ProductsPage() {
     setSelectedMenuValue(null);
     setSelectedSubmenuValues([]);
     refetch();
+  };
+
+  const handleSwitchChange = async (id, productItem) => {
+    const updatedAvailabilityStatus =
+      productItem.availability === "true" ? "false" : "true";
+
+    // Optimistically update the UI
+    productItem.availability = updatedAvailabilityStatus;
+
+    try {
+      await updatemutation.mutateAsync({
+        id,
+        availability: updatedAvailabilityStatus,
+      });
+      refetch();
+      updateSnackBarState(
+        true,
+        "Availability updated successfully.",
+        "success"
+      );
+    } catch (error) {
+      // Revert the optimistic update if the request fails
+      productItem.availability = updatedAvailabilityStatus === "true" ? "false" : "true";
+      updateSnackBarState(
+        true,
+        "Failed to update availability status.",
+        "error"
+      );
+    }
   };
 
   return (
@@ -235,6 +267,20 @@ function ProductsPage() {
                 >
                   <Typography variant="subtitle1" fontWeight="bold">
                     Image
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
+                    width: "10%",
+                    background: (theme) => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Availability
                   </Typography>
                 </TableCell>
                 <TableCell
@@ -344,6 +390,12 @@ function ProductsPage() {
                         width="50px"
                       />
                     </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={item?.availability === "true"}
+                        onChange={() => handleSwitchChange(item._id, item)}
+                      />
+                    </TableCell>
                     <TableCell
                       align="left"
                       sx={{ textAlign: "left", fontWeight: 600 }}
@@ -392,7 +444,7 @@ function ProductsPage() {
                       {item.dailyMenuSizeWithPrice.length > 0 &&
                         item.dailyMenuSizeWithPrice.map((qty, index) => (
                           <>
-                            <Box key={index} >
+                            <Box key={index}>
                               <>
                                 {qty.size} - ${qty.price}
                               </>

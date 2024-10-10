@@ -6,7 +6,11 @@ import {
   IUser,
 } from "../interface/customer";
 import { IMenu } from "../interface/menus";
-import { cartItems, DistanceBasedDeliveryCharge, PaymentData } from "../interface/snacks";
+import {
+  cartItems,
+  DistanceBasedDeliveryCharge,
+  PaymentData,
+} from "../interface/snacks";
 import { ICoupen } from "../interface/menus";
 import {
   ICateringEnquiries,
@@ -282,7 +286,7 @@ const deleteEnquiry = async (enquiryId: string) => {
 };
 
 const createMenu = async (newMenu: FormData) => {
-  console.log('new menu', newMenu);
+  console.log("new menu", newMenu);
 
   try {
     var response = await httpWithMultipartFormData.post<IMenu>(
@@ -308,21 +312,21 @@ const updateMenu = async (updateMenu: FormData) => {
   }
 };
 
-const createCoupen = async (newCoupen: { [key: string]: any }) => { // Specify the type accordingly
+const createCoupen = async (newCoupen: { [key: string]: any }) => {
+  // Specify the type accordingly
   try {
-    console.log('newCoupen', newCoupen);
+    console.log("newCoupen", newCoupen);
 
     var response = await httpWithMultipartFormData.post<ICoupen>(
       "/coupen/createCoupen",
       newCoupen,
       {
         headers: {
-          'Content-Type': 'application/json', // Set the correct content type for JSON
+          "Content-Type": "application/json", // Set the correct content type for JSON
         },
       }
-
     );
-    console.log('response', response);
+    console.log("response", response);
 
     return response.data;
   } catch (error) {
@@ -337,7 +341,7 @@ const updateCoupen = async (updateCoupen: { [key: string]: any }) => {
       updateCoupen,
       {
         headers: {
-          'Content-Type': 'application/json', // Set the correct content type for JSON
+          "Content-Type": "application/json", // Set the correct content type for JSON
         },
       }
     );
@@ -416,7 +420,8 @@ const changeisResponseStatus = async (enquiryId: any) => {
 const getPayments = async () => {
   try {
     const response = await httpWithoutCredentials.get<PaymentData[]>(
-      "/payment/transaction")
+      "/payment/transaction"
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -450,7 +455,6 @@ const getCartItems = async () => {
     return response.data;
   } catch (error) {
     throw error;
-
   }
 };
 
@@ -481,7 +485,21 @@ const updateDeliveryStatus = async ({ orderNumber, deliveredStatus }) => {
     throw error; // Re-throwing the error helps in debugging
   }
 };
+const updateAvailability = async ({ id, availability }) => {
+  console.log("api order number update", id);
 
+  try {
+    const response = await httpWithoutCredentials.put(
+      `/product/updateAvailability/${id}`,
+      { availability },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error updating delivery status:", error);
+    throw error; // Re-throwing the error helps in debugging
+  }
+};
 const deleteOrder = async (orderNumber) => {
   console.log("api order number delete", orderNumber);
 
@@ -510,29 +528,33 @@ const deleteDeliveredPayment = async (orderNumber) => {
 
 const getDistanceBasedDeliveryCharge = async () => {
   try {
-    const response = await httpWithoutCredentials.get<DistanceBasedDeliveryCharge[]>(
-      "/distance/getAllDistances")
+    const response = await httpWithoutCredentials.get<
+      DistanceBasedDeliveryCharge[]
+    >("/distance/getAllDistances");
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-const createDistanceBasedCharge = async (newDistance: { [key: string]: any }) => { // Specify the type accordingly
+const createDistanceBasedCharge = async (newDistance: {
+  [key: string]: any;
+}) => {
+  // Specify the type accordingly
   try {
-    console.log('newCoupen', newDistance);
+    console.log("newCoupen", newDistance);
 
-    var response = await httpWithMultipartFormData.post<DistanceBasedDeliveryCharge>(
-      "/distance/createDistance",
-      newDistance,
-      {
-        headers: {
-          'Content-Type': 'application/json', // Set the correct content type for JSON
-        },
-      }
-
-    );
-    console.log('response', response);
+    var response =
+      await httpWithMultipartFormData.post<DistanceBasedDeliveryCharge>(
+        "/distance/createDistance",
+        newDistance,
+        {
+          headers: {
+            "Content-Type": "application/json", // Set the correct content type for JSON
+          },
+        }
+      );
+    console.log("response", response);
 
     return response.data;
   } catch (error) {
@@ -540,19 +562,21 @@ const createDistanceBasedCharge = async (newDistance: { [key: string]: any }) =>
   }
 };
 
-const updateDistanceBasedCharge = async (updateDistance: { [key: string]: any }) => {
+const updateDistanceBasedCharge = async (updateDistance: {
+  [key: string]: any;
+}) => {
   try {
-
     var id = updateDistance.get("id");
-    var response = await httpWithMultipartFormData.put<DistanceBasedDeliveryCharge>(
-      `distance/updateDistance/${id}`,
-      updateDistance,
-      {
-        headers: {
-          'Content-Type': 'application/json', // Set the correct content type for JSON
-        },
-      }
-    );
+    var response =
+      await httpWithMultipartFormData.put<DistanceBasedDeliveryCharge>(
+        `distance/updateDistance/${id}`,
+        updateDistance,
+        {
+          headers: {
+            "Content-Type": "application/json", // Set the correct content type for JSON
+          },
+        }
+      );
     return response.data;
   } catch (error) {
     throw error;
@@ -589,19 +613,15 @@ const updatePaymentData = async ({ orderNumber, data }) => {
 
 const getResendMailItems = async (cartItems, paymentData) => {
   try {
-    const response = await httpWithoutCredentials.get(
-      `/cart/resendMail`,
-      {
-        params: { cartItems, paymentData } // Send data as query parameters
-      }
-    );
+    const response = await httpWithoutCredentials.get(`/cart/resendMail`, {
+      params: { cartItems, paymentData }, // Send data as query parameters
+    });
 
     return response.data;
   } catch (error) {
     throw error;
   }
 };
-
 
 export {
   getResendMailItems,
@@ -644,5 +664,6 @@ export {
   getAllCoupens,
   deleteCoupen,
   updateCoupen,
-  createCoupen
+  createCoupen,
+  updateAvailability,
 };
