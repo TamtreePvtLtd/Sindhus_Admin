@@ -521,7 +521,7 @@ function Snacks() {
                             {payment.couponName}
                           </TableCell>
                           <TableCell rowSpan={filteredCartItems.length}>
-                            {Number(payment.totalWithCoupon).toFixed(2)}
+                            {Number(payment.amount / 100).toFixed(2)}
                           </TableCell>
 
                           <TableCell rowSpan={filteredCartItems.length}>
