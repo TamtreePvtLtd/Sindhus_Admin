@@ -32,6 +32,7 @@ import {
   deleteDistanceBasedCharge,
   updatePaymentData,
   getResendMailItems,
+  updateAvailability,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -297,6 +298,17 @@ export const useUpdateDeliveryStatus = () => {
   });
 };
 
+export const useUpdateAvailability = () => {
+  const queryClient = useQueryClient();
+  return useMutation(updateAvailability, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["product"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
 export const useDeleteOrder = () => {
   const queryClient = useQueryClient();
   return useMutation(deleteOrder, {
@@ -385,4 +397,3 @@ export const useUpdatePaymentData = () => {
 //     refetchOnWindowFocus: false,
 //   });
 // };
-

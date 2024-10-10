@@ -34,6 +34,7 @@ export interface IProduct {
   servingSizeDescription: string;
   ingredients: string;
   dailyMenuSizeWithPrice: IDailyMenuSizeWithPrice[];
+  availability: string;
 }
 
 export interface IProductMenu {
@@ -138,10 +139,9 @@ export interface IDiningOutMenu {
   productIds: string[];
   _id: string;
 }
- export interface ISpecial {
+export interface ISpecial {
   id: string;
-   image: string;
-   name: string;
-   created_at: string
-
+  image: string;
+  name: string;
+  created_at: string;
 }
