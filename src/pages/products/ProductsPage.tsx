@@ -145,24 +145,26 @@ function ProductsPage() {
   };
 
   const handleSwitchChange = async (id, productItem) => {
-    console.log("deliveredStatus", productItem.availability);
-
     const updatedAvailabilityStatus =
-      productItem.availability == "true" ? "false" : "true";
+      productItem.availability === "true" ? "false" : "true";
+
+    // Optimistically update the UI
+    productItem.availability = updatedAvailabilityStatus;
 
     try {
       await updatemutation.mutateAsync({
         id,
         availability: updatedAvailabilityStatus,
       });
-
+      refetch();
       updateSnackBarState(
         true,
         "Availability updated successfully.",
         "success"
       );
-      refetch();
     } catch (error) {
+      // Revert the optimistic update if the request fails
+      productItem.availability = updatedAvailabilityStatus === "true" ? "false" : "true";
       updateSnackBarState(
         true,
         "Failed to update availability status.",
@@ -170,6 +172,7 @@ function ProductsPage() {
       );
     }
   };
+
   return (
     <Box sx={{ py: 2, marginLeft: "40px", marginRight: "40px" }}>
       <Box
@@ -391,7 +394,6 @@ function ProductsPage() {
                       <Switch
                         checked={item?.availability === "true"}
                         onChange={() => handleSwitchChange(item._id, item)}
-                        // disabled={item?.availability === "true"}
                       />
                     </TableCell>
                     <TableCell
