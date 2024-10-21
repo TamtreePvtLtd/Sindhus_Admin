@@ -5,6 +5,7 @@ import {
   Document,
   StyleSheet,
   Image,
+  Link,
 } from "@react-pdf/renderer";
 
 // Define styles
@@ -38,8 +39,8 @@ const styles = StyleSheet.create({
   totalAmount: {
     marginTop: 20,
     fontSize: 14, // Increased font size for the total amount
-      fontWeight: "bold",
-    marginLeft:"280px"
+    fontWeight: "bold",
+    marginLeft: "280px",
   },
   boldText: {
     fontFamily: "Times-Bold",
@@ -55,8 +56,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20, // Add margin to space out from the rest of the content
   },
+  contactContainer: {
+    textAlign: "center",
+    paddingTop: 10,
+    marginTop: 20, // Adds spacing before contact section
+  },
+  contactText: {
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 5,
+  },
+  contactLink: {
+    fontSize: 14,
+    color: "#038265",
+    marginBottom: 5,
+  },
+  contactHeader: {
+    fontSize: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    marginBottom: 10,
+    color: "#555",
+    textAlign: "center",
+  },
+  signature: {
+    fontSize: 14,
+    color: "#038265",
+    marginTop: 10,
+    textAlign: "center",
+  },
 });
 
+// PDF Bill Component
 const PDFBill = ({ payment, filteredCartItems }) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -109,6 +140,7 @@ const PDFBill = ({ payment, filteredCartItems }) => (
         <Text style={[styles.section, styles.text]}>
           Delivery Date: {new Date(payment.deliveryDate).toLocaleDateString()}
         </Text>
+
         {/* Table for items */}
         <View style={styles.table}>
           <View style={[styles.row, styles.header]}>
@@ -126,18 +158,40 @@ const PDFBill = ({ payment, filteredCartItems }) => (
             </View>
           ))}
         </View>
+
         {/* Total Amount */}
-        {/* <View>
-          <Text style={styles.totalAmount}>
-            Amount without Coupen: $
-            {Number(payment.totalWithoutCoupon).toFixed(2)}
-          </Text>
-        </View> */}
         <View>
           <Text style={styles.totalAmount}>
             Total Amount with Tax: $ {Number(payment.amount / 100).toFixed(2)}
           </Text>
         </View>
+      </View>
+
+      {/* Contact Us Section */}
+      <View style={styles.contactContainer}>
+        <Text style={styles.contactHeader}>Contact Us:</Text>
+        <Text style={styles.contactText}>
+          2700 E Eldorado Pkwy, #203, Little Elm, Texas - 75068
+        </Text>
+        <Link href="tel:+19402792536" style={styles.contactLink}>
+          +1 940-279-2536
+        </Link>
+        <Link
+          href="mailto:sindhuskitchenusa@gmail.com"
+          style={styles.contactLink}
+        >
+          sindhuskitchenusa@gmail.com
+        </Link>
+        <Link href="http://sindhuskitchen.com" style={styles.contactLink}>
+          sindhuskitchen.com
+        </Link>
+        <Text style={styles.signature}>
+          <b>
+            Best Regards,
+            <br />
+            SINDHU'S
+          </b>
+        </Text>
       </View>
     </Page>
   </Document>
