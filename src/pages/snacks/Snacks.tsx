@@ -31,6 +31,8 @@ import {
 import SnacksDrawer from "../../pageDrawers/Snacks";
 import { getResendMailItems } from "../../services/api";
 import logo from "../../../public/assets/images/output-onlinepngtools (1).png";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PDFBill from "../../common/components/PDFBill";
 
 function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
@@ -166,7 +168,7 @@ function Snacks() {
             ? `${payment.totalWithoutCoupon} `
             : "",
           "Total Amount with Coupon": firstItemForOrder
-            ? `${payment.totalWithCoupon} `
+            ? `${(payment.amount/ 100).toFixed(2)} `
             : "",
           "Delivered Status": firstItemForOrder
             ? matchingCart?.deliveredStatus === "true"
@@ -397,6 +399,7 @@ function Snacks() {
               >
                 Quantity
               </TableCell>
+
               <TableCell
                 sx={{
                   backgroundColor: theme.palette.primary.main,
@@ -444,6 +447,14 @@ function Snacks() {
                 }}
               >
                 Resend Mail
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
+                Bill
               </TableCell>
             </TableRow>
           </TableHead>
@@ -512,6 +523,7 @@ function Snacks() {
                       <TableCell>{item.title}</TableCell>
                       <TableCell>{item.size}</TableCell>
                       <TableCell>{item.quantity}</TableCell>
+
                       {index === 0 && (
                         <>
                           <TableCell rowSpan={filteredCartItems.length}>
@@ -558,6 +570,29 @@ function Snacks() {
                             >
                               Resend Mail
                             </Button>
+                          </TableCell>
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            <PDFDownloadLink
+                              document={
+                                <PDFBill
+                                  payment={payment}
+                                  filteredCartItems={filteredCartItems}
+                                />
+                              }
+                              fileName={`invoice_${payment.orderNumber}.pdf`}
+                            >
+                              {({ blob, url, loading, error }) => {
+                                if (loading)
+                                  return <span>Loading document...</span>;
+                                if (error)
+                                  return <span>Error loading document</span>;
+                                return (
+                                  <Button variant="contained" color="primary">
+                                    print&nbsp;Order
+                                  </Button>
+                                );
+                              }}
+                            </PDFDownloadLink>
                           </TableCell>
                         </>
                       )}
