@@ -147,7 +147,7 @@ const PDFBill = ({ payment, filteredCartItems }) => (
             <Text style={styles.cell}>Item</Text>
             <Text style={styles.cell}>Size</Text>
             <Text style={styles.cell}>Quantity</Text>
-            <Text style={styles.cell}>Price</Text>
+            <Text style={styles.cell}>Unit Price</Text>
           </View>
           {filteredCartItems.map((item, index) => (
             <View style={styles.row} key={index}>
@@ -161,9 +161,26 @@ const PDFBill = ({ payment, filteredCartItems }) => (
 
         {/* Total Amount */}
         <View>
-          <Text style={styles.totalAmount}>
-            Total Amount with Tax: $ {Number(payment.amount / 100).toFixed(2)}
-          </Text>
+          {payment.deliveryOption === "Pickup" ? (
+            <Text
+              style={{
+                ...styles.totalAmount, // Use the base totalAmount styles
+                marginLeft: "280px", // Set marginLeft to 280px for Pickup
+              }}
+            >
+              Total Amount with Tax: $ {Number(payment.amount / 100).toFixed(2)}
+            </Text>
+          ) : (
+            <Text
+              style={{
+                ...styles.totalAmount, // Use the base totalAmount styles
+                marginLeft: "170px", // Set marginLeft to 200px for Delivery
+              }}
+            >
+              Total Amount with Tax and Delivery Charge: $
+              {Number(payment.amount / 100).toFixed(2)}
+            </Text>
+          )}
         </View>
       </View>
 
