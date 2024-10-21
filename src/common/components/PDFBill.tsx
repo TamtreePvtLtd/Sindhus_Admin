@@ -8,7 +8,6 @@ import {
   Link,
 } from "@react-pdf/renderer";
 
-// Define styles
 const styles = StyleSheet.create({
   page: { padding: 10, fontFamily: "Times-Roman" },
   section: { marginBottom: 10 },
@@ -25,20 +24,20 @@ const styles = StyleSheet.create({
   header: {
     fontWeight: 500,
     marginBottom: 5,
-    fontSize: 14, // Increased font size for header
+    fontSize: 14,
   },
   cell: {
     flex: 1,
     marginBottom: 5,
-    fontSize: 12, // Increased font size for table cells
+    fontSize: 12, 
   },
   text: {
-    fontSize: 12, // Increased font size for regular text
+    fontSize: 12, 
     marginBottom: 5,
   },
   totalAmount: {
     marginTop: 20,
-    fontSize: 14, // Increased font size for the total amount
+    fontSize: 14,
     fontWeight: "bold",
     marginLeft: "280px",
   },
@@ -47,19 +46,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logo: {
-    width: 50, // Reduced the width of the logo
-    height: 50, // Reduced the height of the logo
+    width: 50,
+    height: 50, 
   },
   headerContainer: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginBottom: 20, // Add margin to space out from the rest of the content
+    marginBottom: 20, 
   },
   contactContainer: {
     textAlign: "center",
     paddingTop: 10,
-    marginTop: 20, // Adds spacing before contact section
+    marginTop: 20, 
   },
   contactText: {
     fontSize: 14,
@@ -87,28 +86,26 @@ const styles = StyleSheet.create({
   },
 });
 
-// PDF Bill Component
 const PDFBill = ({ payment, filteredCartItems }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.headerContainer}>
         <Image
-          style={styles.logo} // Apply the logo style
+          style={styles.logo}
           src="assets/images/output-onlinepngtools (1).png"
         />
         <Text
           style={{
             marginTop: 10,
-            fontSize: 14, // Adjusted to match increased font size
+            fontSize: 14,
             color: "#038265",
-            textAlign: "center", // Ensure text alignment is center
+            textAlign: "center",
           }}
         >
           SINDHU’S
         </Text>
       </View>
       <View>
-        {/* Display Order Number with a bold label */}
         <Text style={styles.text}>
           <Text>Order Number: </Text>
           <Text style={styles.boldText}>{payment.orderNumber}</Text>
@@ -134,14 +131,16 @@ const PDFBill = ({ payment, filteredCartItems }) => (
         <Text style={[styles.section, styles.text]}>
           Email: {payment.email}
         </Text>
-        <Text style={[styles.section, styles.text]}>
-          Coupon Used: {payment.couponName}
-        </Text>
+        {payment.couponName && (
+          <Text style={[styles.section, styles.text]}>
+            Coupon Used: {payment.couponName}
+          </Text>
+        )}
+
         <Text style={[styles.section, styles.text]}>
           Delivery Date: {new Date(payment.deliveryDate).toLocaleDateString()}
         </Text>
 
-        {/* Table for items */}
         <View style={styles.table}>
           <View style={[styles.row, styles.header]}>
             <Text style={styles.cell}>Item</Text>
@@ -159,13 +158,12 @@ const PDFBill = ({ payment, filteredCartItems }) => (
           ))}
         </View>
 
-        {/* Total Amount */}
         <View>
           {payment.deliveryOption === "Pickup" ? (
             <Text
               style={{
-                ...styles.totalAmount, // Use the base totalAmount styles
-                marginLeft: "280px", // Set marginLeft to 280px for Pickup
+                ...styles.totalAmount,
+                marginLeft: "280px",
               }}
             >
               Total Amount with Tax: $ {Number(payment.amount / 100).toFixed(2)}
@@ -173,8 +171,8 @@ const PDFBill = ({ payment, filteredCartItems }) => (
           ) : (
             <Text
               style={{
-                ...styles.totalAmount, // Use the base totalAmount styles
-                marginLeft: "170px", // Set marginLeft to 200px for Delivery
+                ...styles.totalAmount,
+                marginLeft: "170px",
               }}
             >
               Total Amount with Tax and Delivery Charge: $
@@ -184,7 +182,6 @@ const PDFBill = ({ payment, filteredCartItems }) => (
         </View>
       </View>
 
-      {/* Contact Us Section */}
       <View style={styles.contactContainer}>
         <Text style={styles.contactHeader}>Contact Us:</Text>
         <Text style={styles.contactText}>

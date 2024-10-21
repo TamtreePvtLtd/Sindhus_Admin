@@ -586,7 +586,11 @@ function Snacks() {
                                   return <span>Loading document...</span>;
                                 if (error)
                                   return <span>Error loading document</span>;
-                                return <button>Download Invoice</button>;
+                                return (
+                                  <Button variant="contained" color="primary">
+                                    print&nbsp;Order
+                                  </Button>
+                                );
                               }}
                             </PDFDownloadLink>
                           </TableCell>
