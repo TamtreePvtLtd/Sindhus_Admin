@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     marginBottom: 5,
-    fontSize: 12, 
+    fontSize: 12,
   },
   text: {
-    fontSize: 12, 
+    fontSize: 12,
     marginBottom: 5,
   },
   totalAmount: {
@@ -47,18 +47,18 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 50,
-    height: 50, 
+    height: 50,
   },
   headerContainer: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginBottom: 20, 
+    marginBottom: 20,
   },
   contactContainer: {
     textAlign: "center",
     paddingTop: 10,
-    marginTop: 20, 
+    marginTop: 20,
   },
   contactText: {
     fontSize: 14,
@@ -147,6 +147,7 @@ const PDFBill = ({ payment, filteredCartItems }) => (
             <Text style={styles.cell}>Size</Text>
             <Text style={styles.cell}>Quantity</Text>
             <Text style={styles.cell}>Unit Price</Text>
+            <Text style={styles.cell}>Price</Text>
           </View>
           {filteredCartItems.map((item, index) => (
             <View style={styles.row} key={index}>
@@ -154,6 +155,9 @@ const PDFBill = ({ payment, filteredCartItems }) => (
               <Text style={styles.cell}>{item.size}</Text>
               <Text style={styles.cell}>{item.quantity}</Text>
               <Text style={styles.cell}>${item.price}</Text>
+              <Text style={styles.cell}>
+                ${(item.quantity * item.price).toFixed(2)}
+              </Text>
             </View>
           ))}
         </View>
@@ -163,7 +167,7 @@ const PDFBill = ({ payment, filteredCartItems }) => (
             <Text
               style={{
                 ...styles.totalAmount,
-                marginLeft: "280px",
+                marginLeft: "310px",
               }}
             >
               Total Amount with Tax: $ {Number(payment.amount / 100).toFixed(2)}
@@ -172,7 +176,7 @@ const PDFBill = ({ payment, filteredCartItems }) => (
             <Text
               style={{
                 ...styles.totalAmount,
-                marginLeft: "170px",
+                marginLeft: "200px",
               }}
             >
               Total Amount with Tax and Delivery Charge: $
