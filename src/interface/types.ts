@@ -35,6 +35,7 @@ export interface IProduct {
   ingredients: string;
   dailyMenuSizeWithPrice: IDailyMenuSizeWithPrice[];
   availability: string;
+  hideProduct: string;
 }
 
 export interface IProductMenu {

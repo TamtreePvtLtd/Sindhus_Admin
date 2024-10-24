@@ -33,6 +33,7 @@ import {
   updatePaymentData,
   getResendMailItems,
   updateAvailability,
+  updateHideProduct,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -309,6 +310,18 @@ export const useUpdateAvailability = () => {
     },
   });
 };
+export const useUpdateHideProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation(updateHideProduct, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["product"] });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
 export const useDeleteOrder = () => {
   const queryClient = useQueryClient();
   return useMutation(deleteOrder, {

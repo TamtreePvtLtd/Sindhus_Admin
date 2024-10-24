@@ -28,6 +28,7 @@ import {
   useGetAllProduct,
   useGetProducts,
   useUpdateAvailability,
+  useUpdateHideProduct,
 } from "../../customRQHooks/Hooks";
 import { useSnackBar } from "../../context/SnackBarContext";
 import { IProduct, IProductPageMenuDropDown } from "../../interface/types";
@@ -56,6 +57,7 @@ function ProductsPage() {
   );
   const { data: allProduct, refetch } = useGetAllProduct(page, rowsPerPage);
   const updatemutation = useUpdateAvailability();
+  const updateHideProduct = useUpdateHideProduct();
 
   useEffect(() => {
     if (selectedMenuValue === null) {
@@ -143,7 +145,26 @@ function ProductsPage() {
     setSelectedSubmenuValues([]);
     refetch();
   };
+  
+ const handleHideProductChange = async (id, productItem) => {
+   const updatedhideProductStatus =
+     productItem.hideProduct === "false" ? "true" : "false";
+   productItem.hideProduct = updatedhideProductStatus;
 
+   try {
+     await updateHideProduct.mutateAsync({
+       id,
+       hideProduct: updatedhideProductStatus,
+     });
+     refetch();
+     updateSnackBarState(true, "Product Visibility updated successfully.", "success");
+   } catch (error) {
+     productItem.hideProduct =
+       updatedhideProductStatus === "true" ? "false" : "true";
+     updateSnackBarState(true, "Failed to update Visibility status.", "error");
+   }
+  };
+  
   const handleSwitchChange = async (id, productItem) => {
     const updatedAvailabilityStatus =
       productItem.availability === "true" ? "false" : "true";
@@ -288,6 +309,20 @@ function ProductsPage() {
                   sx={{
                     fontWeight: "bolder",
                     fontSize: "large",
+                    width: "10%",
+                    background: (theme) => theme.palette.primary.main,
+                    color: "white",
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Hide Product
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{
+                    fontWeight: "bolder",
+                    fontSize: "large",
                     width: "15%",
                     background: (theme) => theme.palette.primary.main,
                     color: "white",
@@ -392,8 +427,22 @@ function ProductsPage() {
                     </TableCell>
                     <TableCell>
                       <Switch
-                        checked={item?.availability === "true"}
+                        checked={item?.availability === "false"}
                         onChange={() => handleSwitchChange(item._id, item)}
+                      />
+                    </TableCell>
+                    {/* 
+                      <Switch
+                        checked={item?.hideProduct === "true"}
+                        onChange={() => handleHideProductChange(item._id, item)}
+                      />
+                    </TableCell> */}
+                    <TableCell>
+                      <Checkbox
+                        checked={item?.hideProduct === "true"}
+                        onChange={() => handleHideProductChange(item._id, item)}
+                        color="primary" // Changes the color
+                        inputProps={{ "aria-label": "Hide Product" }} // Adds accessibility
                       />
                     </TableCell>
                     <TableCell
