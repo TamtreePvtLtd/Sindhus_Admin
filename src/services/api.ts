@@ -485,7 +485,7 @@ const updateDeliveryStatus = async ({ orderNumber, deliveredStatus }) => {
     throw error; // Re-throwing the error helps in debugging
   }
 };
-const updateAvailability = async ({ id, availability }) => {
+const updateAvailability = async ({ id, availability}) => {
   console.log("api order number update", id);
 
   try {
@@ -500,6 +500,23 @@ const updateAvailability = async ({ id, availability }) => {
     throw error; // Re-throwing the error helps in debugging
   }
 };
+
+const updateHideProduct = async ({ id, hideProduct }) => {
+  console.log("api order number update", id);
+
+  try {
+    const response = await httpWithoutCredentials.put(
+      `/product/updateHideProduct/${id}`,
+      { hideProduct },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error updating delivery status:", error);
+    throw error; // Re-throwing the error helps in debugging
+  }
+};
+
 const deleteOrder = async (orderNumber) => {
   console.log("api order number delete", orderNumber);
 
@@ -626,6 +643,7 @@ const getResendMailItems = async (cartItems, paymentData) => {
 export {
   getResendMailItems,
   updatePaymentData,
+  updateHideProduct,
   deleteDistanceBasedCharge,
   updateDistanceBasedCharge,
   createDistanceBasedCharge,
