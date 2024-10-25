@@ -168,13 +168,14 @@ function Snacks() {
             ? `${payment.totalWithoutCoupon} `
             : "",
           "Total Amount with Coupon": firstItemForOrder
-            ? `${(payment.amount/ 100).toFixed(2)} `
+            ? `${(payment.amount / 100).toFixed(2)} `
             : "",
           "Delivered Status": firstItemForOrder
             ? matchingCart?.deliveredStatus === "true"
               ? "Delivered"
               : "Pending"
             : "",
+          Notes: firstItemForOrder ? payment.notes || "" : "",
         });
         // Set the flag to false after processing the first item for the order
         firstItemForOrder = false;

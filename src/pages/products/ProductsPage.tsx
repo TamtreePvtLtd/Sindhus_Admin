@@ -427,7 +427,7 @@ function ProductsPage() {
                     </TableCell>
                     <TableCell>
                       <Switch
-                        checked={item?.availability === "false"}
+                        checked={item?.availability === "true"}
                         onChange={() => handleSwitchChange(item._id, item)}
                       />
                     </TableCell>
