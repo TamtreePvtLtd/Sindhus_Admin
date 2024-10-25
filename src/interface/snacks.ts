@@ -61,6 +61,7 @@ export interface DownloadData {
   "Coupon Name": string;
   "Total Amount without Coupon": string;
   "Total Amount with Coupon": string;
+  "Notes": string;
 }
 
 export interface DistanceBasedDeliveryCharge {

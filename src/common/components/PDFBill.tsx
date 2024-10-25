@@ -136,7 +136,12 @@ const PDFBill = ({ payment, filteredCartItems }) => (
             Coupon Used: {payment.couponName}
           </Text>
         )}
-
+        <Text style={[styles.section, styles.text]}>
+          Notes: {payment.notes}
+        </Text>
+        <Text style={[styles.section, styles.text]}>
+          Order Date: {new Date(payment.createdAt).toLocaleDateString()}
+        </Text>
         <Text style={[styles.section, styles.text]}>
           Delivery Date: {new Date(payment.deliveryDate).toLocaleDateString()}
         </Text>
