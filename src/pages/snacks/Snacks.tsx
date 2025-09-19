@@ -13,6 +13,7 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { SaveAlt, Delete } from "@mui/icons-material";
@@ -45,8 +46,9 @@ function Snacks() {
   const [selectedPayment, setSelectedPayment] = useState<PaymentData | null>(
     null
   );
-  const [DrawerOpen, setDrawerOpen] = useState(false);
+  const [DrawerOpen, setDrawerOpen] = useState(false); 
   const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const updatemutation = useUpdateDeliveryStatus();
   const deleteOrderMutation = useDeleteOrder();
   const deletePaymentMutation = useDeleteDeliveredPayment();
@@ -228,11 +230,19 @@ function Snacks() {
       <Box
         display="flex"
         justifyContent="space-between"
+        flexDirection={isMobile ? "column" : "row"}
         alignItems="center"
         mb={2}
         mt={2}
       >
-        <Box display="flex" gap="20px">
+        <Box
+          display="flex"
+          flexDirection={isMobile ? "column" : "row"}
+          sx={{
+            gap: isMobile ? "4px" : "16px",
+            padding: isMobile ? "1px" : "16px",
+          }}
+        >
           <div>
             <Typography variant="subtitle1" gutterBottom>
               Filter by Order Number
@@ -242,6 +252,7 @@ function Snacks() {
               variant="outlined"
               value={orderNumberFilter}
               onChange={(e) => setOrderNumberFilter(e.target.value.trim())}
+              size={isMobile ? "small" : "medium"}
             />
           </div>
           <div>
@@ -253,6 +264,7 @@ function Snacks() {
               variant="outlined"
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value.trim())}
+              size={isMobile ? "small" : "medium"}
             />
           </div>
           <div>
@@ -264,6 +276,7 @@ function Snacks() {
               variant="outlined"
               value={titleFilter}
               onChange={(e) => setTitleFilter(e.target.value.trim())}
+              size={isMobile ? "small" : "medium"}
             />
           </div>
           <div>
@@ -274,6 +287,7 @@ function Snacks() {
               value={deliveryStatusFilter}
               onChange={(e) => setDeliveryStatusFilter(e.target.value)}
               variant="outlined"
+              size={isMobile ? "small" : "medium"}
             >
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="delivered">Delivered</MenuItem>
@@ -288,12 +302,20 @@ function Snacks() {
           color="primary"
           startIcon={<SaveAlt />}
           onClick={handleExcelDownload} // Add your download handler here
+          size={isMobile ? "small" : "medium"}
+          sx={{
+            marginTop: isMobile ? "16px" : 0, // Apply margin-top only on mobile
+          }}
         >
           Download Excel
         </Button>
       </Box>
       <TableContainer elevation={0} component={Paper}>
-        <Table stickyHeader aria-label="menus-table">
+        <Table
+          size={isMobile ? "small" : "medium"}
+          stickyHeader
+          aria-label="menus-table"
+        >
           <TableHead className="table-header">
             <TableRow className="table-header-row">
               <TableCell

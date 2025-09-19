@@ -306,24 +306,13 @@ function DiningOutMenu() {
   return (
     <>
       <Grid sx={{ p: 2 }}>
-        {/* <Box >
-          <Typography sx={{
-            fontSize: '1.3rem', display: 'flex',
-            fontWeight: 800
-          }}>
-            Daily Menu
-          </Typography>
-        </Box> */}
-
         <Grid container spacing={2}>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={3}>
             <Box
               sx={{
-                // borderRadius: "10px",
-                // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 overflowY: "auto",
                 maxHeight: "500px",
-                maxWidth: "250px",
+                maxWidth: { xs: "100%", sm: "250px" },
               }}
             >
               {diningOutMenus &&
@@ -361,7 +350,7 @@ function DiningOutMenu() {
               )}
             </Box>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12} sm={9}>
             {selectedMenu !== null && (
               <Box
                 sx={{
@@ -377,7 +366,7 @@ function DiningOutMenu() {
                     diningOutMenus.data
                       .find((item) => item._id === selectedMenu)
                       ?.products.map((product) => (
-                        <Grid item xs={3} key={product._id}>
+                        <Grid item xs={6} sm={3} key={product._id}>
                           <Box
                             sx={{
                               display: "flex",
@@ -394,6 +383,7 @@ function DiningOutMenu() {
                                 overflowY: "hidden",
                                 lineHeight: 1.2,
                                 wordWrap: "break-word",
+                                fontSize: { xs: "0.8rem", sm: "1rem" },
                               }}
                             >
                               {product.title}
@@ -423,31 +413,57 @@ function DiningOutMenu() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: { xs: "center", sm: "flex-end" },
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "center", sm: "flex-end" },
             pb: 3,
-            gap: 3,
+            gap: 1,
           }}
         >
           <Button
             variant="contained"
             onClick={() => setIsClearMenuProductsDialogOpen(true)}
+            sx={{ width: { xs: "60%", sm: "auto" } }}
           >
             Clear Menu Products
           </Button>
-          <Button variant="contained" onClick={() => setClearDialogOpen(true)}>
+          <Button
+            variant="contained"
+            onClick={() => setClearDialogOpen(true)}
+            sx={{ width: { xs: "60%", sm: "auto" } }}
+          >
             Clear Products
           </Button>
-          <Button
-            variant="outlined"
-            onClick={handleCancel}
-            sx={{ maxWidth: "64px", color: theme.palette.primary.main }}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "row", sm: "row" },
+              justifyContent: { xs: "center", sm: "flex-end" },
+              width: { xs: "100%", sm: "auto" },
+              gap: 2,
+            }}
           >
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleSave}>
-            Save
-          </Button>
+            <Button
+              variant="outlined"
+              onClick={handleCancel}
+              sx={{
+                maxWidth: "64px",
+                width: { xs: "50%", sm: "auto" },
+                color: theme.palette.primary.main,
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              sx={{ width: { xs: "50%", sm: "auto" }, maxWidth: "80px" }}
+            >
+              Save
+            </Button>
+          </Box>
         </Box>
+
         <CommonSaveDialog
           dialogOpen={isDialogOpen}
           onDialogclose={handleDialogClose}

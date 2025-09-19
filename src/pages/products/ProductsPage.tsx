@@ -16,6 +16,7 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import ProductPageDrawer from "../../pageDrawers/ProductDrawer";
@@ -58,6 +59,7 @@ function ProductsPage() {
   const { data: allProduct, refetch } = useGetAllProduct(page, rowsPerPage);
   const updatemutation = useUpdateAvailability();
   const updateHideProduct = useUpdateHideProduct();
+   const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     if (selectedMenuValue === null) {
@@ -195,30 +197,47 @@ function ProductsPage() {
   };
 
   return (
-    <Box sx={{ py: 2, marginLeft: "40px", marginRight: "40px" }}>
+    <Box
+      sx={{
+        py: { xs: 1, sm: 2 },
+        marginLeft: { xs: "10px", md: "40px" },
+        marginRight: { xs: "10px", md: "40px" },
+      }}
+    >
       <Box
         sx={{
           width: "100%",
           display: "flex",
           justifyContent: "space-between",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
           marginBottom: 2,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: "center",
+          }}
+        >
           <Autocomplete
             id="combo-box-demo"
             options={menuData || []}
             getOptionLabel={(option) => option.title}
             value={selectedMenuValue}
             onChange={handleMenuChange}
-            sx={{ width: 300, marginRight: 2 }}
+            sx={{
+              width: { xs: "100%", sm: 300 },
+              marginBottom: { xs: 2, md: 0 },
+              marginRight: { md: 2 },
+            }}
             renderInput={(params) => (
               <TextField {...params} placeholder="Select Menu" size="small" />
             )}
           />
 
-          <Box ml={2}>
+          <Box ml={2} sx={{ display: { xs: "none", sm: "block" } }}>
             {selectedMenuValue &&
               selectedMenuValue.subMenus.length > 0 &&
               selectedMenuValue.subMenus.map((data, index) => (
@@ -235,7 +254,12 @@ function ProductsPage() {
               ))}
           </Box>
 
-          <Box ml={2}>
+          <Box
+            ml={2}
+            display="flex"
+            flexDirection={isMobile ? "column" : "row"}
+            alignItems="center"
+          >
             {selectedMenuValue === null && (
               <PaginatedHeader
                 pagetitle="product"
@@ -247,12 +271,23 @@ function ProductsPage() {
           </Box>
         </Box>
 
-        <Box sx={{ float: "left" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: "center",
+            mt: { xs: 2, sm: 0 },
+          }}
+        >
           <Button
             variant="outlined"
             size="small"
             onClick={clearSearch}
-            sx={{ color: "#038265", marginRight: 1 }}
+            sx={{
+              color: "#038265",
+              marginBottom: { xs: 1, sm: 0 },
+              marginRight: { sm: 1 },
+            }}
           >
             Clear Search
           </Button>
@@ -266,7 +301,12 @@ function ProductsPage() {
           </Button> */}
         </Box>
 
-        <Button variant="contained" color="primary" onClick={handleAddProduct}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAddProduct}
+          sx={{ width: { xs: "60%", sm: "auto" } }}
+        >
           + Add Product
         </Button>
       </Box>
@@ -431,18 +471,12 @@ function ProductsPage() {
                         onChange={() => handleSwitchChange(item._id, item)}
                       />
                     </TableCell>
-                    {/* 
-                      <Switch
-                        checked={item?.hideProduct === "true"}
-                        onChange={() => handleHideProductChange(item._id, item)}
-                      />
-                    </TableCell> */}
                     <TableCell>
                       <Checkbox
                         checked={item?.hideProduct === "true"}
                         onChange={() => handleHideProductChange(item._id, item)}
-                        color="primary" // Changes the color
-                        inputProps={{ "aria-label": "Hide Product" }} // Adds accessibility
+                        color="primary"
+                        inputProps={{ "aria-label": "Hide Product" }}
                       />
                     </TableCell>
                     <TableCell

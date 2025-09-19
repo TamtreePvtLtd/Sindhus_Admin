@@ -32,24 +32,27 @@ function PaginatedHeader(props: IProps) {
         my={2}
         justifyContent={"space-between"}
         alignContent={"center"}
+        sx={{
+          flexDirection: { xs: "column", md: "row" }, // Set row-wise for mobile
+        }}
       >
         <Grid item xs={12} md={4}>
           <Box>
-            <Typography sx={{
-              fontSize: '1.3rem',
-              borderRadius: "60px",
-              fontWeight: 800,
-              padding: '10px'
-
-            }}  >
+            <Typography
+              sx={{
+                fontSize: "1.3rem",
+                borderRadius: "60px",
+                fontWeight: 800,
+                padding: "10px",
+              }}
+            >
               {props.pagetitle}&nbsp;
-
               <Box
                 sx={{
-                  fontSize: '1.3rem',
+                  fontSize: "1.3rem",
                   borderRadius: "60px",
                   fontWeight: 800,
-                  }}
+                }}
                 component={"span"}
               >
                 ({props.pageInfo?.totalItems})
@@ -58,7 +61,7 @@ function PaginatedHeader(props: IProps) {
           </Box>
         </Grid>
         <Grid item xs={12} md={8}>
-          <Box display="flex" alignItems="center" >
+          <Box display="flex" alignItems="center">
             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
               <InputLabel id="take-count-label">Page Count</InputLabel>
               <Select
@@ -85,6 +88,7 @@ function PaginatedHeader(props: IProps) {
                   backgroundColor: "#038265",
                   color: "#FFFFFF",
                 },
+                mt: { xs: 2, md: 0 },
               }}
             />
           </Box>

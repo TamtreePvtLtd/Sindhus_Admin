@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Grid, IconButton, Switch } from "@mui/material";
+import { Box, Typography, Grid, IconButton, Switch, Button } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -77,13 +77,22 @@ function Coupons() {
   return (
     <>
       <Box paddingX={"20px"} justifyContent="space-between" alignItems="center">
+        <Box mb={2} display="flex" justifyContent="flex-end">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddCoupenClick}
+          >
+            + Add Coupons
+          </Button>
+        </Box>
         <PaginatedHeader
           pagetitle="Coupons"
           pageInfo={coupens?.pageInfo}
           onRowsPerPageChange={setRowsPerPage}
           onPageChange={setPage}
           onAddClick={handleAddCoupenClick}
-          addButtonText={" + Add Coupons"}
+          // addButtonText={" + Add Coupons"}
         />
         {/* <Typography variant="h6" fontWeight="bold" sx={{padding:"10px"}}>
           Coupons

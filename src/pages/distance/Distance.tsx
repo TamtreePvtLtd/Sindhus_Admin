@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Grid, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  IconButton,
+  useMediaQuery,
+  Button,
+} from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -33,6 +40,7 @@ function Distance() {
   const { updateSnackBarState } = useSnackBar();
   const { data: distance, refetch } = useGetDistanceBasedDeliveryCharge();
   const deleteDistanceMutation = useDeleteDistanceBasedCharge();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Detect mobile screen size
 
   useEffect(() => {
     if (distance) {
@@ -86,6 +94,16 @@ function Distance() {
   return (
     <>
       <Box paddingX={"20px"} justifyContent="space-between" alignItems="center">
+        {/* Add Distance Button */}
+        <Box mb={2} display="flex" justifyContent="flex-end">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddDistanceClick}
+          >
+            + Add Distance
+          </Button>
+        </Box>
         <PaginatedHeader
           pagetitle="Distance"
           pageInfo={{
@@ -98,7 +116,7 @@ function Distance() {
           onRowsPerPageChange={setRowsPerPage}
           onPageChange={setPage}
           onAddClick={handleAddDistanceClick}
-          addButtonText={" + Add Distance"}
+          // addButtonText={" + Add Distance"}
         />
         <Grid item xs={12}>
           <TableContainer elevation={0} component={Paper}>
@@ -111,9 +129,10 @@ function Distance() {
                 <TableRow className="table-header-row">
                   <TableCell
                     sx={{
-                      // width: "20%",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
+                      fontSize: isMobile ? "0.75rem" : "1rem", // Adjust font size for mobile
+                      padding: isMobile ? "6px" : "16px", // Adjust padding for mobile
                     }}
                   >
                     <Typography variant="subtitle1" fontWeight="bold">
@@ -122,10 +141,11 @@ function Distance() {
                   </TableCell>
                   <TableCell
                     sx={{
-                      // width: "15%",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
                       textAlign: "center",
+                      fontSize: isMobile ? "0.75rem" : "1rem",
+                      padding: isMobile ? "6px" : "16px",
                     }}
                   >
                     <Typography variant="subtitle1" fontWeight="bold">
@@ -134,10 +154,11 @@ function Distance() {
                   </TableCell>
                   <TableCell
                     sx={{
-                      // width: "10%",
                       textAlign: "center",
                       backgroundColor: theme.palette.primary.main,
                       color: "white",
+                      fontSize: isMobile ? "0.75rem" : "1rem",
+                      padding: isMobile ? "6px" : "16px",
                     }}
                   >
                     <Typography variant="subtitle1" fontWeight="bold">
@@ -151,13 +172,30 @@ function Distance() {
                   distance.length > 0 &&
                   distance.map((distance) => (
                     <TableRow key={distance._id}>
-                      <TableCell sx={{ fontWeight: 600 }}>
+                      <TableCell
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: isMobile ? "0.75rem" : "1rem",
+                        }}
+                      >
                         {distance.uptoDistance}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", fontWeight: 600 }}>
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          fontWeight: 600,
+                          fontSize: isMobile ? "0.75rem" : "1rem",
+                        }}
+                      >
                         {distance.amount}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", fontWeight: 600 }}>
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          fontWeight: 600,
+                          fontSize: isMobile ? "0.75rem" : "1rem",
+                        }}
+                      >
                         <IconButton>
                           <EditIcon
                             onClick={() => handleEditCoupen(distance)}

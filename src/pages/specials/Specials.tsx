@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,6 +21,7 @@ import SpecialsDrawer from "../../pageDrawers/SpecialsDrawer";
 
 function SpecialsPage() {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [openDrawer, setOpenDrawer] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState(null);
@@ -28,42 +30,29 @@ function SpecialsPage() {
   const { data: imagePreviews, isLoading, refetch } = useGetSpecials();
   const deleteSpecial = useDeleteSpecial();
 
-  const handleDrawerOpen = () => {
-    setOpenDrawer(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpenDrawer(false);
-  };
-
+  const handleDrawerOpen = () => setOpenDrawer(true);
+  const handleDrawerClose = () => setOpenDrawer(false);
   const handleDeleteDialogOpen = (index) => {
     setDeleteConfirmationIndex(index);
     setDeleteDialogOpen(true);
   };
-
   const handleDeleteDialogClose = () => {
     setDeleteConfirmationIndex(null);
     setDeleteDialogOpen(false);
   };
-
   const handleDelete = () => {
     if (deleteConfirmationIndex !== null) {
       deleteSpecial.mutate({ id: deleteConfirmationIndex });
+      handleDeleteDialogClose();
     }
-    handleDeleteDialogClose();
   };
-
-  const handleDeleteAllDialogOpen = () => {
-    setDeleteConfirmationIndex(null);
-    setDeleteDialogOpen(true);
-  };
-
+  const handleDeleteAllDialogOpen = () => setDeleteDialogOpen(true);
   const handleDeleteAll = () => {
     setDeleteDialogOpen(false);
     if (imagePreviews?.data) {
-      imagePreviews.data.forEach((preview) => {
-        deleteSpecial.mutate({ id: preview._id });
-      });
+      imagePreviews.data.forEach((preview) =>
+        deleteSpecial.mutate({ id: preview._id })
+      );
     }
     refetch();
   };
@@ -79,46 +68,55 @@ function SpecialsPage() {
   };
 
   return (
-    <Box paddingX={"20px"}>
+    <Box paddingX={isMobile ? "10px" : "20px"}>
       <Box
         sx={{
           display: "flex",
+          flexDirection: isMobile ? "column" : "row",
           justifyContent: "space-between",
-          marginTop: "50px",
-          margin: 3,
+          alignItems: isMobile ? "flex-start" : "center",
+          marginTop: isMobile ? "30px" : "50px",
+          gap: 2,
+          padding: 1,
         }}
       >
         <Typography
           variant="h4"
           sx={{
-            fontSize: "1.3rem",
-            borderRadius: "50px",
+            fontSize: isMobile ? "1rem" : "1.3rem",
             fontWeight: 800,
           }}
         >
           Special Offers
         </Typography>
-
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={handleDeleteAllDialogOpen}
+        <Box
           sx={{
-            color: "#038265",
+            display: "flex",
+            gap: 1,
+            // flexDirection: isMobile ? "column" : "row",
           }}
         >
-          Delete All
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleDrawerOpen}
-          sx={{
-            alignSelf: "flex-end",
-          }}
-        >
-          <AddIcon /> Add Specials
-        </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleDeleteAllDialogOpen}
+            sx={{
+              color: "#038265",
+            }}
+          >
+            Delete All
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleDrawerOpen}
+            sx={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <AddIcon /> Add Specials
+          </Button>
+        </Box>
       </Box>
 
       <Box marginTop="5px">
@@ -195,8 +193,8 @@ function SpecialsPage() {
                         src={preview.images[0]}
                         alt={`Preview ${preview._id}`}
                         style={{
-                          width: 100,
-                          height: 100,
+                          width: isMobile ? 80 : 100,
+                          height: isMobile ? 80 : 100,
                           objectFit: "cover",
                           cursor: "pointer",
                         }}

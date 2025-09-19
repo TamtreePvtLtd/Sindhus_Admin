@@ -4,65 +4,44 @@ import {
   Avatar,
   Box,
   Button,
+  Drawer,
   IconButton,
-  ListItemIcon,
+  List,
+  ListItem,
+  ListItemText,
   Menu,
   MenuItem,
   Toolbar,
   Typography,
-  Tooltip, // Import Tooltip component
+  Tooltip,
 } from "@mui/material";
-
+import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
-
 import { useAuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { logOut } from "../services/api";
 import { useSnackBar } from "../context/SnackBarContext";
 import Logout from "@mui/icons-material/Logout";
 import { paths } from "../routes/Paths";
+import CloseIcon from "@mui/icons-material/Close";
 
 const navMenus = [
-  {
-    label: "Catering Enquiries",
-    link: paths.CATERINGENQUIRIES,
-  },
-  {
-    label: "Menus",
-    link: paths.MENUS,
-  },
-  {
-    label: "Products",
-    link: paths.PRODUCTS,
-  },
-  {
-    label: "Daily Menu",
-    link: paths.DININGOUTMENU,
-  },
-  {
-    label: "Specials",
-    link: paths.SPECIALS,
-  },
-  {
-    label: "Snacks",
-    link: paths.SNACKS,
-  },
-  {
-    label: "Coupons",
-    link: paths.COUPONS,
-  },
-  {
-    label: "Distance",
-    link: paths.DISTANCE,
-  },
+  { label: "Catering Enquiries", link: paths.CATERINGENQUIRIES },
+  { label: "Menus", link: paths.MENUS },
+  { label: "Products", link: paths.PRODUCTS },
+  { label: "Daily Menu", link: paths.DININGOUTMENU },
+  { label: "Specials", link: paths.SPECIALS },
+  { label: "Snacks", link: paths.SNACKS },
+  { label: "Coupons", link: paths.COUPONS },
+  { label: "Distance", link: paths.DISTANCE },
 ];
 
 function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
   const open = Boolean(anchorEl);
   const { user, updateUserData } = useAuthContext();
   const { updateSnackBarState } = useSnackBar();
-
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -85,133 +64,151 @@ function Navbar() {
       })
       .catch((error) => {
         if (error.response && error.response.data) {
-          console.log(error.response.data);
           updateSnackBarState(true, error.response.data.message, "error");
         }
       });
   };
 
+  const toggleDrawer = (open: boolean) => () => {
+    setDrawerOpen(open);
+  };
+
   return (
     <>
-      <Box>
+      <Box sx={{ marginBottom: "100px" }}>
         <AppBar
           component="nav"
-          sx={{
-            backgroundColor: "white",
-            color: "#038265",
-          }}
+          sx={{ backgroundColor: "white", color: "#038265" }}
         >
           <Toolbar>
-            <Box
+            <img
+              src="assets/images/output-onlinepngtools (1).png"
+              alt="Sindhus-Logo"
+              height="50px"
+              width="50px"
+            />
+            <Typography
               sx={{
-                display: "flex",
-                alignItems: "center",
-                width: "90%",
+                padding: "10px",
+                fontWeight: 800,
+                color: "#038265",
+                fontSize: "2rem",
+                fontFamily: "Sindhus-Logo-Font",
+                cursor: "pointer",
               }}
             >
-              <img
-                src="assets\images\output-onlinepngtools (1).png"
-                alt="Sindhus-Logo"
-                height="50px"
-                width="50px"
-              />
-              <Typography
-                sx={{
-                  padding: "10px",
-                  fontWeight: 800,
-                  color: "#038265",
-                  fontSize: "2rem",
-                  fontFamily: "Sindhus-Logo-Font",
-                  cursor: "pointer",
-                }}
-              >
-                SINDHU&#8217;S
-              </Typography>
-              <Box
-                sx={{
-                  width: "80%",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              >
-                {navMenus.map((menu, index) => (
-                  <Box
-                    key={menu.label}
+              SINDHU'S
+            </Typography>
+
+            {/* Desktop Menu */}
+            <Box
+              sx={{
+                width: "80%",
+                display: { xs: "none", md: "flex" },
+                flexGrow: 1,
+                justifyContent: "flex-end",
+              }}
+            >
+              {navMenus.map((menu) => (
+                <Link
+                  key={menu.label}
+                  to={menu.link}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button
                     sx={{
-                      position: "relative",
-                      // marginRight: index < navMenus.length - 1 ? "20px" : "0",
+                      borderRadius: "50px",
+                      fontSize: "large",
+                      textTransform: "none",
+                      backgroundColor:
+                        location.pathname === menu.link
+                          ? theme.palette.primary.main
+                          : "transparent",
+                      color:
+                        location.pathname === menu.link ? "white" : "black",
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.main,
+                        color: "white",
+                      },
                     }}
                   >
-                    <Link to={menu.link} style={{ textDecoration: "none" }}>
-                      <Button
-                        sx={{
-                          borderRadius: "50px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          fontSize: "large",
-                          textTransform: "none",
-                          backgroundColor:
-                            location.pathname === menu.link
-                              ? theme.palette.primary.main
-                              : "transparent",
-                          color:
-                            location.pathname === menu.link ? "white" : "black",
-                          "&:hover": {
-                            backgroundColor: theme.palette.primary.main,
-                            color: "white",
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                          px={2}
-                        >
-                          {menu.label}
-                        </Box>
-                      </Button>
-                    </Link>
-                  </Box>
-                ))}
-              </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                      px={2}
+                    >
+                      {menu.label}
+                    </Box>
+                  </Button>
+                </Link>
+              ))}
+            </Box>
+
+            {/* Mobile Menu - Burger Icon */}
+            <Box
+              sx={{ display: { xs: "flex", md: "none" }, marginLeft: "auto" }}
+            >
+              <IconButton onClick={toggleDrawer(true)} color="inherit">
+                <MenuIcon />
+              </IconButton>
             </Box>
 
             {user && (
-              <Box sx={{ marginLeft: "auto" }}>
-                <Tooltip title="Logout">
-                  <IconButton
-                    onClick={handleMenuClick}
-                    size="small"
-                    aria-controls={open ? "account-menu" : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? "true" : undefined}
+              <Tooltip title="Logout">
+                <IconButton
+                  onClick={handleMenuClick}
+                  size="small"
+                  aria-controls={open ? "account-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                >
+                  <Avatar
+                    sx={{ width: 28, height: 28, backgroundColor: "#038265" }}
                   >
-                    <Avatar
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        backgroundColor: "#038265",
-                      }}
-                    >
-                      {user?.name ? user.name.toUpperCase()[0] : ""}
-                    </Avatar>
-                  </IconButton>
-                </Tooltip>
-              </Box>
+                    {user?.name ? user.name.toUpperCase()[0] : ""}
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
             )}
           </Toolbar>
         </AppBar>
-        <Toolbar />
+
+        {/* Drawer for Mobile Menu */}
+        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+          <Box
+            sx={{ width: 250 }}
+            role="presentation"
+            onClick={toggleDrawer(false)}
+            onKeyDown={toggleDrawer(false)}
+          >
+            <Box display="flex" justifyContent="flex-end" p={1}>
+              <IconButton onClick={toggleDrawer(false)}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <List>
+              {navMenus.map((menu) => (
+                <ListItem
+                  button
+                  key={menu.label}
+                  component={Link}
+                  to={menu.link}
+                >
+                  <ListItemText primary={menu.label} />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        </Drawer>
       </Box>
+
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
         onClose={handleClose}
-        onClick={handleClose}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -239,9 +236,7 @@ function Navbar() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleLogoutClick}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
+          <Logout fontSize="small" />
           Logout
         </MenuItem>
       </Menu>
