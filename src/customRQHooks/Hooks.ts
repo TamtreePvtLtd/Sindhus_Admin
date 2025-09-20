@@ -31,7 +31,6 @@ import {
   updateDistanceBasedCharge,
   deleteDistanceBasedCharge,
   updatePaymentData,
-  getResendMailItems,
   updateAvailability,
   updateHideProduct,
   updateShipment,
