@@ -14,8 +14,12 @@ import {
   TextField,
   Typography,
   useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import { SaveAlt, Delete } from "@mui/icons-material";
+import { SaveAlt, Delete, LocalShipping } from "@mui/icons-material";
 import { useSnackBar } from "../../context/SnackBarContext";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
@@ -27,6 +31,7 @@ import {
   useGetCartItems,
   useGetPayment,
   useUpdateDeliveryStatus,
+  useUpdateShipment,
 } from "../../customRQHooks/Hooks";
 import SnacksDrawer from "../../pageDrawers/Snacks";
 import { getResendMailItems } from "../../services/api";
@@ -50,9 +55,70 @@ function Snacks() {
   const updatemutation = useUpdateDeliveryStatus();
   const deleteOrderMutation = useDeleteOrder();
   const deletePaymentMutation = useDeleteDeliveredPayment();
+  const updateShipment = useUpdateShipment();
 
   const { data: cartItem, refetch: cartItemrefetch } = useGetCartItems();
   const { data: paymentItem, refetch: paymentRefetch } = useGetPayment();
+  const [shipmentDialogOpen, setShipmentDialogOpen] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [trackingUrl, setTrackingUrl] = useState("");
+  const [currentOrder, setCurrentOrder] = useState<PaymentData | null>(null);
+  const [trackingNumberError, setTrackingNumberError] = useState(false);
+  const [trackingUrlError, setTrackingUrlError] = useState(false);
+  useEffect(() => {
+    if (cartItem) {
+      setCartItemData(cartItem);
+    }
+  }, [cartItem]);
+
+  useEffect(() => {
+    if (paymentItem) setPaymentData(paymentItem);
+  }, [paymentItem]);
+  const handleOpenShipmentDialog = (payment: PaymentData) => {
+    setCurrentOrder(payment);
+
+    setTrackingNumber(payment.trackingNumber || "");
+    setTrackingUrl(payment.trackingUrl || "");
+
+    setShipmentDialogOpen(true);
+  };
+
+  const handleCloseShipmentDialog = () => {
+    setShipmentDialogOpen(false);
+  };
+
+  const handleSendShipment = async () => {
+    setTrackingNumberError(false);
+    setTrackingUrlError(false);
+
+    let hasError = false;
+
+    if (!trackingNumber.trim()) {
+      setTrackingNumberError(true);
+      hasError = true;
+    }
+    if (!trackingUrl.trim()) {
+      setTrackingUrlError(true);
+      hasError = true;
+    }
+
+    if (hasError) return;
+    try {
+      await updateShipment.mutateAsync({
+        orderNumber: currentOrder?.orderNumber,
+        trackingNumber,
+        trackingUrl,
+        firstName: currentOrder?.firstName, // Pass firstName
+        email: currentOrder?.email,
+      });
+
+      updateSnackBarState(true, "Shipment details sent & saved!", "success");
+      paymentRefetch(); // keep if you want explicit refetch
+      setShipmentDialogOpen(false);
+    } catch (err) {
+      updateSnackBarState(true, "Failed to send shipment details", "error");
+    }
+  };
 
   useEffect(() => {
     if (cartItem) {
@@ -447,6 +513,15 @@ function Snacks() {
                   color: "white",
                 }}
               >
+                Shipment
+              </TableCell>
+
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
                 Resend Mail
               </TableCell>
               <TableCell
@@ -564,6 +639,16 @@ function Snacks() {
                           <TableCell rowSpan={filteredCartItems.length}>
                             <Button
                               sx={{ color: theme.palette.primary.main }}
+                              startIcon={<LocalShipping />}
+                              onClick={() => handleOpenShipmentDialog(payment)}
+                            >
+                              Shipment
+                            </Button>
+                          </TableCell>
+
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            <Button
+                              sx={{ color: theme.palette.primary.main }}
                               startIcon={<MailOutline />} // Use the MailOutline icon
                               onClick={() =>
                                 handleResendMail(payment, filteredCartItems)
@@ -605,6 +690,54 @@ function Snacks() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={shipmentDialogOpen} onClose={handleCloseShipmentDialog}>
+        <DialogTitle>Enter Shipment Details</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Tracking Number"
+            fullWidth
+            value={trackingNumber}
+            onChange={(e) => {
+              setTrackingNumber(e.target.value);
+              if (e.target.value.trim() !== "") {
+                setTrackingNumberError(false);
+              }
+            }}
+            error={trackingNumberError}
+            helperText={
+              trackingNumberError ? "Tracking Number is required" : ""
+            }
+          />
+
+          <TextField
+            margin="dense"
+            label="Tracking URL"
+            fullWidth
+            multiline
+            minRows={3}
+            value={trackingUrl}
+            onChange={(e) => {
+              setTrackingUrl(e.target.value);
+              if (e.target.value.trim() !== "") {
+                setTrackingUrlError(false);
+              }
+            }}
+            error={trackingUrlError}
+            helperText={trackingUrlError ? "Tracking URL is required" : ""}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseShipmentDialog}>Cancel</Button>
+          <Button
+            onClick={handleSendShipment}
+            variant="contained"
+            color="primary"
+          >
+            Send
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {DrawerOpen && (
         <SnacksDrawer

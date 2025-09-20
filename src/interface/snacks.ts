@@ -23,6 +23,8 @@ export interface PaymentData {
   addressURL: string;
   notes: string;
   __v: number;
+  trackingNumber?: string; 
+  trackingUrl?: string;
 }
 
 export interface CartItemData {
@@ -42,6 +44,8 @@ export interface cartItems {
   cartItems: CartItemData[];
   orderNumber: string;
   deliveredStatus: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
 }
 
 export interface DownloadData {
@@ -68,4 +72,11 @@ export interface DistanceBasedDeliveryCharge {
   _id?: string;
   amount: string;
   uptoDistance: string;
+}
+ export interface UpdateShipmentInput {
+  orderNumber?: string;
+  trackingNumber: string;
+  trackingUrl: string;
+  firstName?: string;
+  email?: string;
 }

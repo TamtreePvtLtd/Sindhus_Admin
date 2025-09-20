@@ -31,9 +31,9 @@ import {
   updateDistanceBasedCharge,
   deleteDistanceBasedCharge,
   updatePaymentData,
-  getResendMailItems,
   updateAvailability,
   updateHideProduct,
+  updateShipment,
 } from "../services/api";
 import { queryClient } from "../App";
 
@@ -399,6 +399,20 @@ export const useUpdatePaymentData = () => {
     },
     onError: (error) => {
       console.log(error);
+    },
+  });
+};
+
+export const useUpdateShipment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateShipment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+    onError: (error) => {
+      console.error("Error updating shipment:", error);
     },
   });
 };
