@@ -19,7 +19,12 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { SaveAlt, Delete, LocalShipping } from "@mui/icons-material";
+import {
+  SaveAlt,
+  Delete,
+  LocalShipping,
+  Visibility,
+} from "@mui/icons-material";
 import { useSnackBar } from "../../context/SnackBarContext";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
@@ -68,6 +73,11 @@ function Snacks() {
   const [trackingUrlError, setTrackingUrlError] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState<{
+    payment: PaymentData;
+    filteredCartItems: any[];
+  } | null>(null);
 
   useEffect(() => {
     if (cartItem) {
@@ -139,9 +149,25 @@ function Snacks() {
     setDrawerOpen(false);
   };
 
+  const handleDetailsDrawerClose = () => {
+    setDetailsDrawerOpen(false);
+    setSelectedOrderDetails(null);
+  };
+
   const handleEditClick = (payment: PaymentData) => {
     setSelectedPayment({ ...payment });
     setDrawerOpen(true);
+  };
+
+  const handleShowDetails = (
+    payment: PaymentData,
+    filteredCartItems: any[]
+  ) => {
+    setSelectedOrderDetails({
+      payment,
+      filteredCartItems,
+    });
+    setDetailsDrawerOpen(true);
   };
 
   const handleSwitchChange = async (orderNumber, cartItem) => {
@@ -546,7 +572,7 @@ function Snacks() {
                   color: "white",
                 }}
               >
-                Bill
+                Details
               </TableCell>
             </TableRow>
           </TableHead>
@@ -674,27 +700,16 @@ function Snacks() {
                             </Button>
                           </TableCell>
                           <TableCell rowSpan={filteredCartItems.length}>
-                            <PDFDownloadLink
-                              document={
-                                <PDFBill
-                                  payment={payment}
-                                  filteredCartItems={filteredCartItems}
-                                />
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              startIcon={<Visibility />}
+                              onClick={() =>
+                                handleShowDetails(payment, filteredCartItems)
                               }
-                              fileName={`invoice_${payment.orderNumber}.pdf`}
                             >
-                              {({ blob, url, loading, error }) => {
-                                if (loading)
-                                  return <span>Loading document...</span>;
-                                if (error)
-                                  return <span>Error loading document</span>;
-                                return (
-                                  <Button variant="contained" color="primary">
-                                    print&nbsp;Order
-                                  </Button>
-                                );
-                              }}
-                            </PDFDownloadLink>
+                              Show Details
+                            </Button>
                           </TableCell>
                         </>
                       )}
@@ -764,8 +779,168 @@ function Snacks() {
           refetch={paymentRefetch}
         />
       )}
+
+      {detailsDrawerOpen && selectedOrderDetails && (
+        <OrderDetailsDrawer
+          open={detailsDrawerOpen}
+          onClose={handleDetailsDrawerClose}
+          payment={selectedOrderDetails.payment}
+          filteredCartItems={selectedOrderDetails.filteredCartItems}
+        />
+      )}
     </div>
   );
 }
+
+// Order Details Drawer Component
+const OrderDetailsDrawer = ({ open, onClose, payment, filteredCartItems }) => {
+  const theme = useTheme();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = () => {
+    setIsSaving(true);
+    // Simulate saving process
+    setTimeout(() => {
+      setIsSaving(false);
+      onClose();
+    }, 1000);
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        style: {
+          minHeight: "80vh",
+          maxHeight: "90vh",
+        },
+      }}
+    >
+      <DialogTitle>Order Details - #{payment.orderNumber}</DialogTitle>
+      <DialogContent dividers>
+        <Box mb={2}>
+          <Typography variant="h6" gutterBottom>
+            Customer Information
+          </Typography>
+          <Typography>
+            <strong>Name:</strong> {payment.firstName} {payment.lastName}
+          </Typography>
+          <Typography>
+            <strong>Email:</strong> {payment.email}
+          </Typography>
+          <Typography>
+            <strong>Phone:</strong> {payment.phoneNumber}
+          </Typography>
+          <Typography>
+            <strong>Delivery Option:</strong> {payment.deliveryOption}
+          </Typography>
+          {payment.deliveryOption !== "Pickup" && (
+            <>
+              <Typography>
+                <strong>Address:</strong> {payment.address}
+              </Typography>
+              <Typography>
+                <strong>Postal Code:</strong> {payment.postalCode}
+              </Typography>
+              <Typography>
+                <strong>Location URL:</strong>{" "}
+                <a
+                  href={payment.addressURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {payment.addressURL}
+                </a>
+              </Typography>
+            </>
+          )}
+          <Typography>
+            <strong>Notes:</strong> {payment.notes || "N/A"}
+          </Typography>
+        </Box>
+
+        <Box mb={2}>
+          <Typography variant="h6" gutterBottom>
+            Order Information
+          </Typography>
+          <Typography>
+            <strong>Order Date:</strong>{" "}
+            {new Date(payment.createdAt).toLocaleDateString()}
+          </Typography>
+          <Typography>
+            <strong>Delivery Date:</strong>{" "}
+            {new Date(payment.deliveryDate).toLocaleDateString()}
+          </Typography>
+          <Typography>
+            <strong>Coupon Applied:</strong> {payment.couponName || "None"}
+          </Typography>
+          <Typography>
+            <strong>Total Before Coupon:</strong> $
+            {Number(payment.totalWithoutCoupon).toFixed(2)}
+          </Typography>
+          <Typography>
+            <strong>Total After Coupon:</strong> $
+            {Number(payment.amount / 100).toFixed(2)}
+          </Typography>
+        </Box>
+
+        <Box mb={2}>
+          <Typography variant="h6" gutterBottom>
+            Order Items
+          </Typography>
+          <TableContainer component={Paper} variant="outlined">
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item</TableCell>
+                  <TableCell>Size</TableCell>
+                  <TableCell align="right">Quantity</TableCell>
+                  <TableCell align="right">Unit Price</TableCell>
+                  <TableCell align="right">Total</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredCartItems.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.title}</TableCell>
+                    <TableCell>{item.size}</TableCell>
+                    <TableCell align="right">{item.quantity}</TableCell>
+                    <TableCell align="right">
+                      ${(item.price / item.quantity).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">
+                      ${item.price.toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <PDFDownloadLink
+          document={
+            <PDFBill payment={payment} filteredCartItems={filteredCartItems} />
+          }
+          fileName={`invoice_${payment.orderNumber}.pdf`}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            Save & Print
+          </Button>
+        </PDFDownloadLink>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default Snacks;
