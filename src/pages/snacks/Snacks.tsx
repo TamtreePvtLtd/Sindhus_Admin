@@ -38,6 +38,7 @@ import { getResendMailItems } from "../../services/api";
 import logo from "../../../public/assets/images/output-onlinepngtools (1).png";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFBill from "../../common/components/PDFBill";
+import PaginatedHeader from "../../common/components/PaginatedHeader";
 
 function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
@@ -65,6 +66,9 @@ function Snacks() {
   const [currentOrder, setCurrentOrder] = useState<PaymentData | null>(null);
   const [trackingNumberError, setTrackingNumberError] = useState(false);
   const [trackingUrlError, setTrackingUrlError] = useState(false);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   useEffect(() => {
     if (cartItem) {
       setCartItemData(cartItem);
@@ -74,12 +78,11 @@ function Snacks() {
   useEffect(() => {
     if (paymentItem) setPaymentData(paymentItem);
   }, [paymentItem]);
+
   const handleOpenShipmentDialog = (payment: PaymentData) => {
     setCurrentOrder(payment);
-
     setTrackingNumber(payment.trackingNumber || "");
     setTrackingUrl(payment.trackingUrl || "");
-
     setShipmentDialogOpen(true);
   };
 
@@ -108,12 +111,12 @@ function Snacks() {
         orderNumber: currentOrder?.orderNumber,
         trackingNumber,
         trackingUrl,
-        firstName: currentOrder?.firstName, // Pass firstName
+        firstName: currentOrder?.firstName,
         email: currentOrder?.email,
       });
 
       updateSnackBarState(true, "Shipment details sent & saved!", "success");
-      paymentRefetch(); // keep if you want explicit refetch
+      paymentRefetch();
       setShipmentDialogOpen(false);
     } catch (err) {
       updateSnackBarState(true, "Failed to send shipment details", "error");
@@ -141,7 +144,6 @@ function Snacks() {
     setDrawerOpen(true);
   };
 
-  // Function to handle switch change
   const handleSwitchChange = async (orderNumber, cartItem) => {
     console.log("deliveredStatus", cartItem.deliveredStatus);
 
@@ -182,9 +184,8 @@ function Snacks() {
     cartItemrefetch();
     paymentRefetch();
   };
-  // Handle Excel Download
+
   const handleExcelDownload = () => {
-    // Prepare data for Excel
     const dataToDownload: DownloadData[] = [];
 
     filteredPayments.forEach((payment) => {
@@ -204,7 +205,7 @@ function Snacks() {
           matchingCart?.deliveredStatus === "false");
 
       if (!deliveryStatusMatches) return;
-      // Track whether it's the first item for the order
+
       let firstItemForOrder = true;
 
       filteredCartItems?.forEach((item) => {
@@ -243,17 +244,13 @@ function Snacks() {
             : "",
           Notes: firstItemForOrder ? payment.notes || "" : "",
         });
-        // Set the flag to false after processing the first item for the order
         firstItemForOrder = false;
       });
     });
 
-    // Create a new workbook and worksheet
     const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-
-    // Generate Excel file and trigger download
     XLSX.writeFile(workbook, "filtered_orders.xlsx");
   };
 
@@ -279,6 +276,12 @@ function Snacks() {
       matchesDeliveryStatus
     );
   });
+
+  // Apply pagination to filtered payments
+  const paginatedPayments = filteredPayments.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
 
   const handleResendMail = async (payment, item) => {
     const response = await getResendMailItems(item, payment);
@@ -348,16 +351,29 @@ function Snacks() {
           </div>
         </Box>
 
-        {/* Button for Excel Download */}
         <Button
           variant="contained"
           color="primary"
           startIcon={<SaveAlt />}
-          onClick={handleExcelDownload} // Add your download handler here
+          onClick={handleExcelDownload}
         >
           Download Excel
         </Button>
       </Box>
+      <Box>
+        <PaginatedHeader
+          pagetitle="Orders"
+          pageInfo={{
+            totalItems: filteredPayments.length,
+            totalPages: Math.ceil(filteredPayments.length / rowsPerPage),
+            pageSize: rowsPerPage,
+            page: page,
+          }}
+          onRowsPerPageChange={setRowsPerPage}
+          onPageChange={setPage}
+        />
+      </Box>
+
       <TableContainer elevation={0} component={Paper}>
         <Table stickyHeader aria-label="menus-table">
           <TableHead className="table-header">
@@ -535,7 +551,7 @@ function Snacks() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredPayments.map((payment, paymentIndex) => {
+            {paginatedPayments.map((payment, paymentIndex) => {
               const matchingCart = cartItemData.find(
                 (cart) => cart.orderNumber === payment.orderNumber
               );
@@ -649,10 +665,10 @@ function Snacks() {
                           <TableCell rowSpan={filteredCartItems.length}>
                             <Button
                               sx={{ color: theme.palette.primary.main }}
-                              startIcon={<MailOutline />} // Use the MailOutline icon
+                              startIcon={<MailOutline />}
                               onClick={() =>
                                 handleResendMail(payment, filteredCartItems)
-                              } // Add your resend mail handler here
+                              }
                             >
                               Resend Mail
                             </Button>
@@ -690,6 +706,7 @@ function Snacks() {
           </TableBody>
         </Table>
       </TableContainer>
+
       <Dialog open={shipmentDialogOpen} onClose={handleCloseShipmentDialog}>
         <DialogTitle>Enter Shipment Details</DialogTitle>
         <DialogContent>
