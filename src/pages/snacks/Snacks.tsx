@@ -328,6 +328,7 @@ function Snacks() {
         alignItems="center"
         mb={2}
         mt={2}
+        sx={{ px: 1 }}
       >
         <Box display="flex" gap="20px">
           <div>
