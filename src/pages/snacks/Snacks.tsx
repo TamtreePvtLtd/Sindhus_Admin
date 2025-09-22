@@ -705,7 +705,8 @@ function Snacks() {
                             <Button
                               variant="contained"
                               color="primary"
-                              startIcon={<Visibility />}
+                              sx={{ whiteSpace: "nowrap" }}
+                              // startIcon={<Visibility />}
                               onClick={() =>
                                 handleShowDetails(payment, filteredCartItems)
                               }
