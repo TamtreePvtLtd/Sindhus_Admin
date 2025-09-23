@@ -45,8 +45,6 @@ import logo from "../../../public/assets/images/output-onlinepngtools (1).png";
 import PaginatedHeader from "../../common/components/PaginatedHeader";
 import OrderDetailsDrawer from "../../pageDrawers/OrderDetailsDrawer";
 
-
-
 function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [cartItemData, setCartItemData] = useState<cartItems[]>([]);
@@ -54,6 +52,7 @@ function Snacks() {
   const [nameFilter, setNameFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
   const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all");
+  const [deliveryOptionFilter, setDeliveryOptionFilter] = useState("all"); // New filter state
   const { updateSnackBarState } = useSnackBar();
   const [selectedPayment, setSelectedPayment] = useState<PaymentData | null>(
     null
@@ -232,7 +231,11 @@ function Snacks() {
         (deliveryStatusFilter === "pending" &&
           matchingCart?.deliveredStatus === "false");
 
-      if (!deliveryStatusMatches) return;
+      const deliveryOptionMatches =
+        deliveryOptionFilter === "all" ||
+        payment.deliveryOption === deliveryOptionFilter;
+
+      if (!deliveryStatusMatches || !deliveryOptionMatches) return;
 
       let firstItemForOrder = true;
 
@@ -295,13 +298,18 @@ function Snacks() {
       (deliveryStatusFilter === "pending" &&
         matchingCart?.deliveredStatus === "false");
 
+    const matchesDeliveryOption =
+      deliveryOptionFilter === "all" ||
+      payment.deliveryOption === deliveryOptionFilter;
+
     return (
       payment.orderNumber
         .toLowerCase()
         .includes(orderNumberFilter.toLowerCase()) &&
       (payment.firstName.toLowerCase().includes(nameFilter.toLowerCase()) ||
         payment.lastName.toLowerCase().includes(nameFilter.toLowerCase())) &&
-      matchesDeliveryStatus
+      matchesDeliveryStatus &&
+      matchesDeliveryOption
     );
   });
 
@@ -324,7 +332,7 @@ function Snacks() {
     <div>
       <Box
         display="flex"
-        justifyContent="space-between"
+        justifyContent="space-around"
         alignItems="center"
         mb={2}
         mt={2}
@@ -376,6 +384,21 @@ function Snacks() {
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="delivered">Delivered</MenuItem>
               <MenuItem value="pending">Pending</MenuItem>
+            </Select>
+          </div>
+          <div>
+            <Typography variant="subtitle1" gutterBottom>
+              Filter by Delivery Option
+            </Typography>
+            <Select
+              value={deliveryOptionFilter}
+              onChange={(e) => setDeliveryOptionFilter(e.target.value)}
+              variant="outlined"
+              sx={{ minWidth: 120 }}
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="Pickup">Pickup</MenuItem>
+              <MenuItem value="Delivery">Delivery</MenuItem>
             </Select>
           </div>
         </Box>
@@ -795,7 +818,5 @@ function Snacks() {
     </div>
   );
 }
-
-
 
 export default Snacks;
