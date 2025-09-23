@@ -10,6 +10,7 @@ import {
   cartItems,
   DistanceBasedDeliveryCharge,
   PaymentData,
+  UpdateShipmentInput,
 } from "../interface/snacks";
 import { ICoupen } from "../interface/menus";
 import {
@@ -640,6 +641,30 @@ const getResendMailItems = async (cartItems, paymentData) => {
   }
 };
 
+const updateShipment = async ({
+  orderNumber,
+  trackingNumber,
+  trackingUrl,
+}: UpdateShipmentInput) => {
+  console.log("Updating shipment for order:", orderNumber, {
+    trackingNumber,
+    trackingUrl,
+  });
+
+  try {
+    const response = await httpWithoutCredentials.put(
+      `/payment/${orderNumber}/shipment`,
+      { trackingNumber, trackingUrl },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating shipment details:", error);
+    throw error;
+  }
+};
+
+
 export {
   getResendMailItems,
   updatePaymentData,
@@ -684,4 +709,5 @@ export {
   updateCoupen,
   createCoupen,
   updateAvailability,
+  updateShipment,
 };

@@ -14,8 +14,17 @@ import {
   TextField,
   Typography,
   useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import { SaveAlt, Delete } from "@mui/icons-material";
+import {
+  SaveAlt,
+  Delete,
+  LocalShipping,
+  Visibility,
+} from "@mui/icons-material";
 import { useSnackBar } from "../../context/SnackBarContext";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
@@ -27,12 +36,14 @@ import {
   useGetCartItems,
   useGetPayment,
   useUpdateDeliveryStatus,
+  useUpdateShipment,
 } from "../../customRQHooks/Hooks";
 import SnacksDrawer from "../../pageDrawers/Snacks";
 import { getResendMailItems } from "../../services/api";
 import logo from "../../../public/assets/images/output-onlinepngtools (1).png";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import PDFBill from "../../common/components/PDFBill";
+
+import PaginatedHeader from "../../common/components/PaginatedHeader";
+import OrderDetailsDrawer from "../../pageDrawers/OrderDetailsDrawer";
 
 function Snacks() {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
@@ -41,6 +52,7 @@ function Snacks() {
   const [nameFilter, setNameFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
   const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all");
+  const [deliveryOptionFilter, setDeliveryOptionFilter] = useState("all"); // New filter state
   const { updateSnackBarState } = useSnackBar();
   const [selectedPayment, setSelectedPayment] = useState<PaymentData | null>(
     null
@@ -50,9 +62,77 @@ function Snacks() {
   const updatemutation = useUpdateDeliveryStatus();
   const deleteOrderMutation = useDeleteOrder();
   const deletePaymentMutation = useDeleteDeliveredPayment();
+  const updateShipment = useUpdateShipment();
 
   const { data: cartItem, refetch: cartItemrefetch } = useGetCartItems();
   const { data: paymentItem, refetch: paymentRefetch } = useGetPayment();
+  const [shipmentDialogOpen, setShipmentDialogOpen] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [trackingUrl, setTrackingUrl] = useState("");
+  const [currentOrder, setCurrentOrder] = useState<PaymentData | null>(null);
+  const [trackingNumberError, setTrackingNumberError] = useState(false);
+  const [trackingUrlError, setTrackingUrlError] = useState(false);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState<{
+    payment: PaymentData;
+    filteredCartItems: any[];
+  } | null>(null);
+
+  useEffect(() => {
+    if (cartItem) {
+      setCartItemData(cartItem);
+    }
+  }, [cartItem]);
+
+  useEffect(() => {
+    if (paymentItem) setPaymentData(paymentItem);
+  }, [paymentItem]);
+
+  const handleOpenShipmentDialog = (payment: PaymentData) => {
+    setCurrentOrder(payment);
+    setTrackingNumber(payment.trackingNumber || "");
+    setTrackingUrl(payment.trackingUrl || "");
+    setShipmentDialogOpen(true);
+  };
+
+  const handleCloseShipmentDialog = () => {
+    setShipmentDialogOpen(false);
+  };
+
+  const handleSendShipment = async () => {
+    setTrackingNumberError(false);
+    setTrackingUrlError(false);
+
+    let hasError = false;
+
+    if (!trackingNumber.trim()) {
+      setTrackingNumberError(true);
+      hasError = true;
+    }
+    if (!trackingUrl.trim()) {
+      setTrackingUrlError(true);
+      hasError = true;
+    }
+
+    if (hasError) return;
+    try {
+      await updateShipment.mutateAsync({
+        orderNumber: currentOrder?.orderNumber,
+        trackingNumber,
+        trackingUrl,
+        firstName: currentOrder?.firstName,
+        email: currentOrder?.email,
+      });
+
+      updateSnackBarState(true, "Shipment details sent & saved!", "success");
+      paymentRefetch();
+      setShipmentDialogOpen(false);
+    } catch (err) {
+      updateSnackBarState(true, "Failed to send shipment details", "error");
+    }
+  };
 
   useEffect(() => {
     if (cartItem) {
@@ -70,12 +150,27 @@ function Snacks() {
     setDrawerOpen(false);
   };
 
+  const handleDetailsDrawerClose = () => {
+    setDetailsDrawerOpen(false);
+    setSelectedOrderDetails(null);
+  };
+
   const handleEditClick = (payment: PaymentData) => {
     setSelectedPayment({ ...payment });
     setDrawerOpen(true);
   };
 
-  // Function to handle switch change
+  const handleShowDetails = (
+    payment: PaymentData,
+    filteredCartItems: any[]
+  ) => {
+    setSelectedOrderDetails({
+      payment,
+      filteredCartItems,
+    });
+    setDetailsDrawerOpen(true);
+  };
+
   const handleSwitchChange = async (orderNumber, cartItem) => {
     console.log("deliveredStatus", cartItem.deliveredStatus);
 
@@ -116,9 +211,8 @@ function Snacks() {
     cartItemrefetch();
     paymentRefetch();
   };
-  // Handle Excel Download
+
   const handleExcelDownload = () => {
-    // Prepare data for Excel
     const dataToDownload: DownloadData[] = [];
 
     filteredPayments.forEach((payment) => {
@@ -137,8 +231,12 @@ function Snacks() {
         (deliveryStatusFilter === "pending" &&
           matchingCart?.deliveredStatus === "false");
 
-      if (!deliveryStatusMatches) return;
-      // Track whether it's the first item for the order
+      const deliveryOptionMatches =
+        deliveryOptionFilter === "all" ||
+        payment.deliveryOption === deliveryOptionFilter;
+
+      if (!deliveryStatusMatches || !deliveryOptionMatches) return;
+
       let firstItemForOrder = true;
 
       filteredCartItems?.forEach((item) => {
@@ -177,17 +275,13 @@ function Snacks() {
             : "",
           Notes: firstItemForOrder ? payment.notes || "" : "",
         });
-        // Set the flag to false after processing the first item for the order
         firstItemForOrder = false;
       });
     });
 
-    // Create a new workbook and worksheet
     const worksheet = XLSX.utils.json_to_sheet(dataToDownload);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-
-    // Generate Excel file and trigger download
     XLSX.writeFile(workbook, "filtered_orders.xlsx");
   };
 
@@ -204,15 +298,26 @@ function Snacks() {
       (deliveryStatusFilter === "pending" &&
         matchingCart?.deliveredStatus === "false");
 
+    const matchesDeliveryOption =
+      deliveryOptionFilter === "all" ||
+      payment.deliveryOption === deliveryOptionFilter;
+
     return (
       payment.orderNumber
         .toLowerCase()
         .includes(orderNumberFilter.toLowerCase()) &&
       (payment.firstName.toLowerCase().includes(nameFilter.toLowerCase()) ||
         payment.lastName.toLowerCase().includes(nameFilter.toLowerCase())) &&
-      matchesDeliveryStatus
+      matchesDeliveryStatus &&
+      matchesDeliveryOption
     );
   });
+
+  // Apply pagination to filtered payments
+  const paginatedPayments = filteredPayments.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
 
   const handleResendMail = async (payment, item) => {
     const response = await getResendMailItems(item, payment);
@@ -227,10 +332,11 @@ function Snacks() {
     <div>
       <Box
         display="flex"
-        justifyContent="space-between"
+        justifyContent="space-around"
         alignItems="center"
         mb={2}
         mt={2}
+        sx={{ px: 1 }}
       >
         <Box display="flex" gap="20px">
           <div>
@@ -280,18 +386,46 @@ function Snacks() {
               <MenuItem value="pending">Pending</MenuItem>
             </Select>
           </div>
+          <div>
+            <Typography variant="subtitle1" gutterBottom>
+              Filter by Delivery Option
+            </Typography>
+            <Select
+              value={deliveryOptionFilter}
+              onChange={(e) => setDeliveryOptionFilter(e.target.value)}
+              variant="outlined"
+              sx={{ minWidth: 120 }}
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="Pickup">Pickup</MenuItem>
+              <MenuItem value="Delivery">Delivery</MenuItem>
+            </Select>
+          </div>
         </Box>
 
-        {/* Button for Excel Download */}
         <Button
           variant="contained"
           color="primary"
           startIcon={<SaveAlt />}
-          onClick={handleExcelDownload} // Add your download handler here
+          onClick={handleExcelDownload}
         >
           Download Excel
         </Button>
       </Box>
+      <Box>
+        <PaginatedHeader
+          pagetitle="Orders"
+          pageInfo={{
+            totalItems: filteredPayments.length,
+            totalPages: Math.ceil(filteredPayments.length / rowsPerPage),
+            pageSize: rowsPerPage,
+            page: page,
+          }}
+          onRowsPerPageChange={setRowsPerPage}
+          onPageChange={setPage}
+        />
+      </Box>
+
       <TableContainer elevation={0} component={Paper}>
         <Table stickyHeader aria-label="menus-table">
           <TableHead className="table-header">
@@ -376,7 +510,7 @@ function Snacks() {
               >
                 Notes
               </TableCell>
-              <TableCell
+              {/* <TableCell
                 sx={{
                   backgroundColor: theme.palette.primary.main,
                   color: "white",
@@ -399,7 +533,7 @@ function Snacks() {
                 }}
               >
                 Quantity
-              </TableCell>
+              </TableCell> */}
 
               <TableCell
                 sx={{
@@ -447,6 +581,15 @@ function Snacks() {
                   color: "white",
                 }}
               >
+                Shipment
+              </TableCell>
+
+              <TableCell
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color: "white",
+                }}
+              >
                 Resend Mail
               </TableCell>
               <TableCell
@@ -455,12 +598,12 @@ function Snacks() {
                   color: "white",
                 }}
               >
-                Bill
+                Details
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredPayments.map((payment, paymentIndex) => {
+            {paginatedPayments.map((payment, paymentIndex) => {
               const matchingCart = cartItemData.find(
                 (cart) => cart.orderNumber === payment.orderNumber
               );
@@ -521,9 +664,9 @@ function Snacks() {
                           </TableCell>
                         </>
                       )}
-                      <TableCell>{item.title}</TableCell>
+                      {/* <TableCell>{item.title}</TableCell>
                       <TableCell>{item.size}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
+                      <TableCell>{item.quantity}</TableCell> */}
 
                       {index === 0 && (
                         <>
@@ -564,36 +707,36 @@ function Snacks() {
                           <TableCell rowSpan={filteredCartItems.length}>
                             <Button
                               sx={{ color: theme.palette.primary.main }}
-                              startIcon={<MailOutline />} // Use the MailOutline icon
+                              startIcon={<LocalShipping />}
+                              onClick={() => handleOpenShipmentDialog(payment)}
+                            >
+                              Shipment
+                            </Button>
+                          </TableCell>
+
+                          <TableCell rowSpan={filteredCartItems.length}>
+                            <Button
+                              sx={{ color: theme.palette.primary.main }}
+                              startIcon={<MailOutline />}
                               onClick={() =>
                                 handleResendMail(payment, filteredCartItems)
-                              } // Add your resend mail handler here
+                              }
                             >
                               Resend Mail
                             </Button>
                           </TableCell>
                           <TableCell rowSpan={filteredCartItems.length}>
-                            <PDFDownloadLink
-                              document={
-                                <PDFBill
-                                  payment={payment}
-                                  filteredCartItems={filteredCartItems}
-                                />
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              sx={{ whiteSpace: "nowrap" }}
+                              // startIcon={<Visibility />}
+                              onClick={() =>
+                                handleShowDetails(payment, filteredCartItems)
                               }
-                              fileName={`invoice_${payment.orderNumber}.pdf`}
                             >
-                              {({ blob, url, loading, error }) => {
-                                if (loading)
-                                  return <span>Loading document...</span>;
-                                if (error)
-                                  return <span>Error loading document</span>;
-                                return (
-                                  <Button variant="contained" color="primary">
-                                    print&nbsp;Order
-                                  </Button>
-                                );
-                              }}
-                            </PDFDownloadLink>
+                              Show Details
+                            </Button>
                           </TableCell>
                         </>
                       )}
@@ -606,12 +749,70 @@ function Snacks() {
         </Table>
       </TableContainer>
 
+      <Dialog open={shipmentDialogOpen} onClose={handleCloseShipmentDialog}>
+        <DialogTitle>Enter Shipment Details</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Tracking Number"
+            fullWidth
+            value={trackingNumber}
+            onChange={(e) => {
+              setTrackingNumber(e.target.value);
+              if (e.target.value.trim() !== "") {
+                setTrackingNumberError(false);
+              }
+            }}
+            error={trackingNumberError}
+            helperText={
+              trackingNumberError ? "Tracking Number is required" : ""
+            }
+          />
+
+          <TextField
+            margin="dense"
+            label="Tracking URL"
+            fullWidth
+            multiline
+            minRows={3}
+            value={trackingUrl}
+            onChange={(e) => {
+              setTrackingUrl(e.target.value);
+              if (e.target.value.trim() !== "") {
+                setTrackingUrlError(false);
+              }
+            }}
+            error={trackingUrlError}
+            helperText={trackingUrlError ? "Tracking URL is required" : ""}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseShipmentDialog}>Cancel</Button>
+          <Button
+            onClick={handleSendShipment}
+            variant="contained"
+            color="primary"
+          >
+            Send
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {DrawerOpen && (
         <SnacksDrawer
           selectedPaymentData={selectedPayment}
           menuDrawerOpen={DrawerOpen}
           handleDrawerclose={handleDrawerclose}
           refetch={paymentRefetch}
+        />
+      )}
+
+      {detailsDrawerOpen && selectedOrderDetails && (
+        <OrderDetailsDrawer
+          open={detailsDrawerOpen}
+          onClose={handleDetailsDrawerClose}
+          payment={selectedOrderDetails.payment}
+          filteredCartItems={selectedOrderDetails.filteredCartItems}
         />
       )}
     </div>
