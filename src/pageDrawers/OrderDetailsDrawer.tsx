@@ -165,10 +165,10 @@ const OrderDetailsDrawer = ({
                     <TableCell>{item.size}</TableCell>
                     <TableCell align="right">{item.quantity}</TableCell>
                     <TableCell align="right">
-                      ${(item.price / item.quantity).toFixed(2)}
+                      ${item.price.toFixed(2)}
                     </TableCell>
                     <TableCell align="right">
-                      ${item.price.toFixed(2)}
+                      ${(item.price * item.quantity).toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}
