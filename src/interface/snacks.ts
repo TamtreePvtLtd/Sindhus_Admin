@@ -23,8 +23,10 @@ export interface PaymentData {
   addressURL: string;
   notes: string;
   __v: number;
-  trackingNumber?: string; 
+  trackingNumber?: string;
   trackingUrl?: string;
+  shippingAmount?: number;
+  taxAmount?: number;
 }
 
 export interface CartItemData {
@@ -63,9 +65,12 @@ export interface DownloadData {
   "Delivered Status": string;
   "Location URL": string;
   "Coupon Name": string;
-  "Total Amount without Coupon": string;
-  "Total Amount with Coupon": string;
-  "Notes": string;
+  "After Coupon / Discount": string;
+  Notes: string;
+  Amount: string;
+  "Tax Amount": string;
+  "Shipping Amount": string;
+  "Paid Amount": string;
 }
 
 export interface DistanceBasedDeliveryCharge {
@@ -73,7 +78,7 @@ export interface DistanceBasedDeliveryCharge {
   amount: string;
   uptoDistance: string;
 }
- export interface UpdateShipmentInput {
+export interface UpdateShipmentInput {
   orderNumber?: string;
   trackingNumber: string;
   trackingUrl: string;
