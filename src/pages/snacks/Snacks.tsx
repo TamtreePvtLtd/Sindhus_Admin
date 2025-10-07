@@ -262,18 +262,37 @@ function Snacks() {
           Size: item.size,
           "Location URL": firstItemForOrder ? `${payment.addressURL} ` : "",
           "Coupon Name": firstItemForOrder ? `${payment.couponName} ` : "",
-          "Total Amount without Coupon": firstItemForOrder
-            ? `${payment.totalWithoutCoupon} `
-            : "",
-          "Total Amount with Coupon": firstItemForOrder
-            ? `${(payment.amount / 100).toFixed(2)} `
-            : "",
+
           "Delivered Status": firstItemForOrder
             ? matchingCart?.deliveredStatus === "true"
               ? "Delivered"
               : "Pending"
             : "",
           Notes: firstItemForOrder ? payment.notes || "" : "",
+          Amount: firstItemForOrder
+            ? payment.totalWithoutCoupon !== undefined
+              ? Number(payment.totalWithoutCoupon).toFixed(2)
+              : ""
+            : "",
+
+          "After Coupon / Discount": firstItemForOrder
+            ? `${Number(payment.totalWithCoupon).toFixed(2)} `
+            : "",
+          "Tax Amount": firstItemForOrder
+            ? payment.taxAmount !== undefined
+              ? Number(payment.taxAmount).toFixed(2)
+              : ""
+            : "",
+          "Shipping Amount": firstItemForOrder
+            ? payment.shippingAmount !== undefined
+              ? Number(payment.shippingAmount).toFixed(2)
+              : ""
+            : "",
+          "Paid Amount": firstItemForOrder
+            ? payment.amount !== undefined
+              ? Number(payment.amount / 100).toFixed(2)
+              : ""
+            : "",
         });
         firstItemForOrder = false;
       });
