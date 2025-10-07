@@ -131,14 +131,29 @@ const OrderDetailsDrawer = ({
             {new Date(payment.deliveryDate).toLocaleDateString()}
           </Typography>
           <Typography>
+            <strong>Amount:</strong> $
+            {Number(payment.totalWithoutCoupon).toFixed(2)}
+          </Typography>
+
+          <Typography>
             <strong>Coupon Applied:</strong> {payment.couponName || "None"}
           </Typography>
           <Typography>
-            <strong>Total Before Coupon:</strong> $
-            {Number(payment.totalWithoutCoupon).toFixed(2)}
+            <strong>After Coupon/Discount:</strong> $
+            {Number(payment.totalWithCoupon).toFixed(2)}
           </Typography>
           <Typography>
-            <strong>Total After Coupon:</strong> $
+            <strong>Amount with Tax:</strong> $
+            {Number(payment.taxAmount).toFixed(2)}
+          </Typography>
+          <Typography>
+            <strong>Shipping Amount:</strong> $
+            {payment.shippingAmount
+              ? Number(payment.shippingAmount).toFixed(2)
+              : "0.00"}
+          </Typography>
+          <Typography>
+            <strong>Paid Amount:</strong> $
             {Number(payment.amount / 100).toFixed(2)}
           </Typography>
         </Box>
